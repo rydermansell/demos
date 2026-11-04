@@ -198,10 +198,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 footer .brand b{color:#efe5cf}
 .pw{font-size:12.5px;color:#8a826f}
 .pw a{color:var(--gold)}
-.sticky{position:fixed;left:12px;right:12px;bottom:12px;z-index:25;display:flex;gap:8px;transform:translateY(120%);transition:transform .35s ease}
+.sticky{position:fixed;left:12px;right:12px;bottom:12px;z-index:25;display:flex;gap:8px;transform:translateY(160%);transition:transform .35s ease}
 .sticky.show{transform:none}
 .sticky .btn{flex:1;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 @media(min-width:800px){.sticky{display:none}}
+@media(max-width:799px){footer{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}.sticky{bottom:calc(12px + env(safe-area-inset-bottom,0px))}}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -488,7 +489,7 @@ footer .brand b{color:#efe5cf}
 
   /* header + sticky */
   const hdr=$('#top'), stk=$('#sticky'), hero=$('.hero');
-  function onScroll(){ const y=scrollY; hdr.classList.toggle('solid', y>40); const q=$('#quote').getBoundingClientRect(); stk.classList.toggle('show', y>hero.offsetHeight*0.8 && !(q.top<innerHeight && q.bottom>0)); }
+  function onScroll(){ const y=scrollY; hdr.classList.toggle('solid', y>40); const q=$('#quote').getBoundingClientRect(); const ft=document.querySelector('footer').getBoundingClientRect(); stk.classList.toggle('show', ft.top>innerHeight-10 && y>hero.offsetHeight*0.8 && !(q.top<innerHeight && q.bottom>0)); }
   addEventListener('scroll',onScroll,{passive:true}); onScroll();
 
   /* reveals + count up */
