@@ -22,8 +22,12 @@ header.top{position:fixed;inset:0 0 auto 0;z-index:30;transition:background .3s,
 header.top.solid{background:rgba(23,48,31,.96);backdrop-filter:blur(8px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
 .pv{background:var(--orange);color:#1a0d03;text-align:center;font-size:12.5px;font-weight:700;padding:7px 12px;line-height:1.3}
 .pv a{color:inherit}
+.pv-s{display:none}@media(max-width:520px){.pv-l{display:none}.pv-s{display:inline}}
+.brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar{display:flex;align-items:center;justify-content:space-between;height:62px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cream)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cream);min-width:0}
+.brand>span:last-child{min-width:0}
+.callbtn{flex:none;margin-left:12px}
 .mark{width:40px;height:40px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:#1a0d03;font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:-.02em}
 .brand b{font-family:var(--head);font-weight:800;font-size:17px;letter-spacing:.01em;line-height:1;display:block;text-transform:uppercase}
 .brand small{display:block;font-size:11px;letter-spacing:.14em;color:#b9c9b5;font-weight:600;margin-top:3px}
@@ -53,19 +57,19 @@ header.top.solid{background:rgba(23,48,31,.96);backdrop-filter:blur(8px);box-sha
 .rating{display:flex;align-items:center;gap:10px;margin-top:22px;font-size:14.5px;color:#c9d6c4}
 .rating b{font-family:var(--head);font-size:22px;color:var(--cream)}
 .rating .st{color:#f5b638;letter-spacing:2px}
-.scene svg{width:100%;height:auto;display:block;max-height:420px}
+.scene svg{width:100%;height:auto;display:block;max-height:400px}
 
-/* felling animation */
-.fell .top{transform-box:view-box;transform-origin:212px 318px;animation:fall 9s cubic-bezier(.55,0,.9,.5) infinite}
-@keyframes fall{0%,22%{transform:rotate(0);opacity:1}40%{transform:rotate(84deg);opacity:1}
-  41%{transform:rotate(80deg)}43%{transform:rotate(84deg)}58%{transform:rotate(84deg);opacity:1}66%{transform:rotate(84deg);opacity:0}
-  67%{transform:rotate(0) scale(.05);opacity:0}70%{opacity:1}100%{transform:rotate(0) scale(1);opacity:1}}
-.fell .cut{stroke-dasharray:34;stroke-dashoffset:34;animation:cut 9s linear infinite}
-@keyframes cut{0%,8%{stroke-dashoffset:34;opacity:1}22%{stroke-dashoffset:0;opacity:1}60%{opacity:1}66%,100%{opacity:0;stroke-dashoffset:0}}
-.fell .dust circle{opacity:0;animation:dust 9s ease-out infinite}
-@keyframes dust{0%,9%{opacity:0;transform:none}12%{opacity:1}24%{opacity:0;transform:translate(var(--dx),var(--dy))}100%{opacity:0}}
-.fell .thud{opacity:0;animation:thud 9s ease-out infinite;transform-box:fill-box;transform-origin:center}
-@keyframes thud{0%,39%{opacity:0;transform:scale(.4)}41%{opacity:.7}52%{opacity:0;transform:scale(1.6)}100%{opacity:0}}
+/* felling animation: sapling grows from the ground, gets cut at the base, falls flat, yard clears, repeat */
+.fell .tree{transform-box:view-box;transform-origin:152px 346px;animation:grow 10s infinite}
+@keyframes grow{0%{transform:scale(.04);opacity:1;animation-timing-function:cubic-bezier(.2,.8,.3,1)}24%{transform:scale(1);opacity:1}68%{transform:scale(1);opacity:1}76%{transform:scale(1);opacity:0}99%{transform:scale(1);opacity:0}100%{transform:scale(.04);opacity:0}}
+.fell .top{transform-box:view-box;transform-origin:164px 336px;animation:fall 10s infinite}
+@keyframes fall{0%,40%{transform:rotate(0);animation-timing-function:cubic-bezier(.6,0,1,.6)}55%{transform:rotate(90deg);animation-timing-function:ease-out}57%{transform:rotate(85deg);animation-timing-function:ease-in}59%,100%{transform:rotate(90deg)}}
+.fell .cut{stroke-dasharray:30;stroke-dashoffset:30;opacity:0;animation:cut 10s linear infinite}
+@keyframes cut{0%,29%{stroke-dashoffset:30;opacity:0}30%{opacity:1}40%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+.fell .dust circle{opacity:0;animation:dust 10s ease-out infinite}
+@keyframes dust{0%,30%{opacity:0;transform:none}33%{opacity:1}44%{opacity:0;transform:translate(var(--dx),var(--dy))}100%{opacity:0}}
+.fell .thud{opacity:0;transform-box:fill-box;transform-origin:center;animation:thud 10s ease-out infinite}
+@keyframes thud{0%,54%{opacity:0;transform:scale(.4)}56%{opacity:.6}66%{opacity:0;transform:scale(1.5)}100%{opacity:0}}
 
 .storm{background:var(--orange);color:#1a0d03}
 .storm .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;padding-bottom:14px}
@@ -213,9 +217,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 </style>
 
 <header class="top" id="top">
-  <div class="pv">Preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> · booking goes live when you sign up</div>
+  <div class="pv">Preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> · <span class="pv-l">booking goes live when you sign up</span><span class="pv-s">not live yet</span></div>
   <div class="wrap bar">
-    <a class="brand" href="#home"><span class="mark">D</span><span><b>Dennison's Affordable Tree Service</b><small>SEVIERVILLE, TN</small></span></a>
+    <a class="brand" href="#home"><span class="mark">D</span><span><b>Dennison&rsquo;s</b><small>TREE SERVICE</small></span></a>
     <a class="callbtn" href="tel:+18658043273" target="_top"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="cl-long">(865) 804-3273</span><span class="cl-short">Call</span></a>
   </div>
 </header>
@@ -231,25 +235,27 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="rating"><b>4.5</b><span class="st" aria-hidden="true">★★★★★</span><span>37 Google reviews</span></div>
     </div>
     <div class="scene">
-      <svg class="fell" viewBox="0 0 420 380" role="img" aria-label="A tree being cut down and falling">
-        <defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b4d32"/><stop offset="1" stop-color="#17301f"/></linearGradient></defs>
-        <ellipse cx="210" cy="372" rx="230" ry="30" fill="url(#gr)"/>
-        <g fill="#24442c"><circle cx="40" cy="300" r="44"/><circle cx="80" cy="318" r="32"/><circle cx="388" cy="306" r="40"/></g>
-        <ellipse class="thud" cx="330" cy="352" rx="70" ry="10" fill="#c8b48a"/>
-        <g class="top">
-          <path d="M200 318 L196 120 L206 100 L218 120 L224 318 Z" fill="#6b4e37"/>
-          <path d="M208 200 L250 160 M204 240 L168 205 M210 160 L178 130" stroke="#6b4e37" stroke-width="7" stroke-linecap="round"/>
-          <g fill="#4f8a4f"><circle cx="210" cy="90" r="58"/><circle cx="160" cy="130" r="42"/><circle cx="262" cy="138" r="44"/><circle cx="182" cy="190" r="34"/><circle cx="246" cy="196" r="36"/></g>
-          <g fill="#6aa65f"><circle cx="196" cy="70" r="30"/><circle cx="252" cy="118" r="22"/><circle cx="150" cy="118" r="18"/></g>
+      <svg class="fell" viewBox="0 0 460 390" role="img" aria-label="A tree growing, then being cut down and falling">
+        <g fill="#000" opacity=".18"><circle cx="40" cy="322" r="38"/><circle cx="78" cy="336" r="26"/></g>
+        <g class="tree">
+          <path d="M141 336 L142 360 L163 360 L164 336 Z" fill="#5b4330"/>
+          <g class="top">
+            <path d="M141 336 L145 150 L152 128 L159 150 L164 336 Z" fill="#6b4e37"/>
+            <path d="M152 230 L190 196 M150 262 L118 232 M153 186 L124 160" stroke="#6b4e37" stroke-width="7" stroke-linecap="round"/>
+            <g fill="#4f8a4f"><circle cx="152" cy="118" r="50"/><circle cx="110" cy="152" r="36"/><circle cx="196" cy="156" r="38"/><circle cx="124" cy="200" r="28"/><circle cx="182" cy="204" r="30"/></g>
+            <g fill="#6aa65f"><circle cx="140" cy="100" r="26"/><circle cx="190" cy="140" r="18"/><circle cx="104" cy="142" r="15"/></g>
+          </g>
+          <ellipse cx="152.5" cy="336" rx="11.5" ry="3.5" fill="#d8bf8e"/>
+          <line class="cut" x1="168" y1="336" x2="138" y2="336" stroke="#e8681a" stroke-width="3" stroke-linecap="round"/>
         </g>
-        <path d="M198 318 L226 318 L224 360 L198 360 Z" fill="#5b4330"/>
-        <ellipse cx="212" cy="319" rx="13" ry="4" fill="#d8bf8e"/>
-        <line class="cut" x1="230" y1="318" x2="196" y2="318" stroke="#e8681a" stroke-width="3" stroke-linecap="round"/>
+        <ellipse class="thud" cx="300" cy="344" rx="120" ry="9" fill="#c8b48a"/>
         <g class="dust" fill="#e9d6ac">
-          <circle cx="226" cy="318" r="2.5" style="--dx:24px;--dy:-14px"/><circle cx="226" cy="320" r="2" style="--dx:34px;--dy:4px"/>
-          <circle cx="224" cy="316" r="1.8" style="--dx:18px;--dy:-26px"/><circle cx="226" cy="322" r="2.2" style="--dx:28px;--dy:16px"/>
-          <circle cx="225" cy="318" r="1.6" style="--dx:40px;--dy:-6px"/><circle cx="225" cy="319" r="2" style="--dx:12px;--dy:20px"/>
+          <circle cx="166" cy="336" r="2.5" style="--dx:24px;--dy:-14px"/><circle cx="166" cy="338" r="2" style="--dx:34px;--dy:4px"/>
+          <circle cx="164" cy="334" r="1.8" style="--dx:18px;--dy:-26px"/><circle cx="166" cy="340" r="2.2" style="--dx:28px;--dy:10px"/>
+          <circle cx="165" cy="336" r="1.6" style="--dx:40px;--dy:-6px"/><circle cx="165" cy="337" r="2" style="--dx:12px;--dy:14px"/>
         </g>
+        <rect x="0" y="346" width="460" height="44" fill="#1c2a35" class="gnd"/>
+        <rect x="0" y="345" width="460" height="2" fill="rgba(255,255,255,.08)"/>
       </svg>
     </div>
   </div>
@@ -449,7 +455,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 </main>
 
 <footer><div class="wrap">
-  <a class="brand" href="#home"><span class="mark">D</span><span><b>Dennison's Affordable Tree Service</b><small>SEVIERVILLE, TN</small></span></a>
+  <a class="brand" href="#home"><span class="mark">D</span><span><b>Dennison&rsquo;s</b><small>TREE SERVICE</small></span></a>
   <div>(865) 804-3273 · Open 24/7</div>
   <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a></div>
 </div></footer>
