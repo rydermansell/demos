@@ -59,17 +59,27 @@ header.top.solid{background:rgba(23,48,31,.96);backdrop-filter:blur(8px);box-sha
 .rating .st{color:#f5b638;letter-spacing:2px}
 .scene svg{width:100%;height:auto;display:block;max-height:400px}
 
-/* felling animation: sapling grows from the ground, gets cut at the base, falls flat, yard clears, repeat */
-.fell .tree{transform-box:view-box;transform-origin:152px 346px;animation:grow 10s infinite}
-@keyframes grow{0%{transform:scale(.04);opacity:1;animation-timing-function:cubic-bezier(.2,.8,.3,1)}24%{transform:scale(1);opacity:1}68%{transform:scale(1);opacity:1}76%{transform:scale(1);opacity:0}99%{transform:scale(1);opacity:0}100%{transform:scale(.04);opacity:0}}
-.fell .top{transform-box:view-box;transform-origin:164px 336px;animation:fall 10s infinite}
-@keyframes fall{0%,40%{transform:rotate(0);animation-timing-function:cubic-bezier(.6,0,1,.6)}55%{transform:rotate(90deg);animation-timing-function:ease-out}57%{transform:rotate(85deg);animation-timing-function:ease-in}59%,100%{transform:rotate(90deg)}}
-.fell .cut{stroke-dasharray:30;stroke-dashoffset:30;opacity:0;animation:cut 10s linear infinite}
-@keyframes cut{0%,29%{stroke-dashoffset:30;opacity:0}30%{opacity:1}40%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+/* felling animation: tree grows, gets cut, falls, gets hauled off, regrows. 10s loop */
+.fell *{transform-box:view-box}
+.fell .stump{transform-origin:224px 362px;animation:stump 10s ease-in-out infinite}
+@keyframes stump{0%{transform:scaleY(0)}5%,66%{transform:scaleY(1)}75%,100%{transform:scaleY(0)}}
+.fell .face{opacity:0;animation:face 10s linear infinite}
+@keyframes face{0%,42%{opacity:0}43%,66%{opacity:1}70%,100%{opacity:0}}
+.fell .trunkUp{transform-origin:224px 330px;animation:trunk 10s cubic-bezier(.2,.7,.3,1) infinite}
+@keyframes trunk{0%,3%{transform:scaleY(0)}13%,100%{transform:scaleY(1)}}
+.fell .crown{transform-origin:212px 150px;animation:crown 10s cubic-bezier(.3,1.4,.5,1) infinite}
+@keyframes crown{0%,8%{transform:scale(0)}19%,100%{transform:scale(1)}}
+.fell .upper{transform-origin:224px 330px;animation:fall 10s linear infinite}
+@keyframes fall{0%,42%{transform:rotate(0);opacity:1;animation-timing-function:cubic-bezier(.6,0,1,.6)}
+  54%{transform:rotate(80deg);animation-timing-function:ease-out}56%{transform:rotate(76deg);animation-timing-function:ease-in}58%{transform:rotate(80deg)}
+  63%{transform:rotate(80deg);opacity:1}71%{transform:rotate(80deg);opacity:0}72%{transform:rotate(0);opacity:0}100%{transform:rotate(0);opacity:0}}
+.fell .cut{stroke-dasharray:34;stroke-dashoffset:34;opacity:0;animation:cut 10s linear infinite}
+@keyframes cut{0%,32%{stroke-dashoffset:34;opacity:0}33%{opacity:1}42%{stroke-dashoffset:0;opacity:1}46%,100%{stroke-dashoffset:0;opacity:0}}
 .fell .dust circle{opacity:0;animation:dust 10s ease-out infinite}
-@keyframes dust{0%,30%{opacity:0;transform:none}33%{opacity:1}44%{opacity:0;transform:translate(var(--dx),var(--dy))}100%{opacity:0}}
+@keyframes dust{0%,33%{opacity:0;transform:none}35%{opacity:1}46%{opacity:0;transform:translate(var(--dx),var(--dy))}100%{opacity:0}}
 .fell .thud{opacity:0;transform-box:fill-box;transform-origin:center;animation:thud 10s ease-out infinite}
-@keyframes thud{0%,54%{opacity:0;transform:scale(.4)}56%{opacity:.6}66%{opacity:0;transform:scale(1.5)}100%{opacity:0}}
+@keyframes thud{0%,53%{opacity:0;transform:scale(.4)}55%{opacity:.6}64%{opacity:0;transform:scale(1.5)}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.fell .face{opacity:0}}
 
 .storm{background:var(--orange);color:#1a0d03}
 .storm .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;padding-bottom:14px}
@@ -235,27 +245,29 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="rating"><b>4.9</b><span class="st" aria-hidden="true">★★★★★</span><span>49 Google reviews</span></div>
     </div>
     <div class="scene">
-      <svg class="fell" viewBox="0 0 460 390" role="img" aria-label="A tree growing, then being cut down and falling">
-        <g fill="#000" opacity=".18"><circle cx="40" cy="322" r="38"/><circle cx="78" cy="336" r="26"/></g>
-        <g class="tree">
-          <path d="M141 336 L142 360 L163 360 L164 336 Z" fill="#5b4330"/>
-          <g class="top">
-            <path d="M141 336 L145 150 L152 128 L159 150 L164 336 Z" fill="#6b4e37"/>
-            <path d="M152 230 L190 196 M150 262 L118 232 M153 186 L124 160" stroke="#6b4e37" stroke-width="7" stroke-linecap="round"/>
-            <g fill="#4f8a4f"><circle cx="152" cy="118" r="50"/><circle cx="110" cy="152" r="36"/><circle cx="196" cy="156" r="38"/><circle cx="124" cy="200" r="28"/><circle cx="182" cy="204" r="30"/></g>
-            <g fill="#6aa65f"><circle cx="140" cy="100" r="26"/><circle cx="190" cy="140" r="18"/><circle cx="104" cy="142" r="15"/></g>
+      <svg class="fell" viewBox="0 0 520 380" role="img" aria-label="A tree growing, then being cut down">
+        <defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".10"/><stop offset="1" stop-color="#000000" stop-opacity=".25"/></linearGradient></defs>
+        <g fill="currentColor" opacity=".18"><circle cx="40" cy="330" r="40"/><circle cx="86" cy="342" r="28"/></g>
+        <g class="upper">
+          <g class="trunkUp">
+            <path d="M212 332 L209 140 L224 120 L238 140 L236 332 Z" fill="#6b4e37"/>
+            <path d="M224 230 L266 192 M220 262 L182 230 M226 186 L194 160" stroke="#6b4e37" stroke-width="8" stroke-linecap="round"/>
           </g>
-          <ellipse cx="152.5" cy="336" rx="11.5" ry="3.5" fill="#d8bf8e"/>
-          <line class="cut" x1="168" y1="336" x2="138" y2="336" stroke="#e8681a" stroke-width="3" stroke-linecap="round"/>
+          <g class="crown">
+            <g fill="#4f8a4f"><circle cx="222" cy="112" r="56"/><circle cx="174" cy="150" r="40"/><circle cx="272" cy="156" r="42"/><circle cx="196" cy="204" r="32"/><circle cx="256" cy="210" r="34"/></g>
+            <g fill="#6aa65f"><circle cx="208" cy="92" r="28"/><circle cx="264" cy="138" r="20"/><circle cx="164" cy="138" r="16"/></g>
+          </g>
         </g>
-        <ellipse class="thud" cx="300" cy="344" rx="120" ry="9" fill="#c8b48a"/>
+        <g class="stump"><path d="M210 330 L238 330 L240 362 L208 362 Z" fill="#5b4330"/><ellipse class="face" cx="224" cy="331" rx="14" ry="4" fill="#d8bf8e"/></g>
+        <rect x="0" y="356" width="520" height="24" fill="url(#gr)"/>
+        <line x1="0" y1="356" x2="520" y2="356" stroke="currentColor" stroke-opacity=".25" stroke-width="2"/>
+        <ellipse class="thud" cx="430" cy="352" rx="80" ry="9" fill="#c8b48a"/>
+        <line class="cut" x1="242" y1="331" x2="208" y2="331" stroke="var(--orange)" stroke-width="3" stroke-linecap="round"/>
         <g class="dust" fill="#e9d6ac">
-          <circle cx="166" cy="336" r="2.5" style="--dx:24px;--dy:-14px"/><circle cx="166" cy="338" r="2" style="--dx:34px;--dy:4px"/>
-          <circle cx="164" cy="334" r="1.8" style="--dx:18px;--dy:-26px"/><circle cx="166" cy="340" r="2.2" style="--dx:28px;--dy:10px"/>
-          <circle cx="165" cy="336" r="1.6" style="--dx:40px;--dy:-6px"/><circle cx="165" cy="337" r="2" style="--dx:12px;--dy:14px"/>
+          <circle cx="240" cy="331" r="2.5" style="--dx:24px;--dy:-14px"/><circle cx="240" cy="333" r="2" style="--dx:34px;--dy:4px"/>
+          <circle cx="238" cy="329" r="1.8" style="--dx:18px;--dy:-26px"/><circle cx="240" cy="334" r="2.2" style="--dx:28px;--dy:14px"/>
+          <circle cx="239" cy="331" r="1.6" style="--dx:40px;--dy:-6px"/><circle cx="239" cy="332" r="2" style="--dx:12px;--dy:18px"/>
         </g>
-        <rect x="0" y="346" width="460" height="44" fill="#17301f" class="gnd"/>
-        <rect x="0" y="345" width="460" height="2" fill="rgba(255,255,255,.08)"/>
       </svg>
     </div>
   </div>
