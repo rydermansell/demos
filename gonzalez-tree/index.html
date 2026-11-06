@@ -273,6 +273,19 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .revsum p{margin:0;color:#a9b6a5;font-size:15px}
 .revsum p b{display:block;color:var(--cream);font-size:16px}
 
+
+/* hours & area */
+.area{background:var(--cream2)}
+.agrid{display:grid;gap:34px}
+@media(min-width:860px){.agrid{grid-template-columns:1fr 1fr;align-items:center;gap:60px}}
+.hours{list-style:none;margin:0;padding:8px 22px;background:var(--paper);border-radius:18px;box-shadow:0 24px 50px -32px rgba(0,0,0,.4)}
+.hours li{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:16px}
+.hours li:last-child{border-bottom:0}
+.hours span{color:var(--muted)}
+.hours b{display:flex;align-items:center;gap:8px}
+.hours b::before{content:"";width:8px;height:8px;border-radius:50%;background:#3fae4f}
+.btn.line{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.line:hover{background:var(--ink);color:var(--cream)}
 /* how */
 .how{display:grid;gap:0;margin-top:40px}
 .how div{display:grid;grid-template-columns:auto 1fr;gap:4px 20px;padding:24px 0;border-top:2px solid var(--ink)}
@@ -378,7 +391,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   <div class="wrap">
     <p class="kicker reveal">What we do</p>
     <h2 class="reveal">One limb to <span class="hv">the whole lot.</span></h2>
-    <p class="intro reveal">Years of experience with every size of tree, licensed and insured. Tap any service to get a price. <span class="sample">SAMPLE PRICES</span></p>
+    <p class="intro reveal">Every size of tree, from one limb to the whole lot. Tap any service to get a price. <span class="sample">SAMPLE PRICES</span></p>
     <div class="svc">
       <a class="row reveal" href="#quote" data-svc="removal"><span class="n">01</span><h3>Tree removal</h3><p>Safe takedowns of dead, leaning and unsafe trees of every size.</p><span class="price"><span>From $<span class="cu" data-to="300">300</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
       <a class="row reveal" href="#quote" data-svc="trim"><span class="n">02</span><h3>Trimming &amp; pruning</h3><p>Thinning and shaping to keep trees healthy and off the roof.</p><span class="price"><span>From $<span class="cu" data-to="150">150</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
@@ -480,7 +493,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
       <div class="step" data-step="4">
         <div class="pricebox">
-          <div class="k">YOUR ESTIMATE</div>
+          <div class="k">YOUR ESTIMATE · SAMPLE PRICES</div>
           <div class="amt">$<span id="lo">0</span> to $<span id="hi">0</span></div>
           <p id="pNote">Sample pricing for this preview. Final price is set after we see the job.</p>
           <ul class="lines" id="lines"></ul>
@@ -542,6 +555,20 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   </div>
 </section>
 
+<section class="s area" id="area">
+  <div class="wrap agrid">
+    <div>
+      <p class="kicker reveal">Hours &amp; service area</p>
+      <h2 class="reveal">Open <span class="hv">24/7.</span></h2>
+      <p class="intro reveal">Serving Maryville and the surrounding area. Storm damage doesn't wait for business hours, and neither does Gonzalez.</p>
+      <div class="ctas reveal"><a class="btn dk" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a><a class="btn line" href="https://www.google.com/maps/search/?api=1&amp;query=Gonzalez+Tree+Service+Maryville+TN" target="_blank" rel="noopener">Find us on Maps <svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></a></div>
+    </div>
+    <ul class="hours reveal">
+      <li><span>Monday</span><b>Open 24 hours</b></li><li><span>Tuesday</span><b>Open 24 hours</b></li><li><span>Wednesday</span><b>Open 24 hours</b></li><li><span>Thursday</span><b>Open 24 hours</b></li><li><span>Friday</span><b>Open 24 hours</b></li><li><span>Saturday</span><b>Open 24 hours</b></li><li><span>Sunday</span><b>Open 24 hours</b></li>
+    </ul>
+  </div>
+</section>
+
 <section class="s" id="how">
   <div class="wrap">
     <p class="kicker reveal">How it works</p>
@@ -589,6 +616,33 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   const bg=$('#heroBg'); if(bg && !RM){ let tk=false; addEventListener('scroll',()=>{ if(tk) return; tk=true; requestAnimationFrame(()=>{ const y=Math.min(scrollY,innerHeight); bg.style.transform='scale(1.08) translateY('+(y*.25)+'px)'; tk=false; }); },{passive:true}); }
 
   /* ---------- quote tool ---------- */
+  /* =====================================================================
+     PRICING CONFIG: swap these sample numbers for the owner's real prices.
+     Ranges are [low, high] in dollars. "per" values multiply by the count.
+     ===================================================================== */
+  const PRICING={
+    minJob:150,                                  // smallest estimate ever shown
+    removal:{perFootLow:12, perFootHigh:22, minLow:300, minHigh:550},
+    trim:{factor:.45, minLow:150, minHigh:300},  // trimming = removal price x factor
+    unknownHeight:[25,80], houseSizes:{s:[15,25],m:[25,50],l:[50,85]},
+    nearHouse:{low:.15, high:.30},               // % added when near house/lines
+    haulPerTree:[100,200], grindWithRemoval:[125,275],
+    storm:{limbs:[200,500], one:[500,1500], many:[1500,4000], unknown:[300,2500]},
+    stormOnStructure:{low:.20, high:.35}, stormHaul:[150,400],
+    stump:{perInchLow:3, baseLow:50, perInchHigh:5, baseHigh:75, minLow:100, minHigh:175},
+    stumpSizes:{s:[6,12],m:[12,24],l:[24,40]}, unknownStump:[8,30],
+    stumpRoots:[50,150], stumpFill:[40,90],
+    land:{perAcreLow:1500, perAcreHigh:3500}, unknownAcres:[.5,2],
+    thickness:{light:[.7,.8], mixed:[1,1], heavy:[1.5,1.7]},
+    landHaulPerAcre:[500,1500], landStumpsPerAcre:[400,1200]
+  };
+
+  /* =====================================================================
+     BOOKING ENDPOINT: paste the Google Apps Script web-app URL here when the
+     client signs up. Empty = preview mode (nothing is sent).
+     ===================================================================== */
+  const BOOKING_ENDPOINT='';
+
   const S={svc:null, trees:1, hMode:'slider', h:40, hSize:'m', storm:'one', stumps:1, dMode:'slider', d:18, dSize:'m', aMode:'slider', acres:1, thick:'mixed', ex:{}, when:null};
   const r25=n=>Math.round(n/25)*25;
 
@@ -619,37 +673,38 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   };
   function buildExtras(){ const box=$('#extras'); box.innerHTML=''; (EXTRAS[S.svc]||[]).forEach(([k,t,s])=>{ const b=document.createElement('button'); b.type='button'; b.className='opt box'; b.setAttribute('aria-pressed',String(!!S.ex[k])); b.innerHTML='<span class="tick"></span><span><b>'+t+'</b><small>'+s+'</small></span>'; b.onclick=()=>{ S.ex[k]=!S.ex[k]; b.setAttribute('aria-pressed',String(S.ex[k])); }; box.appendChild(b); }); }
 
-  function heightRange(){ if(S.hMode==='slider') return [S.h,S.h]; if(S.hMode==='house') return {s:[15,25],m:[25,50],l:[50,85]}[S.hSize]; return [25,80]; }
-  function diaRange(){ if(S.dMode==='slider') return [S.d,S.d]; if(S.dMode==='size') return {s:[6,12],m:[12,24],l:[24,40]}[S.dSize]; return [8,30]; }
+  const P=PRICING;
+  function heightRange(){ if(S.hMode==='slider') return [S.h,S.h]; if(S.hMode==='house') return P.houseSizes[S.hSize]; return P.unknownHeight; }
+  function diaRange(){ if(S.dMode==='slider') return [S.d,S.d]; if(S.dMode==='size') return P.stumpSizes[S.dSize]; return P.unknownStump; }
   function price(){
     const L=[]; let lo=0, hi=0; const add=(n,a,b)=>{ L.push([n,a,b]); lo+=a; hi+=b; };
     if (S.svc==='removal'||S.svc==='trim'){
-      const [a,b]=heightRange(), f=S.svc==='trim'?.45:1, n=S.trees;
-      const pl=Math.max(S.svc==='trim'?150:300, 12*a*f), ph=Math.max(S.svc==='trim'?300:550, 22*b*f);
-      add((S.svc==='trim'?'Trimming, ':'Removal, ')+n+' tree'+(n>1?'s':'')+' ('+(a===b?a:a+'–'+b)+' ft)', pl*n, ph*n);
-      if(S.ex.near) add('Near house or lines', pl*n*.15, ph*n*.3);
-      if(S.ex.haul) add('Haul away', 100*n, 200*n);
-      if(S.ex.grind) add('Stump grinding', 125*n, 275*n);
+      const [a,b]=heightRange(), t=S.svc==='trim', f=t?P.trim.factor:1, n=S.trees;
+      const pl=Math.max(t?P.trim.minLow:P.removal.minLow, P.removal.perFootLow*a*f), ph=Math.max(t?P.trim.minHigh:P.removal.minHigh, P.removal.perFootHigh*b*f);
+      add((t?'Trimming, ':'Removal, ')+n+' tree'+(n>1?'s':'')+' ('+(a===b?a:a+'–'+b)+' ft)', pl*n, ph*n);
+      if(S.ex.near) add('Near house or lines', pl*n*P.nearHouse.low, ph*n*P.nearHouse.high);
+      if(S.ex.haul) add('Haul away', P.haulPerTree[0]*n, P.haulPerTree[1]*n);
+      if(S.ex.grind) add('Stump grinding', P.grindWithRemoval[0]*n, P.grindWithRemoval[1]*n);
     }
     if (S.svc==='storm'){
-      const r={limbs:[200,500],one:[500,1500],many:[1500,4000],unknown:[300,2500]}[S.storm];
+      const r=P.storm[S.storm];
       add({limbs:'A few limbs',one:'One downed tree',many:'Several trees',unknown:'Storm cleanup'}[S.storm], r[0], r[1]);
-      if(S.ex.near) add('On a structure', r[0]*.2, r[1]*.35);
-      if(S.ex.haul) add('Haul away', 150, 400);
+      if(S.ex.near) add('On a structure', r[0]*P.stormOnStructure.low, r[1]*P.stormOnStructure.high);
+      if(S.ex.haul) add('Haul away', P.stormHaul[0], P.stormHaul[1]);
     }
     if (S.svc==='stump'){
-      const [a,b]=diaRange(), n=S.stumps;
-      add(n+' stump'+(n>1?'s':'')+' ('+(a===b?a:a+'–'+b)+' in)', Math.max(100,3*a+50)*n, Math.max(175,5*b+75)*n);
-      if(S.ex.roots) add('Surface roots', 50*n, 150*n);
-      if(S.ex.fill) add('Fill with dirt', 40*n, 90*n);
+      const [a,b]=diaRange(), n=S.stumps, k=P.stump;
+      add(n+' stump'+(n>1?'s':'')+' ('+(a===b?a:a+'–'+b)+' in)', Math.max(k.minLow,k.perInchLow*a+k.baseLow)*n, Math.max(k.minHigh,k.perInchHigh*b+k.baseHigh)*n);
+      if(S.ex.roots) add('Surface roots', P.stumpRoots[0]*n, P.stumpRoots[1]*n);
+      if(S.ex.fill) add('Fill with dirt', P.stumpFill[0]*n, P.stumpFill[1]*n);
     }
     if (S.svc==='land'){
-      const [a,b]=S.aMode==='slider'?[S.acres,S.acres]:[.5,2], m={light:[.7,.8],mixed:[1,1],heavy:[1.5,1.7]}[S.thick];
-      add('Clearing, '+(a===b?a:a+'–'+b)+' acre'+(b>1?'s':''), 1500*a*m[0], 3500*b*m[1]);
-      if(S.ex.haul) add('Haul off', 500*a, 1500*b);
-      if(S.ex.stumps) add('Stump grinding', 400*a, 1200*b);
+      const [a,b]=S.aMode==='slider'?[S.acres,S.acres]:P.unknownAcres, m=P.thickness[S.thick];
+      add('Clearing, '+(a===b?a:a+'–'+b)+' acre'+(b>1?'s':''), P.land.perAcreLow*a*m[0], P.land.perAcreHigh*b*m[1]);
+      if(S.ex.haul) add('Haul off', P.landHaulPerAcre[0]*a, P.landHaulPerAcre[1]*b);
+      if(S.ex.stumps) add('Stump grinding', P.landStumpsPerAcre[0]*a, P.landStumpsPerAcre[1]*b);
     }
-    lo=Math.max(150,r25(lo)); hi=Math.max(lo+50,r25(hi));
+    lo=Math.max(P.minJob,r25(lo)); hi=Math.max(lo+50,r25(hi));
     return {lo,hi,L};
   }
   function animNum(el,to){ if(RM){el.textContent=fmt(to);return;} const t0=performance.now(); (function f(t){ const p=Math.min(1,(t-t0)/1000), e=1-Math.pow(1-p,3); el.textContent=fmt(Math.round(to*e)); if(p<1) requestAnimationFrame(f); })(t0); }
@@ -677,6 +732,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   $('#next').addEventListener('click',()=>{ if(valid()) go(step+1); });
   $('#prev').addEventListener('click',()=>go(Math.max(1,step-1)));
   $('#restart').addEventListener('click',()=>go(1));
+  // Posts the booking to the Google Apps Script web app (saves to Sheet, emails owner, feeds the inbox).
+  function sendBooking(data){
+    if(!BOOKING_ENDPOINT) return; // preview mode
+    try{ fetch(BOOKING_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); }catch(e){}
+  }
   function finish(){
     const {lo,hi}=price(), first=$('#fName').value.trim().split(' ')[0];
     $('#doneTitle').textContent='Got it, '+first+'!';
@@ -685,6 +745,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     const note=$('#fNote').value.trim(); if(note) rows.push(['Notes',note]);
     $('#summary').innerHTML=rows.map(()=>'<div><span></span><b></b></div>').join('');
     $$('#summary div').forEach((d,i)=>{ d.children[0].textContent=rows[i][0]; d.children[1].textContent=rows[i][1]; });
+    sendBooking({business:'Gonzalez Tree Service', submittedAt:new Date().toISOString(), job:names[S.svc], estimateLow:lo, estimateHigh:hi,
+      when:S.when, name:$('#fName').value.trim(), phone:$('#fPhone').value.trim(), address:$('#fAddr').value.trim(), notes:note,
+      details:price().L.map(([n,a,b])=>n+': $'+fmt(r25(a))+'–$'+fmt(r25(b))).join('; ')});
     if(RM) return; const lf=$('#leafs'); lf.innerHTML='';
     for(let i=0;i<16;i++){ const l=document.createElement('i'); const a=Math.random()*Math.PI*2, r=60+Math.random()*90; l.style.setProperty('--dx',Math.cos(a)*r+'px'); l.style.setProperty('--dy',Math.sin(a)*r+60+'px'); l.style.setProperty('--r',(Math.random()*540-270)+'deg'); l.style.animationDelay=(.5+Math.random()*.3)+'s'; if(i%3===0) l.style.background='#e8681a'; lf.appendChild(l); }
   }
