@@ -243,7 +243,7 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 /* easier quote flow */
 .qt{overflow:hidden}@supports(overflow:clip){.qt{overflow:clip}}
 .qt-time{font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted)}
-.prog{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;list-style:none;margin:0;padding:12px 22px 0}
+.prog{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;list-style:none;margin:0;padding:12px 22px 0}
 .prog li{position:relative;padding-top:10px;font-size:11.5px;font-weight:700;color:#a49c88;text-align:center;letter-spacing:.02em}
 .prog li::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;border-radius:3px;background:var(--line);transition:background .35s}
 .prog li.on{color:var(--ink)}.prog li.on::before{background:var(--hv)}
@@ -253,6 +253,8 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .est b.bump{transform:scale(1.08)}
 .nav{position:sticky;bottom:0;z-index:5;background:linear-gradient(rgba(255,252,244,0),var(--paper) 22%);padding:26px 22px 22px}
 .nextwrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+#next[hidden],.est[hidden]{display:none}
+.nav.quiet{position:static;background:none;padding-top:10px}
 .why{font-size:12.5px;color:var(--muted);font-weight:600;min-height:1em}
 .opt{min-height:62px}
 .opt.flash{animation:flash .35s ease}
@@ -431,8 +433,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
       <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Gonzalez reaches out to set a time</li></ul>
     </div>
     <div class="qt reveal" id="qt">
-      <div class="qt-head"><span id="qtLabel">Step 1 of 5</span><span class="qt-time">About 1 minute</span></div>
-      <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Extras</li><li data-to="4">Price</li><li data-to="5">Contact</li></ol>
+      <div class="qt-head"><span id="qtLabel">Step 1 of 4</span><span class="qt-time">About 1 minute</span></div>
+      <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Price</li><li data-to="4">Contact</li></ol>
       <div class="est" id="live" hidden><span>Estimate so far</span><b id="liveAmt">$0</b></div>
       <div class="step active" data-step="1">
         <h3>What do you need?</h3>
@@ -450,10 +452,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
         <!-- trees: removal / trim -->
         <div class="pane" data-pane="tree">
           <h3>How big are the trees?</h3>
-          <p class="help">Pick whichever is easiest. A guess is fine.</p>
+          <p class="help">Tap the closest one. A guess is fine.</p>
           <div class="counter"><div><b>How many trees?</b><small>Same rough size is fine</small></div><div class="stepper" data-count="trees"><button type="button" aria-label="Fewer">−</button><output>1</output><button type="button" aria-label="More">+</button></div></div>
-          <div class="seg" id="hMode"><button type="button" data-m="slider" aria-pressed="true">Set the height</button><button type="button" data-m="house" aria-pressed="false">Compare to house</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
-          <div class="pane sub active" data-sub="slider">
+          <div class="seg" id="hMode"><button type="button" data-m="house" aria-pressed="true">Compare to house</button><button type="button" data-m="slider" aria-pressed="false">Exact height</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
+          <div class="pane sub" data-sub="slider">
             <div class="big"><span id="hOut">40</span> <small>feet tall</small></div>
             <input type="range" id="h" min="10" max="100" step="5" value="40" aria-label="Tree height in feet">
             <div class="ruler"><span>10 ft</span><span>50 ft</span><span>100 ft</span></div>
@@ -464,10 +466,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
               <g id="miniTree"><rect id="mtTrunk" x="206" y="80" width="8" height="44" fill="#6b4e37"/><circle id="mtTop" cx="210" cy="70" r="26" fill="#4f8a4f"/></g>
             </svg><p>Drag to match the tree. The house is for scale.</p></div>
           </div>
-          <div class="pane sub" data-sub="house">
+          <div class="pane sub active" data-sub="house">
             <div class="opts" id="hSize">
               <button type="button" class="opt" data-v="s" aria-pressed="false"><span class="tick"></span><span><b>Shorter than the house</b><small>Under about 25 ft</small></span></button>
-              <button type="button" class="opt" data-v="m" aria-pressed="true"><span class="tick"></span><span><b>About as tall, up to twice</b><small>Roughly 25 to 50 ft</small></span></button>
+              <button type="button" class="opt" data-v="m" aria-pressed="false"><span class="tick"></span><span><b>About as tall, up to twice</b><small>Roughly 25 to 50 ft</small></span></button>
               <button type="button" class="opt" data-v="l" aria-pressed="false"><span class="tick"></span><span><b>Towers over the house</b><small>50 ft and up</small></span></button>
             </div>
           </div>
@@ -479,7 +481,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
           <p class="help">Best guess is fine.</p>
           <div class="opts" id="stormPick">
             <button type="button" class="opt" data-v="limbs" aria-pressed="false"><span class="tick"></span><span><b>A few limbs</b><small>Branches down in the yard</small></span></button>
-            <button type="button" class="opt" data-v="one" aria-pressed="true"><span class="tick"></span><span><b>One tree down</b><small>A whole tree fell or split</small></span></button>
+            <button type="button" class="opt" data-v="one" aria-pressed="false"><span class="tick"></span><span><b>One tree down</b><small>A whole tree fell or split</small></span></button>
             <button type="button" class="opt" data-v="many" aria-pressed="false"><span class="tick"></span><span><b>Several trees</b><small>Multiple trees or a big mess</small></span></button>
             <button type="button" class="opt" data-v="unknown" aria-pressed="false"><span class="tick"></span><span><b>Not sure</b><small>We'll take a look</small></span></button>
           </div>
@@ -487,11 +489,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
         <!-- stump -->
         <div class="pane" data-pane="stump">
           <h3>How big are the stumps?</h3>
-          <p class="help">Measure across the top, or just pick a size.</p>
+          <p class="help">Tap the closest size.</p>
           <div class="counter"><div><b>How many stumps?</b></div><div class="stepper" data-count="stumps"><button type="button" aria-label="Fewer">−</button><output>1</output><button type="button" aria-label="More">+</button></div></div>
-          <div class="seg" id="dMode"><button type="button" data-m="slider" aria-pressed="true">Set the width</button><button type="button" data-m="size" aria-pressed="false">Small / Med / Large</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
-          <div class="pane sub2 active" data-sub="slider"><div class="big"><span id="dOut">18</span> <small>inches across</small></div><input type="range" id="d" min="6" max="48" step="2" value="18" aria-label="Stump width in inches"><div class="ruler"><span>6 in</span><span>24 in</span><span>48 in</span></div></div>
-          <div class="pane sub2" data-sub="size"><div class="chips" id="dSize"><button type="button" data-v="s" aria-pressed="false">Small (under 12 in)</button><button type="button" data-v="m" aria-pressed="true">Medium (12 to 24 in)</button><button type="button" data-v="l" aria-pressed="false">Large (24 in +)</button></div></div>
+          <div class="seg" id="dMode"><button type="button" data-m="size" aria-pressed="true">Pick a size</button><button type="button" data-m="slider" aria-pressed="false">Exact width</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
+          <div class="pane sub2" data-sub="slider"><div class="big"><span id="dOut">18</span> <small>inches across</small></div><input type="range" id="d" min="6" max="48" step="2" value="18" aria-label="Stump width in inches"><div class="ruler"><span>6 in</span><span>24 in</span><span>48 in</span></div></div>
+          <div class="pane sub2 active" data-sub="size"><div class="opts" id="dSize"><button type="button" class="opt" data-v="s" aria-pressed="false"><span class="tick"></span><span><b>Small</b><small>Under 12 inches across</small></span></button><button type="button" class="opt" data-v="m" aria-pressed="false"><span class="tick"></span><span><b>Medium</b><small>12 to 24 inches</small></span></button><button type="button" class="opt" data-v="l" aria-pressed="false"><span class="tick"></span><span><b>Large</b><small>24 inches and up</small></span></button></div></div>
           <div class="pane sub2" data-sub="unknown"><div class="note" style="margin-top:0">That's fine. We'll measure when we get there.</div></div>
         </div>
         <!-- land -->
@@ -501,25 +503,23 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
           <div class="seg" id="aMode" style="grid-template-columns:1fr 1fr"><button type="button" data-m="slider" aria-pressed="true">Set the size</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
           <div class="pane sub3 active" data-sub="slider"><div class="big"><span id="aOut">1</span> <small>acre</small></div><input type="range" id="a" min="0.25" max="10" step="0.25" value="1" aria-label="Acres"><div class="ruler"><span>¼ acre</span><span>5</span><span>10 acres</span></div></div>
           <div class="pane sub3" data-sub="unknown"><div class="note" style="margin-top:0">We'll walk the property with you and give an exact number.</div></div>
-          <p class="lbl">How thick is it?</p>
-          <div class="chips" id="thick"><button type="button" data-v="light" aria-pressed="false">Mostly brush</button><button type="button" data-v="mixed" aria-pressed="true">Brush and some trees</button><button type="button" data-v="heavy" aria-pressed="false">Thick woods</button></div>
+          <p class="lbl">How thick is it? <span style="font-weight:500;color:var(--muted)">Tap one to see your price</span></p>
+          <div class="chips" id="thick"><button type="button" data-v="light" aria-pressed="false">Mostly brush</button><button type="button" data-v="mixed" aria-pressed="false">Brush and some trees</button><button type="button" data-v="heavy" aria-pressed="false">Thick woods</button></div>
         </div>
       </div>
 
-      <div class="step" data-step="3">
-        <h3>Anything else?</h3>
-        <p class="help">Optional. Tap any that apply, or skip.</p>
-        <div class="opts" id="extras"></div>
-      </div>
 
-      <div class="step" data-step="4">
+      <div class="step" data-step="3">
         <div class="pricebox">
           <div class="k">YOUR ESTIMATE · SAMPLE PRICES</div>
           <div class="amt">$<span id="lo">0</span> to $<span id="hi">0</span></div>
           <p id="pNote">Sample pricing for this preview. Final price is set after we see the job.</p>
           <ul class="lines" id="lines"></ul>
         </div>
-        <h3>When do you need it?</h3>
+        <p class="lbl" style="margin-top:0">Add anything? <span style="font-weight:500;color:var(--muted)">Price updates as you tap</span></p>
+        <div class="opts" id="extras"></div>
+        <h3 style="margin-top:26px">When do you need it?</h3>
+        <p class="help" style="margin:0">Tap one to book this estimate.</p>
         <div class="opts" id="when" style="margin-top:12px">
           <button type="button" class="opt" data-v="Emergency, ASAP" aria-pressed="false"><span class="tick"></span><span><b>Emergency</b><small>Tree on a house, car or road</small></span></button>
           <button type="button" class="opt" data-v="This week" aria-pressed="false"><span class="tick"></span><span><b>This week</b></span></button>
@@ -528,7 +528,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
         </div>
       </div>
 
-      <div class="step" data-step="5">
+      <div class="step" data-step="4">
         <h3>Where's the job?</h3>
         <p class="help">We'll call or text to set a time.</p>
         <label class="field"><span>Name</span><input id="fName" autocomplete="name" placeholder="Your name"></label>
@@ -537,7 +537,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
         <label class="field"><span>Anything we should know? <small style="font-weight:500;color:var(--muted)">(optional)</small></span><textarea id="fNote" rows="2" placeholder="Gate code, tree is leaning, etc."></textarea></label>
       </div>
 
-      <div class="step" data-step="6">
+      <div class="step" data-step="5">
         <div class="done">
           <div class="leafs" id="leafs" aria-hidden="true"></div>
           <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="#13241a" stroke-width="6"/><path class="chk" d="M38 62 L54 77 L84 45" fill="none" stroke="#f5b70f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -664,20 +664,23 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
      ===================================================================== */
   const BOOKING_ENDPOINT='';
 
-  const S={svc:null, trees:1, hMode:'slider', h:40, hSize:'m', storm:'one', stumps:1, dMode:'slider', d:18, dSize:'m', aMode:'slider', acres:1, thick:'mixed', ex:{}, when:null};
+  const S={svc:null, trees:1, hMode:'house', h:40, hSize:'m', storm:'one', stumps:1, dMode:'size', d:18, dSize:'m', aMode:'slider', acres:1, thick:'mixed', ex:{}, when:null};
   const r25=n=>Math.round(n/25)*25;
 
   let autoT; function auto(n){ clearTimeout(autoT); autoT=setTimeout(()=>{ if(valid()) go(n); }, RM?0:320); }
   function pick(group, attr, cb){ $$(group+' ['+attr+']').forEach(b=>b.addEventListener('click',()=>{ $$(group+' ['+attr+']').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); cb(b.getAttribute(attr)); updNav(); })); }
-  pick('#svcPick','data-v',v=>{ S.svc=v; S.ex={}; auto(2); });
-  pick('#hMode','data-m',v=>{ S.hMode=v; $$('.sub').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); });
-  pick('#hSize','data-v',v=>S.hSize=v);
-  pick('#stormPick','data-v',v=>S.storm=v);
-  pick('#dMode','data-m',v=>{ S.dMode=v; $$('.sub2').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); });
-  pick('#dSize','data-v',v=>S.dSize=v);
+  const PICKED={}; function clearPicks(){ ['#hSize','#stormPick','#dSize','#thick'].forEach(g=>{ PICKED[g]=false; $$(g+' [data-v]').forEach(b=>b.setAttribute('aria-pressed','false')); }); }
+  clearPicks();
+  pick('#svcPick','data-v',v=>{ if(S.svc!==v){ S.ex={}; clearPicks(); } S.svc=v; auto(2); });
+  pick('#hMode','data-m',v=>{ S.hMode=v; $$('.sub').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); if(v==='unknown') auto(3); });
+  pick('#hSize','data-v',v=>{ S.hSize=v; PICKED['#hSize']=true; auto(3); });
+  pick('#stormPick','data-v',v=>{ S.storm=v; PICKED['#stormPick']=true; auto(3); });
+  pick('#dMode','data-m',v=>{ S.dMode=v; $$('.sub2').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); if(v==='unknown') auto(3); });
+  pick('#dSize','data-v',v=>{ S.dSize=v; PICKED['#dSize']=true; auto(3); });
   pick('#aMode','data-m',v=>{ S.aMode=v; $$('.sub3').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); });
-  pick('#thick','data-v',v=>S.thick=v);
-  pick('#when','data-v',v=>{ S.when=v; auto(5); });
+  pick('#thick','data-v',v=>{ S.thick=v; PICKED['#thick']=true; auto(3); });
+  pick('#when','data-v',v=>{ S.when=v; auto(4); });
+  ['#h','#d'].forEach(sel=>$(sel).addEventListener('input',updNav));
   $$('.stepper').forEach(st=>{ const k=st.dataset.count, [m,o,p]=st.children; m.onclick=()=>{ S[k]=Math.max(1,S[k]-1); o.textContent=S[k]; }; p.onclick=()=>{ S[k]=Math.min(15,S[k]+1); o.textContent=S[k]; }; });
 
   const h=$('#h'), trunk=$('#mtTrunk'), top=$('#mtTop');
@@ -693,7 +696,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     stump:[['roots','Grind surface roots too','Roots sticking up around it'],['fill','Fill the hole with dirt','Ready to seed or sod']],
     land:[['haul','Haul everything off','Instead of leaving piles'],['stumps','Grind the stumps','So the ground is usable']]
   };
-  function buildExtras(){ const box=$('#extras'); box.innerHTML=''; (EXTRAS[S.svc]||[]).forEach(([k,t,s])=>{ const b=document.createElement('button'); b.type='button'; b.className='opt box'; b.setAttribute('aria-pressed',String(!!S.ex[k])); b.innerHTML='<span class="tick"></span><span><b>'+t+'</b><small>'+s+'</small></span>'; b.onclick=()=>{ S.ex[k]=!S.ex[k]; b.setAttribute('aria-pressed',String(S.ex[k])); }; box.appendChild(b); }); }
+  function buildExtras(){ const box=$('#extras'); box.innerHTML=''; (EXTRAS[S.svc]||[]).forEach(([k,t,s])=>{ const b=document.createElement('button'); b.type='button'; b.className='opt box'; b.setAttribute('aria-pressed',String(!!S.ex[k])); b.innerHTML='<span class="tick"></span><span><b>'+t+'</b><small>'+s+'</small></span>'; b.onclick=()=>{ S.ex[k]=!S.ex[k]; b.setAttribute('aria-pressed',String(S.ex[k])); showPrice(); }; box.appendChild(b); }); }
 
   const P=PRICING;
   function heightRange(){ if(S.hMode==='slider') return [S.h,S.h]; if(S.hMode==='house') return P.houseSizes[S.hSize]; return P.unknownHeight; }
@@ -729,31 +732,34 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     lo=Math.max(P.minJob,r25(lo)); hi=Math.max(lo+50,r25(hi));
     return {lo,hi,L};
   }
-  function animNum(el,to){ if(RM){el.textContent=fmt(to);return;} const t0=performance.now(); (function f(t){ const p=Math.min(1,(t-t0)/1000), e=1-Math.pow(1-p,3); el.textContent=fmt(Math.round(to*e)); if(p<1) requestAnimationFrame(f); })(t0); }
+  function animNum(el,to){ if(RM){el.textContent=fmt(to);return;} const from=+(el.textContent.replace(/\D/g,''))||0, t0=performance.now(), dur=from?500:1000; (function f(t){ const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3); el.textContent=fmt(Math.round(from+(to-from)*e)); if(p<1) requestAnimationFrame(f); })(t0); }
   function showPrice(){ const {lo,hi,L}=price(); animNum($('#lo'),lo); animNum($('#hi'),hi); $('#lines').innerHTML=L.map(([n,a,b])=>'<li><span>'+n+'</span><span>$'+fmt(r25(a))+'–$'+fmt(r25(b))+'</span></li>').join('');
     const unsure=(S.svc==='removal'||S.svc==='trim')&&S.hMode==='unknown' || S.svc==='stump'&&S.dMode==='unknown' || S.svc==='land'&&S.aMode==='unknown' || S.svc==='storm'&&S.storm==='unknown';
     $('#pNote').textContent=(unsure?'Wider range since the size isn’t known yet. ':'')+'Sample pricing for this preview. Final price is set after we see the job.'; }
 
   const ORDER=[1,2,3,4,5,6]; let step=1, booted=false;
-  function valid(){ if(step===1) return !!S.svc; if(step===4) return !!S.when; if(step===5) return $('#fName').value.trim().length>1 && $('#fPhone').value.replace(/\D/g,'').length>=10 && $('#fAddr').value.trim().length>4; return true; }
-  const WHY={1:'Pick a job to continue',4:'Pick when you need it',5:'Add your name, phone and address'};
-  function updNav(){ const ok=valid(); $('#next').disabled=!ok; $('#why').textContent=ok?'':(WHY[step]||''); }
-  function live(){ const el=$('#live'); const on=step===2||step===3; el.hidden=!on; if(!on) return; const {lo,hi}=price(), t='$'+fmt(lo)+' – $'+fmt(hi), b=$('#liveAmt'); if(b.textContent!==t){ b.textContent=t; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); } }
+  function sliderMode(){ return (S.svc==='removal'||S.svc==='trim')&&S.hMode==='slider' || S.svc==='stump'&&S.dMode==='slider'; }
+  function valid(){ if(step===1) return !!S.svc;
+    if(step===2){ if(S.svc==='storm') return PICKED['#stormPick']; if(S.svc==='land') return PICKED['#thick'];
+      if(S.svc==='stump') return S.dMode!=='size'||PICKED['#dSize']; return S.hMode!=='house'||PICKED['#hSize']; }
+    if(step===3) return !!S.when; if(step===4) return $('#fName').value.trim().length>1 && $('#fPhone').value.replace(/\D/g,'').length>=10 && $('#fAddr').value.trim().length>4; return true; }
+  const WHY={4:'Add your name, phone and address'};
+  function updNav(){ const ok=valid(), need=(step===2&&sliderMode())||step===4; $('#next').hidden=!need; $('#navRow').classList.toggle('quiet',!need); $('#next').disabled=!ok; $('#why').textContent=need&&!ok?(WHY[step]||''):''; }
+  function live(){ const el=$('#live'); const on=step===2; el.hidden=!on; if(!on) return; const {lo,hi}=price(), t='$'+fmt(lo)+' – $'+fmt(hi), b=$('#liveAmt'); if(b.textContent!==t){ b.textContent=t; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); } }
   $('#qt').addEventListener('click',()=>setTimeout(live,0)); $('#qt').addEventListener('input',()=>setTimeout(live,0));
   $('#prog').addEventListener('click',e=>{ const li=e.target.closest('li.done'); if(li) go(+li.dataset.to); });
   $('#fPhone').addEventListener('input',e=>{ const d=e.target.value.replace(/\D/g,'').slice(0,10); let o=d; if(d.length>6) o='('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6); else if(d.length>3) o='('+d.slice(0,3)+') '+d.slice(3); e.target.value=o; });
-  ['#fName','#fPhone','#fAddr'].forEach((sel,i,arr)=>$(sel).addEventListener('keydown',e=>{ if(e.key!=='Enter') return; e.preventDefault(); const nx=arr[i+1]; if(nx) $(nx).focus(); else if(valid()) go(6); }));
+  ['#fName','#fPhone','#fAddr'].forEach((sel,i,arr)=>$(sel).addEventListener('keydown',e=>{ if(e.key!=='Enter') return; e.preventDefault(); const nx=arr[i+1]; if(nx) $(nx).focus(); else if(valid()) go(5); }));
   ['#fName','#fPhone','#fAddr'].forEach(s=>$(s).addEventListener('input',updNav));
   function go(n){
     step=n; $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
     if(n===2){ const p={removal:'tree',trim:'tree',storm:'storm',stump:'stump',land:'land'}[S.svc]; $$('[data-pane]').forEach(x=>x.classList.toggle('active',x.dataset.pane===p)); }
-    if(n===3) buildExtras();
-    if(n===4) showPrice();
-    if(n===6) finish();
-    $('#qtLabel').textContent = n===6?'All set':'Step '+n+' of 5';
-    $$('#prog li').forEach(li=>{ const t=+li.dataset.to; li.classList.toggle('on',t<=n); li.classList.toggle('done',t<n&&n<6); });
-    $('#prog').style.display=n===6?'none':''; live();
-    $('#prev').hidden=n===1; $('#navRow').style.display=n===6?'none':'flex'; $('#next').textContent=n===5?'Request my estimate':n===4?'Book this estimate':n===3?'See my price':'Continue';
+    if(n===3){ buildExtras(); showPrice(); }
+    if(n===5) finish();
+    $('#qtLabel').textContent = n===5?'All set':'Step '+n+' of 4';
+    $$('#prog li').forEach(li=>{ const t=+li.dataset.to; li.classList.toggle('on',t<=n); li.classList.toggle('done',t<n&&n<5); });
+    $('#prog').style.display=n===5?'none':''; live();
+    $('#prev').hidden=n===1; $('#navRow').style.display=(n===5||n===1)?'none':'flex'; $('#next').textContent=n===4?'Request my estimate':'See my price';
     updNav();
     if(!booted){ booted=true; return; }
     const t=$('#qt').getBoundingClientRect().top; if(t<0||t>innerHeight*.6) $('#qt').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
