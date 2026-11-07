@@ -17,7 +17,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 html,body{overflow-x:hidden}@supports(overflow:clip){html,body{overflow-x:clip}}
-body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 a{color:inherit}
 button{font:inherit;color:inherit}
@@ -154,7 +154,7 @@ h2 .hv{color:var(--hv-d)}
 }
 
 /* ---------- quote tool ---------- */
-.qt-sec{background:var(--forest);color:var(--cream);position:relative;overflow:hidden}
+.qt-sec{background:var(--forest);color:var(--cream);position:relative;overflow:hidden}@supports(overflow:clip){.qt-sec{overflow:clip}}
 .qt-sec::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 90% 0%,rgba(143,191,106,.16),transparent 70%),radial-gradient(50% 40% at 0% 100%,rgba(245,183,15,.08),transparent 70%);pointer-events:none}
 .qt-sec .kicker{color:var(--hv)}
 .qt-sec h2 .hv{color:var(--hv)}
@@ -239,6 +239,25 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .summary span{color:var(--muted)}
 .summary b{text-align:right}
 
+
+/* easier quote flow */
+.qt{overflow:hidden}@supports(overflow:clip){.qt{overflow:clip}}
+.qt-time{font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted)}
+.prog{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;list-style:none;margin:0;padding:12px 22px 0}
+.prog li{position:relative;padding-top:10px;font-size:11.5px;font-weight:700;color:#a49c88;text-align:center;letter-spacing:.02em}
+.prog li::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;border-radius:3px;background:var(--line);transition:background .35s}
+.prog li.on{color:var(--ink)}.prog li.on::before{background:var(--hv)}
+.prog li.done{cursor:pointer}.prog li.done:hover{text-decoration:underline}
+.est{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 22px 0;padding:10px 14px;border-radius:12px;background:var(--night);color:var(--cream);font-size:13.5px;font-weight:600}
+.est b{white-space:nowrap;font-family:var(--cond);font-stretch:70%;font-weight:900;font-size:22px;color:var(--hv);letter-spacing:.01em;transition:transform .25s}
+.est b.bump{transform:scale(1.08)}
+.nav{position:sticky;bottom:0;z-index:5;background:linear-gradient(rgba(255,252,244,0),var(--paper) 22%);padding:26px 22px 22px}
+.nextwrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.why{font-size:12.5px;color:var(--muted);font-weight:600;min-height:1em}
+.opt{min-height:62px}
+.opt.flash{animation:flash .35s ease}
+@keyframes flash{50%{transform:scale(.98);background:#fff3c8}}
+@media(max-width:480px){.prog{padding:12px 16px 0}.prog li{font-size:10.5px}.est{margin:12px 16px 0}.step{padding:22px 16px 4px}.nav{padding:22px 16px 18px}.nav .btn{padding:15px 20px}}
 /* ---------- work / gallery ---------- */
 .work{background:var(--night);color:var(--cream);overflow:hidden}
 .work .kicker{color:var(--hv)}
@@ -412,10 +431,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
       <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Gonzalez reaches out to set a time</li></ul>
     </div>
     <div class="qt reveal" id="qt">
-      <div class="qt-head"><span id="qtLabel">Step 1 of 5</span><div class="dots" id="dots"></div></div>
+      <div class="qt-head"><span id="qtLabel">Step 1 of 5</span><span class="qt-time">About 1 minute</span></div>
+      <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Extras</li><li data-to="4">Price</li><li data-to="5">Contact</li></ol>
+      <div class="est" id="live" hidden><span>Estimate so far</span><b id="liveAmt">$0</b></div>
       <div class="step active" data-step="1">
         <h3>What do you need?</h3>
-        <p class="help">Pick the main job. You can add extras next.</p>
+        <p class="help">Tap one to get started.</p>
         <div class="opts" id="svcPick">
           <button type="button" class="opt" data-v="removal" aria-pressed="false"><span class="tick"></span><span><b>Tree removal</b><small>Take a tree all the way down</small></span></button>
           <button type="button" class="opt" data-v="trim" aria-pressed="false"><span class="tick"></span><span><b>Trimming or pruning</b><small>Dead limbs, overhang, shaping</small></span></button>
@@ -487,7 +508,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
       <div class="step" data-step="3">
         <h3>Anything else?</h3>
-        <p class="help">These change the price, so check any that apply.</p>
+        <p class="help">Optional. Tap any that apply, or skip.</p>
         <div class="opts" id="extras"></div>
       </div>
 
@@ -528,7 +549,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
         </div>
       </div>
 
-      <div class="nav" id="navRow"><button type="button" class="back" id="prev" hidden>Back</button><button type="button" class="btn hv" id="next">Continue</button></div>
+      <div class="nav" id="navRow"><button type="button" class="back" id="prev" hidden>← Back</button><div class="nextwrap"><span class="why" id="why"></span><button type="button" class="btn hv" id="next">Continue</button></div></div>
 
     </div>
   </div>
@@ -646,8 +667,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   const S={svc:null, trees:1, hMode:'slider', h:40, hSize:'m', storm:'one', stumps:1, dMode:'slider', d:18, dSize:'m', aMode:'slider', acres:1, thick:'mixed', ex:{}, when:null};
   const r25=n=>Math.round(n/25)*25;
 
+  let autoT; function auto(n){ clearTimeout(autoT); autoT=setTimeout(()=>{ if(valid()) go(n); }, RM?0:320); }
   function pick(group, attr, cb){ $$(group+' ['+attr+']').forEach(b=>b.addEventListener('click',()=>{ $$(group+' ['+attr+']').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); cb(b.getAttribute(attr)); updNav(); })); }
-  pick('#svcPick','data-v',v=>{ S.svc=v; S.ex={}; });
+  pick('#svcPick','data-v',v=>{ S.svc=v; S.ex={}; auto(2); });
   pick('#hMode','data-m',v=>{ S.hMode=v; $$('.sub').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); });
   pick('#hSize','data-v',v=>S.hSize=v);
   pick('#stormPick','data-v',v=>S.storm=v);
@@ -655,7 +677,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   pick('#dSize','data-v',v=>S.dSize=v);
   pick('#aMode','data-m',v=>{ S.aMode=v; $$('.sub3').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); });
   pick('#thick','data-v',v=>S.thick=v);
-  pick('#when','data-v',v=>S.when=v);
+  pick('#when','data-v',v=>{ S.when=v; auto(5); });
   $$('.stepper').forEach(st=>{ const k=st.dataset.count, [m,o,p]=st.children; m.onclick=()=>{ S[k]=Math.max(1,S[k]-1); o.textContent=S[k]; }; p.onclick=()=>{ S[k]=Math.min(15,S[k]+1); o.textContent=S[k]; }; });
 
   const h=$('#h'), trunk=$('#mtTrunk'), top=$('#mtTop');
@@ -714,7 +736,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
   const ORDER=[1,2,3,4,5,6]; let step=1, booted=false;
   function valid(){ if(step===1) return !!S.svc; if(step===4) return !!S.when; if(step===5) return $('#fName').value.trim().length>1 && $('#fPhone').value.replace(/\D/g,'').length>=10 && $('#fAddr').value.trim().length>4; return true; }
-  function updNav(){ $('#next').disabled=!valid(); }
+  const WHY={1:'Pick a job to continue',4:'Pick when you need it',5:'Add your name, phone and address'};
+  function updNav(){ const ok=valid(); $('#next').disabled=!ok; $('#why').textContent=ok?'':(WHY[step]||''); }
+  function live(){ const el=$('#live'); const on=step===2||step===3; el.hidden=!on; if(!on) return; const {lo,hi}=price(), t='$'+fmt(lo)+' – $'+fmt(hi), b=$('#liveAmt'); if(b.textContent!==t){ b.textContent=t; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); } }
+  $('#qt').addEventListener('click',()=>setTimeout(live,0)); $('#qt').addEventListener('input',()=>setTimeout(live,0));
+  $('#prog').addEventListener('click',e=>{ const li=e.target.closest('li.done'); if(li) go(+li.dataset.to); });
+  $('#fPhone').addEventListener('input',e=>{ const d=e.target.value.replace(/\D/g,'').slice(0,10); let o=d; if(d.length>6) o='('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6); else if(d.length>3) o='('+d.slice(0,3)+') '+d.slice(3); e.target.value=o; });
+  ['#fName','#fPhone','#fAddr'].forEach((sel,i,arr)=>$(sel).addEventListener('keydown',e=>{ if(e.key!=='Enter') return; e.preventDefault(); const nx=arr[i+1]; if(nx) $(nx).focus(); else if(valid()) go(6); }));
   ['#fName','#fPhone','#fAddr'].forEach(s=>$(s).addEventListener('input',updNav));
   function go(n){
     step=n; $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
@@ -723,8 +751,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     if(n===4) showPrice();
     if(n===6) finish();
     $('#qtLabel').textContent = n===6?'All set':'Step '+n+' of 5';
-    const d=$('#dots'); d.innerHTML=''; for(let i=1;i<=5;i++){ const x=document.createElement('i'); if(i<=n) x.className='on'; d.appendChild(x); }
-    $('#prev').hidden=n===1; $('#navRow').style.display=n===6?'none':'flex'; $('#next').textContent=n===5?'Request my estimate':'Continue';
+    $$('#prog li').forEach(li=>{ const t=+li.dataset.to; li.classList.toggle('on',t<=n); li.classList.toggle('done',t<n&&n<6); });
+    $('#prog').style.display=n===6?'none':''; live();
+    $('#prev').hidden=n===1; $('#navRow').style.display=n===6?'none':'flex'; $('#next').textContent=n===5?'Request my estimate':n===4?'Book this estimate':n===3?'See my price':'Continue';
     updNav();
     if(!booted){ booted=true; return; }
     const t=$('#qt').getBoundingClientRect().top; if(t<0||t>innerHeight*.6) $('#qt').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
