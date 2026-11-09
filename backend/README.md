@@ -2,7 +2,7 @@
 
 One Google Apps Script web app runs bookings for **every** PriceWink client. It lives in your Google account (free) and:
 
-- serves each client's open estimate times: their hours, minus PriceWink bookings, minus anything on the owner's **own** calendar (Google, iCloud or Outlook), so jobs booked by phone are blocked automatically
+- serves each client's open estimate times: their hours, minus PriceWink bookings, minus anything on the owner's **own** calendar (Google, iPhone or Outlook, connected by the owner from their inbox), so jobs booked by phone are blocked automatically
 - re-checks a time is still free before booking it (no double bookings)
 - saves the booking to a Google Sheet, puts it on the client's Google Calendar, and emails the owner (plus an optional text)
 - emails the customer a confirmation if they gave an email
@@ -33,21 +33,37 @@ One Google Apps Script web app runs bookings for **every** PriceWink client. It 
    - their private **owner inbox link**. Send this to the owner; they can add it to their home screen.
 3. In Google Calendar, open **Settings > [Client] bookings > Share with specific people** and add the owner's email, so bookings show up on their phone. They can also block off time there, and the booking page stops offering it.
 4. In the client's site, set `CLIENT_ID` to the same id and paste the web-app URL into `BOOKING_ENDPOINT`.
-5. Connect the owner's own calendar (below) so phone bookings block time automatically.
+5. Show the owner the **Connect your calendar** card in their inbox (or connect it with them on the setup call).
 
 ## Connecting the owner's calendar (auto-blocking)
 
 Anything on the owner's own calendar becomes unavailable on their booking page within about 5 minutes. Only busy/free is read, never event titles.
 
-- **Google Calendar:** the owner opens Google Calendar on a computer > **Settings** > their calendar > **Share with specific people** > add the PriceWink Google address with **See only free/busy**. Then put their calendar's email address in the `busyCalendars` column of the Clients tab (separate several with commas).
-- **iPhone / iCloud:** Calendar app > tap **Calendars** > the (i) next to their calendar > turn on **Public Calendar** > **Share Link**. Paste that link into `busyIcs`.
-- **Outlook / Microsoft 365:** Outlook on the web > **Settings > Calendar > Shared calendars > Publish a calendar** > pick the calendar, **Can view when I'm busy** > copy the **ICS** link into `busyIcs`.
+**Owners do this themselves, optionally, from their inbox.** The inbox shows a "Connect your calendar" card. Tapping it offers:
 
-Several links can go in `busyIcs`, separated by commas. Events marked "free" or canceled are ignored; all-day events block the whole day. The inbox shows "Synced with your calendar" once at least one source is connected.
+- **Google Calendar:** one button. They sign in, tap Allow, and land back in the inbox with "Synced with Google Calendar". (This uses the Connect app below.)
+- **iPhone calendar** and **Outlook:** 3 short steps shown right there, then they tap Paste and Connect. The backend checks the link is a real calendar before saving it.
 
-Owners who keep no calendar at all use **Block time** in the inbox, and the 7 PM summary email reminds them. Set the `digest` column to `no` to turn that email off for a client.
+They can see what's connected and tap **Disconnect** any time under **Manage**. Owners who skip it still have **Block time** and the 7 PM summary email.
 
-To change hours, calendars or the digest later, edit that client's row on the **Clients** tab of the spreadsheet. No redeploy needed.
+You can also fill the columns by hand on the Clients tab: `busyCalendars` (Google calendar addresses shared with the PriceWink account as "See only free/busy") and `busyIcs` (calendar links), comma-separated.
+
+### One-time setup: the Connect app (for the Google button)
+
+The Google button needs a second small Apps Script project, because it has to run as the *owner* (to share their calendar) instead of as you.
+
+1. [script.google.com](https://script.google.com) > **New project**, name it `PriceWink Connect`.
+2. Paste in `connect/Code.gs`. Show the manifest (Project Settings > Show "appsscript.json") and replace it with `connect/appsscript.json`.
+3. Set `MAIN` at the top of the code to the booking backend's `/exec` URL.
+4. **Deploy > New deployment > Web app**: Execute as **User accessing the web app**, Who has access **Anyone with a Google account**. Copy the `/exec` URL.
+5. In `inbox/index.html`, paste it into `const CONNECT='...'`. (Empty = the Google button is hidden; the iPhone/Outlook options still work.)
+6. Optional: in Google Cloud's **OAuth consent screen** for this project, set the app name to "PriceWink Connect" and add a support email and logo, so the sign-in screen looks right.
+
+What owners see: Google sign-in, then possibly **"Google hasn't verified this app"** (normal until you apply for verification; the inbox tells them to tap **Advanced > Go to PriceWink Connect**), then an Allow screen asking to manage calendar sharing. Unverified apps are limited to 100 users; before that, apply for verification in the Google Cloud console (free; needs a privacy policy page on getpricewink.com and takes a few weeks).
+
+The Connect app only adds one sharing rule ("PriceWink can see when I'm busy") on their main calendar. Opening it with `&undo=1` added to the link removes that rule. Owners can also remove it in Google Calendar under Settings > Share with specific people.
+
+If Google ever rejects the `calendar.acls` scope in the manifest, replace it with `https://www.googleapis.com/auth/calendar`.
 
 ## Updating the code
 

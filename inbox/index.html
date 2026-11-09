@@ -57,6 +57,24 @@ main{max-width:720px;margin:0 auto;padding:16px 14px calc(40px + env(safe-area-i
 .demo{background:#FFF1C7;color:#5A4100;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;margin-bottom:12px}
 .sk{height:118px;border-radius:18px;margin-bottom:10px;background:linear-gradient(90deg,#ECE6D8 0%,#F5F1E8 50%,#ECE6D8 100%);background-size:200% 100%;animation:sk 1.1s linear infinite}
 @keyframes sk{to{background-position:-200% 0}}
+.conn{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:12px 12px 12px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 1px rgba(14,27,46,.04),0 10px 24px -14px rgba(14,27,46,.3);animation:in .5s var(--ease) both}
+.conn .ic{flex:none}.conn div{flex:1;min-width:0}.conn b{display:block;font-size:15px;color:var(--ink)}.conn span{display:block;font-size:13px;color:var(--muted);line-height:1.35}
+.conn button{flex:none;border:0;border-radius:999px;padding:10px 16px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:transform .14s var(--ease)}.conn button:active{transform:scale(.96)}
+.sync button{margin-left:auto;border:0;background:none;padding:4px 2px;font:inherit;font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.ic{width:40px;height:40px;border-radius:12px;background:#F2EEE4;display:grid;place-items:center}.ic svg{width:24px;height:24px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 8px;padding:12px;border:1.5px solid var(--line);border-radius:16px;background:#fff;text-align:left;font:inherit;cursor:pointer;transition:border-color .2s,transform .14s var(--ease)}
+.opt:active{transform:scale(.985)}.opt span{flex:1;min-width:0}.opt b{display:block;font-size:15.5px;color:var(--ink)}.opt small{display:block;font-size:13px;color:var(--muted)}
+.opt em{font-style:normal;font-size:24px;line-height:1;color:var(--muted);transition:transform .25s var(--ease)}.opt[aria-expanded=true]{border-color:var(--ink)}.opt[aria-expanded=true] em{transform:rotate(90deg)}
+.opt.busy{pointer-events:none;opacity:.75}.opt.busy small::after{content:"…"}
+.fine{margin:2px 4px 12px;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.steps{margin:-2px 0 12px;padding:14px;border-radius:16px;background:#F7F3EA;animation:in .35s var(--ease) both}
+.steps ol{margin:0 0 12px;padding-left:22px;font-size:14.5px;line-height:1.5;color:var(--ink)}.steps li{margin-bottom:6px}.steps li::marker{font-weight:800}
+.paste{display:flex;gap:8px}.paste input{flex:1;min-width:0;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.paste button{flex:none;border:0;border-radius:12px;padding:0 14px;background:var(--tag);color:var(--tag-ink);font-weight:700;cursor:pointer}
+.steps .save{margin-top:10px}
+.src{display:flex;align-items:center;gap:12px;margin:0 0 8px;padding:12px;border-radius:16px;background:#EAF6F0;border:1px solid #BFE3D2}
+.src span{flex:1;min-width:0}.src b{display:block;font-size:15px;color:var(--ink)}.src small{display:block;font-size:12.5px;color:#1B7A54;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src button{flex:none;border:0;background:#fff;border-radius:999px;padding:7px 12px;font-weight:600;font-size:13px;cursor:pointer;box-shadow:0 1px 2px rgba(14,27,46,.12)}
 .sync{display:flex;align-items:center;gap:8px;margin:0 4px 12px;font-size:13.5px;font-weight:600;color:var(--ok)}
 .sync::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(31,157,107,.15)}
 .sync.off{color:var(--muted)}.sync.off::before{background:#C9C2B2;box-shadow:none}
@@ -96,7 +114,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 </header>
 <main>
   <div class="demo" id="demo" hidden>Demo inbox with sample bookings. Anything you book on the demo site shows up here too, marked “You”.</div>
-  <p class="sync" id="sync" hidden></p>
+  <div id="sync" hidden></div>
   <div class="tabs" role="tablist"><button aria-pressed="true" data-t="up">Upcoming</button><button aria-pressed="false" data-t="new">New</button><button aria-pressed="false" data-t="past">Past</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
 </main>
@@ -114,15 +132,35 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   <button class="save" id="bSave" type="button">Block it</button>
   <button class="cancel" id="bCancel" type="button">Cancel</button>
 </section>
+<section class="sheet" id="cSheet" role="dialog" aria-modal="true" aria-labelledby="cT" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="cT">Connect your calendar</h2>
+  <p class="sh-help">Anything on your calendar blocks that time on your booking page, so a job you booked by phone can’t get double-booked. PriceWink only sees when you’re busy, never what the event is.</p>
+  <div id="cList"></div>
+  <p class="sh-l" id="cAsk">Where do you keep your jobs?</p>
+  <button class="opt" id="cGoogle" type="button"><i class="ic g" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.4 3-4.1 5.6-4.1z"/></svg></i><span><b>Google Calendar</b><small>Sign in and tap Allow</small></span><em aria-hidden="true">›</em></button>
+  <p class="fine" id="cWarn">Google may say it hasn’t checked this app yet. That’s normal for small businesses: tap <b>Advanced</b>, then <b>Go to PriceWink Connect</b>.</p>
+  <button class="opt" type="button" data-k="ios" aria-expanded="false"><i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" fill="#fff" stroke="#E5484D" stroke-width="1.6"/><path d="M4 9.5h16" stroke="#E5484D" stroke-width="1.6"/><text x="12" y="17.6" text-anchor="middle" font-size="7" font-weight="700" fill="#0E1B2E" font-family="system-ui">31</text></svg></i><span><b>iPhone calendar</b><small>Copy one link, 30 seconds</small></span><em aria-hidden="true">›</em></button>
+  <button class="opt" type="button" data-k="ol" aria-expanded="false"><i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="12" height="14" rx="2" fill="#0F6CBD"/><text x="9" y="15.5" text-anchor="middle" font-size="8" font-weight="800" fill="#fff" font-family="system-ui">O</text><path d="M15 8h5.5v8H15" fill="none" stroke="#0F6CBD" stroke-width="1.6"/></svg></i><span><b>Outlook</b><small>Copy one link, 1 minute</small></span><em aria-hidden="true">›</em></button>
+  <div class="steps" id="cSteps" hidden>
+    <ol id="cOl"></ol>
+    <div class="paste"><input id="cUrl" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste the link here" enterkeyhint="go"><button type="button" id="cPaste">Paste</button></div>
+    <button class="save" id="cLink" type="button">Connect this calendar</button>
+  </div>
+  <p class="fine">No calendar? No problem. Use <b>Block time</b> for phone jobs, and the 7 PM email shows tomorrow’s schedule.</p>
+  <button class="cancel" id="cClose" type="button">Close</button>
+</section>
 <div class="toast" id="toast" role="status"></div>
 <script>
 (function(){
   /* Paste the PriceWink backend web-app URL here (the same one used on client sites). Empty = demo mode. */
   const API='';
+  /* Paste the PriceWink Connect web-app URL (backend/connect) here to show the Google Calendar button. */
+  const CONNECT='';
   const q=new URLSearchParams(location.search), C=q.get('c')||'', KEY=location.hash.slice(1), DEMO=!API||q.has('demo');
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
-  let B=[], BL=[], SYNC=null, tab='up';
+  let B=[], BL=[], SRC=[], tab='up';
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
   const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'}};
@@ -148,6 +186,8 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     const sample=[{id:'SB-1',label:'Hendricks, phone job',start:at(2,13).toISOString(),end:at(2,15).toISOString(),sample:true},
                   {id:'SB-2',label:'Day off',start:at(6,0).toISOString(),end:at(7,0).toISOString(),sample:true}].filter(b=>gone.indexOf(b.id)<0);
     return [...mine,...sample]; }
+  function demoSources(){ try{ return JSON.parse(localStorage.getItem('pw_demo_sources_'+C)||'[]'); }catch(e){ return []; } }
+  function saveDemoSources(){ try{ localStorage.setItem('pw_demo_sources_'+C,JSON.stringify(SRC)); }catch(e){} }
   function saveDemoBlocks(){ try{ localStorage.setItem('pw_demo_blocks_'+C,JSON.stringify(BL.filter(b=>!b.sample))); }catch(e){} }
   function samples(){
     const now=new Date(), set=SAMPLE_SETS[(CLIENTS[C]||{}).trade]||SAMPLE_SETS.generic; let st={}; try{ st=JSON.parse(localStorage.getItem('pw_demo_status_'+C)||'{}'); }catch(e){}
@@ -164,10 +204,10 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     $('#ref').classList.add('spin'); setTimeout(()=>$('#ref').classList.remove('spin'),600);
     if(DEMO){ $('#demo').hidden=false; $('#biz').textContent=(CLIENTS[C]||{}).name||'Your business';
       let mine=[]; try{ mine=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]').filter(b=>!C||b.client===C); }catch(e){}
-      B=[...mine,...samples()]; BL=demoBlocks(); SYNC={google:1,links:0,demo:true}; render(); return; }
+      B=[...mine,...samples()]; BL=demoBlocks(); SRC=demoSources(); render(); return; }
     try{ const r=await fetch(API+'?action=inbox&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)), j=await r.json();
       if(!j.ok){ $('#biz').textContent='Can’t open this inbox'; $('#list').innerHTML='<p class="msg">'+(j.error==='bad_key'?'This link is missing its key. Use the full link you were sent.':'Something went wrong. Try again in a minute.')+'</p>'; return; }
-      $('#biz').textContent=j.name; B=j.bookings; BL=j.blocks||[]; SYNC=j.synced||null; render();
+      $('#biz').textContent=j.name; B=j.bookings; BL=j.blocks||[]; SRC=j.sources||[]; render(); welcomeBack();
     }catch(e){ $('#list').innerHTML='<p class="msg">No connection. Pull down or tap refresh to try again.</p>'; }
   }
   async function setStatus(id,status){
@@ -183,8 +223,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     $('#nNew').textContent=B.filter(b=>b.status==='New').length;
     $('#nWeek').textContent=live.filter(b=>b.slotStart&&tOf(b)>=now&&tOf(b)<wk).length;
     $('#nVal').textContent=fmt(live.reduce((a,b)=>a+((+b.estimateLow||0)+(+b.estimateHigh||0))/2,0));
-    const sy=$('#sync'); sy.hidden=!SYNC;
-    if(SYNC){ const n=SYNC.google+SYNC.links; sy.classList.toggle('off',!n); sy.textContent=n?(SYNC.demo?'Synced with the owner’s Google Calendar. Jobs on it are blocked automatically.':'Synced with your calendar. Anything on it is blocked automatically.'):'Calendar not connected yet. Use Block time for phone jobs.'; }
+    renderSync();
     let list=tab==='new'?B.filter(b=>b.status==='New'):tab==='past'?B.filter(b=>b.status==='Done'||b.status==='Canceled'||(b.slotStart&&tOf(b)<now-3600e3)):B.filter(b=>b.status!=='Done'&&b.status!=='Canceled'&&(!b.slotStart||tOf(b)>=now-3600e3));
     list.sort((a,b)=>tab==='past'?tOf(b)-tOf(a):(b.urgent?1:0)-(a.urgent?1:0)||tOf(a)-tOf(b));
     const blocks=tab==='up'?BL.filter(x=>new Date(x.end).getTime()>now):[];
@@ -214,6 +253,52 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   $('#list').addEventListener('click',e=>{ const u=e.target.closest('[data-unblock]'); if(u){ unblock(u.dataset.unblock); return; } const b=e.target.closest('.st button'); if(b&&b.getAttribute('aria-pressed')!=='true') setStatus(b.dataset.id,b.dataset.s); });
   $$('.tabs button').forEach(t=>t.addEventListener('click',()=>{ tab=t.dataset.t; $$('.tabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===t))); render(); }));
   $('#ref').addEventListener('click',load);
+  /* ---------- Connect your calendar ---------- */
+  const CAL_ICON='<i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1B2E" stroke-width="1.7" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M8.5 14.5l2.2 2.2 4.8-4.8" stroke="#1F9D6B" stroke-width="2"/></svg></i>';
+  function renderSync(){ const sy=$('#sync'); sy.hidden=false;
+    if(!SRC.length){ sy.className='conn'; sy.innerHTML=CAL_ICON+'<div><b>Connect your calendar</b><span>Jobs you put on your calendar get blocked here automatically.</span></div><button type="button" data-open-connect>Connect</button>'; return; }
+    const names=[...new Set(SRC.map(x=>x.label))];
+    sy.className='sync'; sy.innerHTML='<span>Synced with '+esc(names.length>1?'your calendars':names[0])+'</span><button type="button" data-open-connect>Manage</button>'; }
+  const STEPS={
+    ios:['Open the <b>Calendar</b> app and tap <b>Calendars</b> at the bottom.','Tap <b>ⓘ</b> next to the calendar you put jobs on.','Turn on <b>Public Calendar</b>, tap <b>Share Link</b>, then <b>Copy</b>.','Come back here and tap <b>Paste</b>.'],
+    ol:['Open <b>outlook.com</b> (or Outlook on the web) and tap the gear <b>⚙</b>.','Go to <b>Calendar</b> → <b>Shared calendars</b>.','Under <b>Publish a calendar</b>, pick your calendar and <b>Can view when I’m busy</b>, then <b>Publish</b>.','Copy the <b>ICS</b> link, come back here and tap <b>Paste</b>.']};
+  function renderSources(){ $('#cList').innerHTML=SRC.map((x,i)=>'<div class="src">'+CAL_ICON+'<span><b>'+esc(x.label)+'</b><small>✓ Connected'+(x.detail?' · '+esc(x.detail):', syncs every few minutes')+'</small></span><button type="button" data-dis="'+i+'">Disconnect</button></div>').join('');
+    $('#cAsk').textContent=SRC.length?'Add another calendar':'Where do you keep your jobs?'; }
+  function openConnect(){ renderSources(); collapse(); $('#cGoogle').hidden=$('#cWarn').hidden=!(DEMO||CONNECT);
+    $('#sheetBg').hidden=false; $('#cSheet').hidden=false; $('#fab').hidden=true; }
+  function collapse(){ $('#cSteps').hidden=true; $$('#cSheet .opt[data-k]').forEach(b=>b.setAttribute('aria-expanded','false')); }
+  let stepKind='';
+  $$('#cSheet .opt[data-k]').forEach(b=>b.addEventListener('click',()=>{ const open=b.getAttribute('aria-expanded')==='true'; collapse(); if(open) return;
+    stepKind=b.dataset.k; b.setAttribute('aria-expanded','true'); $('#cOl').innerHTML=STEPS[stepKind].map(t=>'<li>'+t+'</li>').join(''); $('#cUrl').value='';
+    b.after($('#cSteps')); $('#cSteps').hidden=false; setTimeout(()=>$('#cSteps').scrollIntoView({behavior:'smooth',block:'nearest'}),60); }));
+  $('#cPaste').hidden=!(navigator.clipboard&&navigator.clipboard.readText);
+  $('#cPaste').addEventListener('click',async()=>{ try{ $('#cUrl').value=(await navigator.clipboard.readText()).trim(); }catch(e){ $('#cUrl').focus(); } });
+  const srcLabel=u=>/icloud\.com/i.test(u)?'iPhone calendar':/outlook|office365|live\.com|hotmail/i.test(u)?'Outlook calendar':'Calendar link';
+  let cBusy=false;
+  $('#cLink').addEventListener('click',async()=>{ if(cBusy) return; const url=$('#cUrl').value.trim();
+    if(!/^(webcal|https?):\/\/\S+$/i.test(url)){ toast('Paste the whole link first.'); $('#cUrl').focus(); return; }
+    if(DEMO){ SRC.push({type:'ics',id:url,label:srcLabel(url),detail:''}); saveDemoSources(); afterConnect(); return; }
+    cBusy=true; $('#cLink').disabled=true; $('#cLink').textContent='Checking the link…';
+    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'connect',client:C,key:KEY,ics:url})}), j=await r.json();
+      if(j.ok){ SRC=j.sources; afterConnect(); } else toast(j.error==='bad_link'?'That link didn’t work. Copy it again and paste the whole thing.':'Couldn’t connect. Try again.'); }
+    catch(e){ toast('Couldn’t connect. Check your signal and try again.'); }
+    cBusy=false; $('#cLink').disabled=false; $('#cLink').textContent='Connect this calendar'; });
+  $('#cGoogle').addEventListener('click',()=>{ const b=$('#cGoogle');
+    if(DEMO){ b.classList.add('busy'); b.querySelector('small').textContent='Connecting';
+      setTimeout(()=>{ b.classList.remove('busy'); b.querySelector('small').textContent='Sign in and tap Allow';
+        if(!SRC.some(x=>x.type==='google')) SRC.push({type:'google',id:'owner@gmail.com',label:'Google Calendar',detail:'owner@gmail.com (demo)'}); saveDemoSources(); afterConnect(); },1300); return; }
+    location.href=CONNECT+'?c='+encodeURIComponent(C)+'&k='+encodeURIComponent(KEY); });
+  function afterConnect(){ closeAll(); render(); toast('Calendar connected. Jobs on it now block your booking page.'); }
+  $('#cList').addEventListener('click',async e=>{ const b=e.target.closest('[data-dis]'); if(!b) return; const x=SRC[+b.dataset.dis]; if(!x) return;
+    if(DEMO){ SRC=SRC.filter(y=>y!==x); saveDemoSources(); renderSources(); render(); toast('Disconnected.'); return; }
+    b.disabled=true; b.textContent='…';
+    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'disconnect',client:C,key:KEY,type:x.type,id:x.id})}), j=await r.json();
+      if(!j.ok) throw 0; SRC=j.sources; renderSources(); render(); toast('Disconnected.'); }
+    catch(e){ b.disabled=false; b.textContent='Disconnect'; toast('Couldn’t disconnect. Try again.'); } });
+  $('#sync').addEventListener('click',e=>{ if(e.target.closest('[data-open-connect]')) openConnect(); });
+  $('#cClose').addEventListener('click',()=>closeAll());
+  function welcomeBack(){ if(!q.has('connected')) return; toast('Calendar connected. Jobs on it now block your booking page.');
+    q.delete('connected'); try{ history.replaceState(null,'',location.pathname+'?'+q.toString()+location.hash); }catch(e){} }
   /* ---------- Block time sheet ---------- */
   const bs={day:0,start:'all',len:2}; let busy=false;
   function chips(el,items,cur,cb){ el.innerHTML=items.map(([v,t,sm])=>'<button type="button" data-v="'+v+'" aria-pressed="'+(String(v)===String(cur))+'">'+t+(sm?'<small>'+sm+'</small>':'')+'</button>').join('');
@@ -226,9 +311,10 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     chips($('#bLen'),[[1,'1 hr'],[2,'2 hrs'],[3,'3 hrs'],[4,'4 hrs'],[6,'6 hrs']],bs.len,v=>bs.len=+v);
     $('#bLenWrap').hidden=bs.start==='all'; $('#bLabel').value='';
     $('#sheetBg').hidden=false; $('#sheet').hidden=false; $('#fab').hidden=true; }
-  function closeSheet(){ $('#sheetBg').hidden=true; $('#sheet').hidden=true; $('#fab').hidden=false; }
+  function closeSheet(){ closeAll(); }
+  function closeAll(){ $('#sheetBg').hidden=true; $('#sheet').hidden=true; $('#cSheet').hidden=true; $('#fab').hidden=false; }
   $('#fab').addEventListener('click',openSheet); $('#bCancel').addEventListener('click',closeSheet); $('#sheetBg').addEventListener('click',closeSheet);
-  addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#sheet').hidden) closeSheet(); });
+  addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
   $('#bSave').addEventListener('click',async()=>{ if(busy) return; const now=new Date(), d0=new Date(now.getFullYear(),now.getMonth(),now.getDate()+bs.day);
     const start=bs.start==='all'?d0:new Date(d0.getFullYear(),d0.getMonth(),d0.getDate(),+bs.start), end=bs.start==='all'?new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()+1):new Date(start.getTime()+bs.len*3600e3);
     const label=$('#bLabel').value.trim()||(bs.start==='all'?'Day off':'Phone job');

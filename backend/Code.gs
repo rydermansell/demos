@@ -82,7 +82,11 @@ function doGet(e) {
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
     if (p.action === 'inbox') {
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client) });
+      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client) });
+    }
+    if (p.action === 'connectInfo') {   // used by the Connect app (connect/Code.gs) before it shares the owner's calendar
+      if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
+      return json_({ ok: true, name: client.name, shareWith: Session.getEffectiveUser().getEmail() });
     }
     return json_({ ok: false, error: 'unknown_action' });
   } catch (err) { return json_({ ok: false, error: 'server', detail: String(err) }); }
@@ -99,6 +103,8 @@ function doPost(e) {
     if (d.action === 'status') return json_(setStatus_(client, d));
     if (d.action === 'block') return json_(block_(client, d));
     if (d.action === 'unblock') return json_(unblock_(client, d));
+    if (d.action === 'connect') return json_(connect_(client, d));
+    if (d.action === 'disconnect') return json_(disconnect_(client, d));
     return json_(book_(client, d));
   } catch (err) {
     return json_({ ok: false, error: 'server', detail: String(err) });
@@ -226,7 +232,7 @@ function busy_(client, from, to, fresh) {
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
   if (cal) cal.getEvents(from, to).forEach(ev => list.push([ev.getStartTime().getTime(), ev.getEndTime().getTime()]));
   // the owner's own calendars: cached for 5 minutes when listing times, always fresh when booking
-  const key = 'ext_' + client.id + '_' + Math.floor(from.getTime() / 3600000) + '_' + Math.floor(to.getTime() / 3600000);
+  const key = 'ext_' + client.id + '_' + syncVer_(client) + '_' + Math.floor(from.getTime() / 3600000) + '_' + Math.floor(to.getTime() / 3600000);
   const cache = CacheService.getScriptCache(); let ext = !fresh && cache.get(key);
   if (ext) ext = JSON.parse(ext);
   else { ext = googleBusy_(client, from, to).concat(icsBusy_(client, from, to)); try { cache.put(key, JSON.stringify(ext), 300); } catch (e) {} }
@@ -315,6 +321,64 @@ function zonedIn_(ymd, minutes, tz) {
 function syncedSources_(client) {
   return { google: String(client.busyCalendars || '').split(',').filter(x => x.trim()).length, links: String(client.busyIcs || '').split(/[\s,]+/).filter(String).length };
 }
+
+/* ------------------------------------------------------------------ connect the owner's calendar (from the inbox) */
+
+function sources_(client) {
+  const g = String(client.busyCalendars || '').split(',').map(x => x.trim()).filter(String)
+    .map(id => ({ type: 'google', id: id, label: 'Google Calendar', detail: id }));
+  const l = String(client.busyIcs || '').split(/[\s,]+/).filter(String)
+    .map(u => ({ type: 'ics', id: u, label: /icloud\.com/i.test(u) ? 'iPhone calendar' : /outlook|office365|live\.com|hotmail/i.test(u) ? 'Outlook calendar' : 'Calendar link', detail: '' }));
+  return g.concat(l);
+}
+/** Google: the Connect app has already shared the owner's calendar (free/busy) with this account; check we can really read it, then save it. iPhone/Outlook: check the link is a real calendar, then save it. */
+function connect_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  if (d.calendarId) {
+    const id = clean_(d.calendarId, 200).toLowerCase();
+    if (!/^[^\s@,]+@[^\s@,]+$/.test(id)) return { ok: false, error: 'bad_calendar' };
+    const now = new Date();
+    try {
+      const r = Calendar.Freebusy.query({ timeMin: now.toISOString(), timeMax: new Date(now.getTime() + 86400000).toISOString(), items: [{ id: id }] });
+      const c = (r.calendars || {})[id];
+      if (!c || (c.errors && c.errors.length)) return { ok: false, error: 'not_shared' };
+    } catch (err) { return { ok: false, error: 'not_shared' }; }
+    addSource_(client, 'busyCalendars', id);
+  } else if (d.ics) {
+    const url = clean_(d.ics, 600).replace(/^webcal:/i, 'https:');
+    if (!/^https:\/\/[^\s,]+$/i.test(url)) return { ok: false, error: 'bad_link' };
+    let ok = false;
+    try { const res = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true }); ok = res.getResponseCode() < 300 && /BEGIN:VCALENDAR/.test(res.getContentText().slice(0, 2000)); } catch (err) {}
+    if (!ok) return { ok: false, error: 'bad_link' };
+    addSource_(client, 'busyIcs', url);
+  } else return { ok: false, error: 'missing' };
+  const fresh = findClient_(client.id);
+  return { ok: true, synced: syncedSources_(fresh), sources: sources_(fresh) };
+}
+function disconnect_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  const col = d.type === 'google' ? 'busyCalendars' : d.type === 'ics' ? 'busyIcs' : '';
+  if (!col) return { ok: false, error: 'missing' };
+  const list = String(client[col] || '').split(/[\s,]+/).filter(String), keep = list.filter(x => x.toLowerCase() !== String(d.id || '').toLowerCase());
+  if (keep.length === list.length) return { ok: false, error: 'not_found' };
+  setClientField_(client.id, col, keep.join(','));
+  const fresh = findClient_(client.id);
+  return { ok: true, synced: syncedSources_(fresh), sources: sources_(fresh) };
+}
+function addSource_(client, col, value) {
+  const list = String(client[col] || '').split(/[\s,]+/).filter(String);
+  if (!list.some(x => x.toLowerCase() === value.toLowerCase())) list.push(value);
+  setClientField_(client.id, col, list.join(','));
+}
+function setClientField_(id, col, value) {
+  const sh = sheet_().getSheetByName('Clients'), rows = sh.getDataRange().getValues(), H = rows[0];
+  let c = H.indexOf(col);
+  if (c < 0) { c = H.length; sh.getRange(1, c + 1).setValue(col); }
+  for (let r = 1; r < rows.length; r++) if (String(rows[r][0]) === String(id)) { sh.getRange(r + 1, c + 1).setValue(value); break; }
+  const p = PropertiesService.getScriptProperties();   // new version number = the 5-minute busy cache starts fresh
+  p.setProperty('sync_' + id, String(Number(p.getProperty('sync_' + id) || 0) + 1));
+}
+function syncVer_(client) { return PropertiesService.getScriptProperties().getProperty('sync_' + client.id) || '0'; }
 
 /* ------------------------------------------------------------------ owner blocks (phone jobs, days off) */
 
