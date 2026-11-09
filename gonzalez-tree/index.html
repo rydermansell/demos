@@ -118,70 +118,6 @@ html.motion:not(.seen){--intro:1.55s}
 @keyframes nameIn{from{opacity:0;transform:translateY(8px)}to{opacity:.85;transform:none}}
 @keyframes nameOut{to{opacity:0}}
 
-/* ---------- story: photo-led scroll sequence ---------- */
-.story{background:var(--night);color:var(--cream);padding:90px 0 70px}
-.st-stage{max-width:1140px;margin:0 auto;padding:0 20px}
-.st-head h2,.st-end h2{font-size:clamp(40px,9vw,84px);line-height:1;margin:0 0 26px}
-.st-media{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 30px}
-.st-media img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px}
-.st-shade,.st-rail{display:none}
-.st-ch{padding:18px 0;border-top:1px solid rgba(255,255,255,.12)}
-.st-lbl{margin:0 0 6px;font-size:14px;font-weight:700;color:var(--hv)}
-.st-t{font-family:var(--cond);font-stretch:76%;font-weight:800;font-size:clamp(28px,6vw,44px);line-height:1.02;letter-spacing:-.015em;margin:0 0 8px}
-.st-t span{display:block}
-.st-d{margin:0;color:#c9d3c5;max-width:40ch;font-size:16.5px}
-.st-cta{margin-top:20px}
-.motion .st-ch{pointer-events:none}
-.motion .st-cta{opacity:0;transform:translate3d(0,14px,0)}
-
-/* motion: pinned stage, the photo grows from a card to full screen, chapters play over it */
-.motion .story{height:100vh;height:100svh;padding:0}
-.motion .st-stage{position:sticky;top:0;height:100vh;height:100svh;max-width:none;padding:0;overflow:hidden;isolation:isolate}
-.motion .st-head,.motion .st-end{position:absolute;z-index:3;left:20px;right:20px;top:clamp(168px,22vh,200px);text-align:center;will-change:opacity,transform}
-.motion .st-head h2,.motion .st-end h2{font-size:clamp(38px,8.4vw,80px);text-wrap:balance}
-.motion .st-end{opacity:0;display:grid;justify-items:center}
-.motion .st-media{display:none}
-.st-canvas,.st-grain{display:none}
-.motion .st-canvas{display:block;position:absolute;inset:0;width:100%;height:100%;background:#0d1610}
-.motion .st-shade{display:block;position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 95% at 50% 42%,transparent 58%,rgba(0,0,0,.38)),linear-gradient(180deg,rgba(9,15,11,.5) 0%,rgba(9,15,11,0) 22%,rgba(9,15,11,0) 52%,rgba(9,15,11,.72) 86%,rgba(9,15,11,.85) 100%)}
-.motion .st-grain{display:block;position:absolute;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-.motion .st-head h2,.motion .st-end h2{text-shadow:0 2px 30px rgba(0,0,0,.35)}
-.motion .st-t,.motion .st-d{text-shadow:0 1px 18px rgba(0,0,0,.45)}
-.motion .st-rail{display:flex;gap:6px;position:absolute;left:22px;right:22px;top:calc(104px + env(safe-area-inset-top,0px));opacity:0}
-.st-hud{display:none}
-.motion .st-hud{display:block;position:absolute;inset:0;pointer-events:none;z-index:2;color:rgba(243,238,226,.78);font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
-.st-hud .c{position:absolute;width:18px;height:18px;border:0 solid rgba(243,238,226,.5)}
-.st-hud .tl{top:100px;left:12px;border-width:1.5px 0 0 1.5px}.st-hud .tr{top:100px;right:12px;border-width:1.5px 1.5px 0 0}
-.st-hud .bl{bottom:12px;left:12px;border-width:0 0 1.5px 1.5px}.st-hud .br{bottom:12px;right:12px;border-width:0 1.5px 1.5px 0}
-.hud-l,.hud-r{position:absolute;top:122px;display:grid;gap:5px;font-variant-numeric:tabular-nums}
-.hud-l{left:22px}.hud-r{right:22px;text-align:right}
-.hud-l #hudCh{color:var(--hv)}
-#hudSt{display:inline-flex;align-items:center;gap:6px}#hudSt::before{content:"";width:6px;height:6px;border-radius:50%;background:#62d26f;box-shadow:0 0 8px #62d26f}
-.st-hud.scan #hudSt::before{background:var(--hv);box-shadow:0 0 10px var(--hv)}
-.hud-r b{color:var(--cream);font-weight:800;letter-spacing:.06em}
-.ret{position:absolute;left:50%;top:44%;width:76px;height:76px;margin:-38px 0 0 -38px;opacity:0;transform:scale(1.6) rotate(45deg);transition:opacity .35s var(--ease-out),transform .7s var(--ease-out)}
-.ret i{position:absolute;width:14px;height:14px;border:0 solid var(--hv)}
-.ret i:nth-child(1){top:0;left:0;border-width:2px 0 0 2px}.ret i:nth-child(2){top:0;right:0;border-width:2px 2px 0 0}
-.ret i:nth-child(3){bottom:0;left:0;border-width:0 0 2px 2px}.ret i:nth-child(4){bottom:0;right:0;border-width:0 2px 2px 0}
-.ret b{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--hv);box-shadow:0 0 10px var(--hv)}
-.ret.lock{opacity:.95;transform:none}.ret.lock.soft{opacity:.28;transition-duration:1.2s}
-@media(min-width:860px){.st-hud .tl,.st-hud .tr{top:108px}.hud-l,.hud-r{top:128px}.hud-l{left:max(30px,calc((100vw - 1140px)/2 + 20px))}.ret{left:62%}}
-.st-rail i{flex:1;height:3px;border-radius:2px;background:rgba(243,238,226,.22);overflow:hidden}
-.st-rail b{display:block;height:100%;background:var(--cream);transform-origin:0 50%;transform:scaleX(0)}
-.motion .st-chs{position:absolute;left:0;right:0;bottom:0;padding:0 22px calc(44px + env(safe-area-inset-bottom,0px));pointer-events:none}
-.motion .st-ch{position:absolute;left:22px;right:22px;bottom:calc(44px + env(safe-area-inset-bottom,0px));padding:0;border:0}
-.motion .st-lbl,.motion .st-d{opacity:0;will-change:opacity,transform}
-.motion .st-t{overflow:hidden;padding-bottom:.06em;font-size:clamp(36px,9.6vw,64px);max-width:13ch}
-.motion .st-t span{transform:translate3d(0,110%,0);will-change:transform}
-.motion .st-d{font-size:17px;color:#dfe6dc}
-@media(min-width:860px){
-  .motion .st-rail{left:max(40px,calc((100vw - 1140px)/2 + 20px));right:auto;width:min(40vw,440px);top:calc(50% - 170px)}
-  .motion .st-chs{top:0;padding:0}
-  .motion .st-ch{left:max(40px,calc((100vw - 1140px)/2 + 20px));right:auto;width:min(40vw,440px);bottom:auto;top:calc(50% - 130px)}
-  .motion .st-t{font-size:clamp(44px,4.6vw,66px)}
-  .motion .st-shade{background:radial-gradient(120% 100% at 60% 45%,transparent 60%,rgba(0,0,0,.35)),linear-gradient(90deg,rgba(9,15,11,.78) 0%,rgba(9,15,11,.35) 38%,rgba(9,15,11,0) 60%),linear-gradient(180deg,rgba(9,15,11,.45) 0%,rgba(9,15,11,0) 20%)}
-}
-
 /* ---------- numbers + rings ---------- */
 .nums{background:var(--night);color:var(--cream);position:relative;overflow:hidden;padding:20px 0 84px}
 .rings{position:absolute;right:-180px;top:50%;width:620px;height:620px;transform:translateY(-50%);opacity:.5;pointer-events:none}
@@ -330,11 +266,67 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .opt.flash{animation:flash .35s ease}
 @keyframes flash{50%{transform:scale(.98);background:#fff3c8}}
 @media(max-width:480px){.prog{padding:12px 16px 0}.prog li{font-size:10.5px}.est{margin:12px 16px 0}.step{padding:22px 16px 4px}.nav{padding:22px 16px 18px}.nav .btn{padding:15px 20px}}
+/* ---------- quote tool inside a real-looking phone (desktop), PriceWink phone kit ---------- */
+.qphone{position:relative}
+.qtilt>.pwr,.qtilt>.vol,.qsb,.qtilt>.glare,.qtilt>.hbar{display:none}
+@media(min-width:960px){
+  .qphone{justify-self:center;perspective:1400px;padding:10px 0 30px}
+  .qphone::after{content:"";position:absolute;left:50%;bottom:4px;width:300px;height:36px;margin-left:-150px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),rgba(0,0,0,0));filter:blur(5px);z-index:-1}
+  .qtilt{position:relative;width:392px;border-radius:58px;padding:12px;transform:rotate(-2deg);transform-style:preserve-3d;transition:transform .3s cubic-bezier(.2,.7,.2,1);
+    background:linear-gradient(145deg,#4A5163 0%,#1A1F2B 18%,#0C0F17 50%,#1A1F2B 82%,#3A4152 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 0 0 0 2.5px #06080D,inset 0 2px 1px rgba(255,255,255,.14),0 2px 3px rgba(0,0,0,.3),0 18px 34px -10px rgba(0,0,0,.55),
+      40px 60px 110px -30px rgba(245,183,15,.42),-46px 70px 120px -40px rgba(143,191,111,.32),0 90px 120px -50px rgba(0,0,0,.7)}
+  .qtilt::before{content:"";position:absolute;top:24px;left:50%;width:96px;height:28px;margin-left:-48px;border-radius:16px;background:#000;box-shadow:inset 0 0 0 1px #1a1f2b;z-index:6}
+  .qtilt>.vol{display:block;position:absolute;left:-2.5px;top:136px;width:3px;height:30px;border-radius:2px 0 0 2px;background:linear-gradient(90deg,#2B3140,#4A5163);box-shadow:0 48px 0 #3A4152,0 100px 0 #3A4152}
+  .qtilt>.pwr{display:block;position:absolute;right:-2.5px;top:190px;width:3px;height:70px;border-radius:0 2px 2px 0;background:linear-gradient(90deg,#4A5163,#2B3140)}
+  .qsb{display:flex;position:absolute;top:12px;left:12px;right:12px;height:54px;z-index:5;justify-content:space-between;align-items:center;padding:4px 28px 0 38px;font:600 15px var(--sans);color:var(--ink);pointer-events:none;
+    background:linear-gradient(var(--paper) 70%,rgba(255,252,244,0));border-radius:46px 46px 0 0}
+  .qsbi{display:flex;gap:5px;align-items:center}.qsbi svg{fill:currentColor}
+  .qtilt .qt{border-radius:46px;height:min(780px,84vh);overflow-y:auto;overscroll-behavior:contain;padding-top:50px;scrollbar-width:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.55);scroll-margin-top:90px}
+  .qtilt .qt::-webkit-scrollbar{display:none}
+  .qtilt>.glare{display:block;position:absolute;inset:12px;border-radius:46px;pointer-events:none;z-index:7;
+    background:linear-gradient(var(--ga,118deg),rgba(255,255,255,.22) 0%,rgba(255,255,255,.07) 22%,rgba(255,255,255,0) 40%)}
+  .qtilt>.hbar{display:block;position:absolute;bottom:20px;left:50%;width:132px;height:5px;margin-left:-66px;border-radius:3px;background:var(--ink);opacity:.82;z-index:8}
+  .qtilt .nav{border-radius:0 0 46px 46px}
+}
+/* owner notification: springs in when a request is sent (shows the business side of the tool) */
+.qnote{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:60;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;
+  background:rgba(255,252,244,.97);color:var(--ink);border-radius:20px;padding:12px 14px;border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 2px rgba(0,0,0,.12),0 12px 24px -8px rgba(0,0,0,.3),0 30px 60px -20px rgba(143,191,111,.55);
+  transform:translate3d(0,-140%,0) scale(.96);opacity:0;transition:transform .55s cubic-bezier(.2,.9,.3,1.2),opacity .35s ease;pointer-events:none}
+.qnote.on{transform:none;opacity:1}
+.qn-ap{grid-row:span 2;width:40px;height:40px;border-radius:11px;background:var(--night);display:grid;place-items:center}
+.qnote small{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:600}
+.qnote b{display:block;font-size:15px;line-height:1.25}
+.qnote #qnS{display:block;font-size:13.5px;color:var(--muted)}
+.qnote em{grid-column:1/-1;font-style:normal;font-size:11px;font-weight:700;color:var(--hv-d);margin-top:2px}
+@media(min-width:960px){.qnote{position:absolute;left:auto;top:auto;right:-110px;bottom:170px;width:300px;transform:translate3d(0,22px,0) scale(.94);z-index:9}}
+/* price tag swing when the estimate appears */
+.pricebox .amt{transform-origin:0 60%}
+.pricebox .amt.swing{animation:tagswing .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tagswing{0%{transform:rotate(-7deg) scale(.94);opacity:.4}60%{transform:rotate(2deg)}100%{transform:none;opacity:1}}
+
 /* ---------- work / gallery ---------- */
 .work{background:var(--night);color:var(--cream);overflow:hidden}
 .work .intro{color:#a9b6a5}
+.gal{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20px 18px;margin:0 -20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.gal::-webkit-scrollbar{display:none}
+.gal figure{margin:0;flex:none;width:78vw;max-width:340px;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:16px;background:#000;scroll-snap-align:center}
+.gal img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);will-change:transform;filter:saturate(.88) contrast(1.03)}
+.gal figure::after{content:"";position:absolute;inset:0;background:var(--forest);opacity:.1;pointer-events:none}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:50px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.gal figcaption b{display:block;font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:24px;line-height:1.05}
+.gal figcaption span{font-size:13px;color:#c9d3c5}
+.swipe{font-size:13px;color:#7f8d7b;margin:2px 0 0;display:flex;align-items:center;gap:8px}
+@media(min-width:860px){
+  .gal{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:260px 260px;overflow:visible;margin:0;padding:6px 0 0}
+  .gal figure{width:auto;max-width:none;aspect-ratio:auto}
+  .gal figure:first-child{grid-row:span 2}
+  .gal figure:last-child{grid-column:span 2}
+  .swipe{display:none}
+}
 
-.revs{display:grid;gap:30px;margin-top:34px}
+.revs{display:grid;gap:30px;margin-top:70px;border-top:1px solid rgba(255,255,255,.12);padding-top:50px}
 @media(min-width:860px){.revs{grid-template-columns:1fr 1fr;gap:56px}}
 .rev{position:relative;padding-left:20px;border-left:2px solid rgba(245,183,15,.55)}
 .rev blockquote{font-family:var(--cond);font-stretch:84%;font-weight:700;font-size:clamp(24px,4.6vw,32px);line-height:1.15;margin:10px 0 14px}
@@ -420,22 +412,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="ctas"><a class="btn hv" href="#quote">Get my price</a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>Call now</a></div>
     <div class="rating"><b>4.9</b><span class="st" aria-hidden="true">★★★★★</span><span>56 Google reviews</span></div>
   </div>
-  <a class="cue" id="cue" href="#takedown"><span>Scroll to see the work<i aria-hidden="true"></i></span></a>
-</section>
-
-<section class="story" id="takedown" aria-label="What Gonzalez does">
-  <div class="st-stage" id="stStage">
-    <div class="st-head" id="stHead"><h2>Every tree job.<br>Start to finish.</h2></div>
-    <div class="st-media" id="stMedia"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" decoding="async"><img src="img/p4.jpg" alt="Tall hardwoods seen from below" loading="lazy" decoding="async"><img src="img/p2.jpg" alt="Gonzalez chipper beside a large tree" loading="lazy" decoding="async"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy" decoding="async"></div>
-    <canvas class="st-canvas" id="stCanvas" aria-hidden="true"></canvas><span class="st-shade" aria-hidden="true"></span><span class="st-grain" aria-hidden="true"></span>
-    <div class="st-hud" aria-hidden="true"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><div class="hud-l"><span id="hudCh">Survey</span><span id="hudSt">Live</span></div><div class="hud-r"><span>Alt <b id="hudAlt">0.0</b> m</span><span>Hdg <b id="hudHdg">000</b>°</span></div><div class="ret" id="hudRet"><i></i><i></i><i></i><i></i><b></b></div></div>
-    <div class="st-rail" id="stRail" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i></div>
-    <div class="st-chs">
-      <div class="st-ch"><p class="st-lbl">Tree removal &amp; trimming</p><h3 class="st-t"><span>Down safely, even in tight spots.</span></h3><p class="st-d">Dead, leaning or hanging over the roof. Taken down or trimmed back, stump ground while we’re there.</p></div>
-      <div class="st-ch"><p class="st-lbl">Storm cleanup &amp; haul away</p><h3 class="st-t"><span>Day or night, we pick up.</span></h3><p class="st-d">Downed trees and limbs cleared, chipped and hauled off. Yard left clean.</p></div>
-      <div class="st-ch"><p class="st-lbl">Land clearing</p><h3 class="st-t"><span>From overgrown to usable.</span></h3><p class="st-d">Brush and trees cleared for a build, a fence line or a yard you can use.</p><a class="btn hv st-cta" href="#quote">Get my free estimate</a></div>
-    </div>
-  </div>
+  <a class="cue" id="cue" href="#work"><span>See the work<i aria-hidden="true"></i></span></a>
 </section>
 
 <div class="storm"><div class="wrap"><p><b>Tree down after a storm?</b> Day or night, Gonzalez picks up the phone.</p><a href="tel:+18653674667" target="_top"><svg width="26" height="26" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a></div></div>
@@ -482,131 +459,145 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
       <p class="intro reveal">Tell us what needs doing and roughly how big. Not sure on size? Just say so. Final price is set when we see it in person.</p>
       <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Gonzalez reaches out to set a time</li></ul>
     </div>
+    <div class="qphone" id="qphone">
+      <div class="qtilt" id="qtilt"><i class="pwr" aria-hidden="true"></i><i class="vol" aria-hidden="true"></i><div class="qsb" aria-hidden="true"><span>9:41</span><span class="qsbi"><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11"><path d="M7.5 2.2c2.2 0 4.2.9 5.7 2.3l1.1-1.1A9.6 9.6 0 0 0 7.5.6 9.6 9.6 0 0 0 .7 3.4l1.1 1.1a8 8 0 0 1 5.7-2.3zm0 3.2c1.3 0 2.5.5 3.4 1.3l1.1-1.1a6.4 6.4 0 0 0-9 0l1.1 1.1c.9-.8 2.1-1.3 3.4-1.3zm0 3.2c.5 0 .9.2 1.2.5L7.5 10.3 6.3 9.1c.3-.3.7-.5 1.2-.5z"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2"/><rect x="22.6" y="4" width="1.6" height="4" rx=".8" opacity=".5"/></svg></span></div>
     <div class="qt" id="qt">
-      <div class="qt-head"><span id="qtLabel">Step 1 of 4</span><span class="qt-time">About 1 minute</span></div>
-      <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Price</li><li data-to="4">Contact</li></ol>
-      <div class="est" id="live" hidden><span>Estimate so far</span><b id="liveAmt">$0</b></div>
-      <div class="step active" data-step="1">
-        <h3>What do you need?</h3>
-        <p class="help">Tap one to get started.</p>
-        <div class="opts" id="svcPick">
-          <button type="button" class="opt" data-v="removal" aria-pressed="false"><span class="tick"></span><span><b>Tree removal</b><small>Take a tree all the way down</small></span></button>
-          <button type="button" class="opt" data-v="trim" aria-pressed="false"><span class="tick"></span><span><b>Trimming or pruning</b><small>Dead limbs, overhang, shaping</small></span></button>
-          <button type="button" class="opt" data-v="storm" aria-pressed="false"><span class="tick"></span><span><b>Storm cleanup</b><small>Downed trees or limbs</small></span></button>
-          <button type="button" class="opt" data-v="stump" aria-pressed="false"><span class="tick"></span><span><b>Stump grinding</b><small>Get rid of old stumps</small></span></button>
-          <button type="button" class="opt" data-v="land" aria-pressed="false"><span class="tick"></span><span><b>Land clearing</b><small>Brush, overgrowth and trees on a lot</small></span></button>
-        </div>
-      </div>
-
-      <div class="step" data-step="2">
-        <!-- trees: removal / trim -->
-        <div class="pane" data-pane="tree">
-          <h3>How big are the trees?</h3>
-          <p class="help">Tap the closest one. A guess is fine.</p>
-          <div class="counter"><div><b>How many trees?</b><small>Same rough size is fine</small></div><div class="stepper" data-count="trees"><button type="button" aria-label="Fewer">−</button><output>1</output><button type="button" aria-label="More">+</button></div></div>
-          <div class="seg" id="hMode"><button type="button" data-m="house" aria-pressed="true">Compare to house</button><button type="button" data-m="slider" aria-pressed="false">Exact height</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
-          <div class="pane sub" data-sub="slider">
-            <div class="big"><span id="hOut">40</span> <small>feet tall</small></div>
-            <input type="range" id="h" min="10" max="100" step="5" value="40" aria-label="Tree height in feet">
-            <div class="ruler"><span>10 ft</span><span>50 ft</span><span>100 ft</span></div>
-            <div class="compare"><svg viewBox="0 0 300 130" aria-hidden="true">
-              <line x1="0" y1="124" x2="300" y2="124" stroke="#b9ad92" stroke-width="2"/>
-              <g fill="#c9bfa8"><rect x="52" y="106" width="56" height="18"/><polygon points="46,107 80,90 114,107"/></g>
-              <text x="80" y="84" text-anchor="middle" font-size="10" fill="#6b6455" font-family="system-ui">2-story house ≈ 25 ft</text>
-              <g id="miniTree"><rect id="mtTrunk" x="206" y="80" width="8" height="44" fill="#6b4e37"/><circle id="mtTop" cx="210" cy="70" r="26" fill="#4f8a4f"/></g>
-            </svg><p>Drag to match the tree. The house is for scale.</p></div>
+        <div class="qt-head"><span id="qtLabel">Step 1 of 4</span><span class="qt-time">About 1 minute</span></div>
+        <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Price</li><li data-to="4">Contact</li></ol>
+        <div class="est" id="live" hidden><span>Estimate so far</span><b id="liveAmt">$0</b></div>
+        <div class="step active" data-step="1">
+          <h3>What do you need?</h3>
+          <p class="help">Tap one to get started.</p>
+          <div class="opts" id="svcPick">
+            <button type="button" class="opt" data-v="removal" aria-pressed="false"><span class="tick"></span><span><b>Tree removal</b><small>Take a tree all the way down</small></span></button>
+            <button type="button" class="opt" data-v="trim" aria-pressed="false"><span class="tick"></span><span><b>Trimming or pruning</b><small>Dead limbs, overhang, shaping</small></span></button>
+            <button type="button" class="opt" data-v="storm" aria-pressed="false"><span class="tick"></span><span><b>Storm cleanup</b><small>Downed trees or limbs</small></span></button>
+            <button type="button" class="opt" data-v="stump" aria-pressed="false"><span class="tick"></span><span><b>Stump grinding</b><small>Get rid of old stumps</small></span></button>
+            <button type="button" class="opt" data-v="land" aria-pressed="false"><span class="tick"></span><span><b>Land clearing</b><small>Brush, overgrowth and trees on a lot</small></span></button>
           </div>
-          <div class="pane sub active" data-sub="house">
-            <div class="opts" id="hSize">
-              <button type="button" class="opt" data-v="s" aria-pressed="false"><span class="tick"></span><span><b>Shorter than the house</b><small>Under about 25 ft</small></span></button>
-              <button type="button" class="opt" data-v="m" aria-pressed="false"><span class="tick"></span><span><b>About as tall, up to twice</b><small>Roughly 25 to 50 ft</small></span></button>
-              <button type="button" class="opt" data-v="l" aria-pressed="false"><span class="tick"></span><span><b>Towers over the house</b><small>50 ft and up</small></span></button>
+        </div>
+  
+        <div class="step" data-step="2">
+          <!-- trees: removal / trim -->
+          <div class="pane" data-pane="tree">
+            <h3>How big are the trees?</h3>
+            <p class="help">Tap the closest one. A guess is fine.</p>
+            <div class="counter"><div><b>How many trees?</b><small>Same rough size is fine</small></div><div class="stepper" data-count="trees"><button type="button" aria-label="Fewer">−</button><output>1</output><button type="button" aria-label="More">+</button></div></div>
+            <div class="seg" id="hMode"><button type="button" data-m="house" aria-pressed="true">Compare to house</button><button type="button" data-m="slider" aria-pressed="false">Exact height</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
+            <div class="pane sub" data-sub="slider">
+              <div class="big"><span id="hOut">40</span> <small>feet tall</small></div>
+              <input type="range" id="h" min="10" max="100" step="5" value="40" aria-label="Tree height in feet">
+              <div class="ruler"><span>10 ft</span><span>50 ft</span><span>100 ft</span></div>
+              <div class="compare"><svg viewBox="0 0 300 130" aria-hidden="true">
+                <line x1="0" y1="124" x2="300" y2="124" stroke="#b9ad92" stroke-width="2"/>
+                <g fill="#c9bfa8"><rect x="52" y="106" width="56" height="18"/><polygon points="46,107 80,90 114,107"/></g>
+                <text x="80" y="84" text-anchor="middle" font-size="10" fill="#6b6455" font-family="system-ui">2-story house ≈ 25 ft</text>
+                <g id="miniTree"><rect id="mtTrunk" x="206" y="80" width="8" height="44" fill="#6b4e37"/><circle id="mtTop" cx="210" cy="70" r="26" fill="#4f8a4f"/></g>
+              </svg><p>Drag to match the tree. The house is for scale.</p></div>
+            </div>
+            <div class="pane sub active" data-sub="house">
+              <div class="opts" id="hSize">
+                <button type="button" class="opt" data-v="s" aria-pressed="false"><span class="tick"></span><span><b>Shorter than the house</b><small>Under about 25 ft</small></span></button>
+                <button type="button" class="opt" data-v="m" aria-pressed="false"><span class="tick"></span><span><b>About as tall, up to twice</b><small>Roughly 25 to 50 ft</small></span></button>
+                <button type="button" class="opt" data-v="l" aria-pressed="false"><span class="tick"></span><span><b>Towers over the house</b><small>50 ft and up</small></span></button>
+              </div>
+            </div>
+            <div class="pane sub" data-sub="unknown"><div class="note" style="margin-top:0">No problem. We'll show a wider range and size it up when we come out.</div></div>
+          </div>
+          <!-- storm -->
+          <div class="pane" data-pane="storm">
+            <h3>How much came down?</h3>
+            <p class="help">Best guess is fine.</p>
+            <div class="opts" id="stormPick">
+              <button type="button" class="opt" data-v="limbs" aria-pressed="false"><span class="tick"></span><span><b>A few limbs</b><small>Branches down in the yard</small></span></button>
+              <button type="button" class="opt" data-v="one" aria-pressed="false"><span class="tick"></span><span><b>One tree down</b><small>A whole tree fell or split</small></span></button>
+              <button type="button" class="opt" data-v="many" aria-pressed="false"><span class="tick"></span><span><b>Several trees</b><small>Multiple trees or a big mess</small></span></button>
+              <button type="button" class="opt" data-v="unknown" aria-pressed="false"><span class="tick"></span><span><b>Not sure</b><small>We'll take a look</small></span></button>
             </div>
           </div>
-          <div class="pane sub" data-sub="unknown"><div class="note" style="margin-top:0">No problem. We'll show a wider range and size it up when we come out.</div></div>
-        </div>
-        <!-- storm -->
-        <div class="pane" data-pane="storm">
-          <h3>How much came down?</h3>
-          <p class="help">Best guess is fine.</p>
-          <div class="opts" id="stormPick">
-            <button type="button" class="opt" data-v="limbs" aria-pressed="false"><span class="tick"></span><span><b>A few limbs</b><small>Branches down in the yard</small></span></button>
-            <button type="button" class="opt" data-v="one" aria-pressed="false"><span class="tick"></span><span><b>One tree down</b><small>A whole tree fell or split</small></span></button>
-            <button type="button" class="opt" data-v="many" aria-pressed="false"><span class="tick"></span><span><b>Several trees</b><small>Multiple trees or a big mess</small></span></button>
-            <button type="button" class="opt" data-v="unknown" aria-pressed="false"><span class="tick"></span><span><b>Not sure</b><small>We'll take a look</small></span></button>
+          <!-- stump -->
+          <div class="pane" data-pane="stump">
+            <h3>How big are the stumps?</h3>
+            <p class="help">Tap the closest size.</p>
+            <div class="counter"><div><b>How many stumps?</b></div><div class="stepper" data-count="stumps"><button type="button" aria-label="Fewer">−</button><output>1</output><button type="button" aria-label="More">+</button></div></div>
+            <div class="seg" id="dMode"><button type="button" data-m="size" aria-pressed="true">Pick a size</button><button type="button" data-m="slider" aria-pressed="false">Exact width</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
+            <div class="pane sub2" data-sub="slider"><div class="big"><span id="dOut">18</span> <small>inches across</small></div><input type="range" id="d" min="6" max="48" step="2" value="18" aria-label="Stump width in inches"><div class="ruler"><span>6 in</span><span>24 in</span><span>48 in</span></div></div>
+            <div class="pane sub2 active" data-sub="size"><div class="opts" id="dSize"><button type="button" class="opt" data-v="s" aria-pressed="false"><span class="tick"></span><span><b>Small</b><small>Under 12 inches across</small></span></button><button type="button" class="opt" data-v="m" aria-pressed="false"><span class="tick"></span><span><b>Medium</b><small>12 to 24 inches</small></span></button><button type="button" class="opt" data-v="l" aria-pressed="false"><span class="tick"></span><span><b>Large</b><small>24 inches and up</small></span></button></div></div>
+            <div class="pane sub2" data-sub="unknown"><div class="note" style="margin-top:0">That's fine. We'll measure when we get there.</div></div>
+          </div>
+          <!-- land -->
+          <div class="pane" data-pane="land">
+            <h3>How much land?</h3>
+            <p class="help">A football field is a little over 1 acre.</p>
+            <div class="seg" id="aMode" style="grid-template-columns:1fr 1fr"><button type="button" data-m="slider" aria-pressed="true">Set the size</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
+            <div class="pane sub3 active" data-sub="slider"><div class="big"><span id="aOut">1</span> <small>acre</small></div><input type="range" id="a" min="0.25" max="10" step="0.25" value="1" aria-label="Acres"><div class="ruler"><span>¼ acre</span><span>5</span><span>10 acres</span></div></div>
+            <div class="pane sub3" data-sub="unknown"><div class="note" style="margin-top:0">We'll walk the property with you and give an exact number.</div></div>
+            <p class="lbl">How thick is it? <span style="font-weight:500;color:var(--muted)">Tap one to see your price</span></p>
+            <div class="chips" id="thick"><button type="button" data-v="light" aria-pressed="false">Mostly brush</button><button type="button" data-v="mixed" aria-pressed="false">Brush and some trees</button><button type="button" data-v="heavy" aria-pressed="false">Thick woods</button></div>
           </div>
         </div>
-        <!-- stump -->
-        <div class="pane" data-pane="stump">
-          <h3>How big are the stumps?</h3>
-          <p class="help">Tap the closest size.</p>
-          <div class="counter"><div><b>How many stumps?</b></div><div class="stepper" data-count="stumps"><button type="button" aria-label="Fewer">−</button><output>1</output><button type="button" aria-label="More">+</button></div></div>
-          <div class="seg" id="dMode"><button type="button" data-m="size" aria-pressed="true">Pick a size</button><button type="button" data-m="slider" aria-pressed="false">Exact width</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
-          <div class="pane sub2" data-sub="slider"><div class="big"><span id="dOut">18</span> <small>inches across</small></div><input type="range" id="d" min="6" max="48" step="2" value="18" aria-label="Stump width in inches"><div class="ruler"><span>6 in</span><span>24 in</span><span>48 in</span></div></div>
-          <div class="pane sub2 active" data-sub="size"><div class="opts" id="dSize"><button type="button" class="opt" data-v="s" aria-pressed="false"><span class="tick"></span><span><b>Small</b><small>Under 12 inches across</small></span></button><button type="button" class="opt" data-v="m" aria-pressed="false"><span class="tick"></span><span><b>Medium</b><small>12 to 24 inches</small></span></button><button type="button" class="opt" data-v="l" aria-pressed="false"><span class="tick"></span><span><b>Large</b><small>24 inches and up</small></span></button></div></div>
-          <div class="pane sub2" data-sub="unknown"><div class="note" style="margin-top:0">That's fine. We'll measure when we get there.</div></div>
+  
+  
+        <div class="step" data-step="3">
+          <div class="pricebox">
+            <div class="k">Your estimate (sample prices)</div>
+            <div class="amt">$<span id="lo">0</span> to $<span id="hi">0</span></div>
+            <p id="pNote">Sample pricing for this preview. Final price is set after we see the job.</p>
+            <ul class="lines" id="lines"></ul>
+          </div>
+          <p class="lbl" style="margin-top:0">Add anything? <span style="font-weight:500;color:var(--muted)">Price updates as you tap</span></p>
+          <div class="opts" id="extras"></div>
+          <h3 style="margin-top:26px">When do you need it?</h3>
+          <p class="help" style="margin:0">Tap one to book this estimate.</p>
+          <div class="opts" id="when" style="margin-top:12px">
+            <button type="button" class="opt" data-v="Emergency, ASAP" aria-pressed="false"><span class="tick"></span><span><b>Emergency</b><small>Tree on a house, car or road</small></span></button>
+            <button type="button" class="opt" data-v="This week" aria-pressed="false"><span class="tick"></span><span><b>This week</b></span></button>
+            <button type="button" class="opt" data-v="Next couple of weeks" aria-pressed="false"><span class="tick"></span><span><b>Next couple of weeks</b></span></button>
+            <button type="button" class="opt" data-v="Flexible" aria-pressed="false"><span class="tick"></span><span><b>I'm flexible</b></span></button>
+          </div>
         </div>
-        <!-- land -->
-        <div class="pane" data-pane="land">
-          <h3>How much land?</h3>
-          <p class="help">A football field is a little over 1 acre.</p>
-          <div class="seg" id="aMode" style="grid-template-columns:1fr 1fr"><button type="button" data-m="slider" aria-pressed="true">Set the size</button><button type="button" data-m="unknown" aria-pressed="false">I don't know</button></div>
-          <div class="pane sub3 active" data-sub="slider"><div class="big"><span id="aOut">1</span> <small>acre</small></div><input type="range" id="a" min="0.25" max="10" step="0.25" value="1" aria-label="Acres"><div class="ruler"><span>¼ acre</span><span>5</span><span>10 acres</span></div></div>
-          <div class="pane sub3" data-sub="unknown"><div class="note" style="margin-top:0">We'll walk the property with you and give an exact number.</div></div>
-          <p class="lbl">How thick is it? <span style="font-weight:500;color:var(--muted)">Tap one to see your price</span></p>
-          <div class="chips" id="thick"><button type="button" data-v="light" aria-pressed="false">Mostly brush</button><button type="button" data-v="mixed" aria-pressed="false">Brush and some trees</button><button type="button" data-v="heavy" aria-pressed="false">Thick woods</button></div>
+  
+        <div class="step" data-step="4">
+          <h3>Where's the job?</h3>
+          <p class="help">We'll call or text to set a time.</p>
+          <label class="field"><span>Name</span><input id="fName" autocomplete="name" placeholder="Your name"></label>
+          <label class="field"><span>Phone</span><input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(865) 555-0123"></label>
+          <label class="field"><span>Address</span><input id="fAddr" autocomplete="street-address" placeholder="Street, city"></label>
+          <label class="field"><span>Anything we should know? <small style="font-weight:500;color:var(--muted)">(optional)</small></span><textarea id="fNote" rows="2" placeholder="Gate code, tree is leaning, etc."></textarea></label>
         </div>
+  
+        <div class="step" data-step="5">
+          <div class="done">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="#13241a" stroke-width="6"/><path class="chk" d="M38 62 L54 77 L84 45" fill="none" stroke="#f5b70f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <h3 id="doneTitle">Request received!</h3>
+            <p class="help" style="margin:0">Gonzalez will reach out to set up a time.</p>
+            <div class="summary" id="summary"></div>
+            <span class="preview">Preview only. Nothing is sent.</span>
+            <div style="margin-top:16px"><button type="button" class="back" id="restart">Start over</button></div>
+          </div>
+        </div>
+  
+        <div class="nav" id="navRow"><button type="button" class="back" id="prev" hidden>← Back</button><div class="nextwrap"><span class="why" id="why"></span><button type="button" class="btn hv" id="next">Continue</button></div></div>
+  
       </div>
-
-
-      <div class="step" data-step="3">
-        <div class="pricebox">
-          <div class="k">Your estimate (sample prices)</div>
-          <div class="amt">$<span id="lo">0</span> to $<span id="hi">0</span></div>
-          <p id="pNote">Sample pricing for this preview. Final price is set after we see the job.</p>
-          <ul class="lines" id="lines"></ul>
-        </div>
-        <p class="lbl" style="margin-top:0">Add anything? <span style="font-weight:500;color:var(--muted)">Price updates as you tap</span></p>
-        <div class="opts" id="extras"></div>
-        <h3 style="margin-top:26px">When do you need it?</h3>
-        <p class="help" style="margin:0">Tap one to book this estimate.</p>
-        <div class="opts" id="when" style="margin-top:12px">
-          <button type="button" class="opt" data-v="Emergency, ASAP" aria-pressed="false"><span class="tick"></span><span><b>Emergency</b><small>Tree on a house, car or road</small></span></button>
-          <button type="button" class="opt" data-v="This week" aria-pressed="false"><span class="tick"></span><span><b>This week</b></span></button>
-          <button type="button" class="opt" data-v="Next couple of weeks" aria-pressed="false"><span class="tick"></span><span><b>Next couple of weeks</b></span></button>
-          <button type="button" class="opt" data-v="Flexible" aria-pressed="false"><span class="tick"></span><span><b>I'm flexible</b></span></button>
-        </div>
+        <i class="glare" aria-hidden="true"></i><i class="hbar" aria-hidden="true"></i>
       </div>
-
-      <div class="step" data-step="4">
-        <h3>Where's the job?</h3>
-        <p class="help">We'll call or text to set a time.</p>
-        <label class="field"><span>Name</span><input id="fName" autocomplete="name" placeholder="Your name"></label>
-        <label class="field"><span>Phone</span><input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(865) 555-0123"></label>
-        <label class="field"><span>Address</span><input id="fAddr" autocomplete="street-address" placeholder="Street, city"></label>
-        <label class="field"><span>Anything we should know? <small style="font-weight:500;color:var(--muted)">(optional)</small></span><textarea id="fNote" rows="2" placeholder="Gate code, tree is leaning, etc."></textarea></label>
-      </div>
-
-      <div class="step" data-step="5">
-        <div class="done">
-          <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="#13241a" stroke-width="6"/><path class="chk" d="M38 62 L54 77 L84 45" fill="none" stroke="#f5b70f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3 id="doneTitle">Request received!</h3>
-          <p class="help" style="margin:0">Gonzalez will reach out to set up a time.</p>
-          <div class="summary" id="summary"></div>
-          <span class="preview">Preview only. Nothing is sent.</span>
-          <div style="margin-top:16px"><button type="button" class="back" id="restart">Start over</button></div>
-        </div>
-      </div>
-
-      <div class="nav" id="navRow"><button type="button" class="back" id="prev" hidden>← Back</button><div class="nextwrap"><span class="why" id="why"></span><button type="button" class="btn hv" id="next">Continue</button></div></div>
-
+      <div class="qnote" id="qnote" role="status" aria-live="polite"><span class="qn-ap"><svg width="22" height="22" aria-hidden="true"><use href="#logo"/></svg></span><div><small><span>Gonzalez Tree Service</span><span>now</span></small><b id="qnT">New request</b><span id="qnS"></span></div><em>Preview of what Gonzalez gets</em></div>
     </div>
   </div>
 </section>
 
 <section class="s work" id="work">
   <div class="wrap">
-    <h2 class="reveal">What customers say.</h2>
+    <h2 class="reveal">Real crews. Real work.</h2>
+    <p class="intro reveal">A few recent jobs around East Tennessee.</p>
+    <div class="gal">
+      <figure><img src="img/p2.jpg" alt="Gonzalez chipper parked beside a large tree" loading="lazy"><figcaption><b>Ready to work</b><span>Chipper set up before a big removal</span></figcaption></figure>
+      <figure><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy"><figcaption><b>Lot clearing</b><span>Brush and trees cleared off a hillside</span></figcaption></figure>
+      <figure><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" loading="lazy"><figcaption><b>Dead tree down</b><span>Cut, stacked and ready to haul</span></figcaption></figure>
+      <figure><img src="img/p4.jpg" alt="Tall bare trees seen from below" loading="lazy"><figcaption><b>No tree too tall</b><span>Big hardwoods, tight yards</span></figcaption></figure>
+    </div>
+        <p class="swipe">Swipe for more <svg width="16" height="16" aria-hidden="true"><use href="#arr"/></svg></p>
 
     <div class="revs">
       <div class="rev reveal"><div class="st" aria-label="5 stars">★★★★★</div><blockquote>“They cleared out brush and small trees in less than a few hours.”</blockquote><cite><svg class="g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.9C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Google review</cite></div>
@@ -653,7 +644,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
   <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
-  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 15)</span></div>
+  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 16)</span></div>
 </div></footer>
 
 <div class="sticky" id="sticky"><a class="btn hv" href="#quote">Get my price</a><a class="btn dk" href="tel:+18653674667" target="_top" aria-label="Call"><svg width="18" height="18" aria-hidden="true"><use href="#ph"/></svg>Call</a></div>
@@ -680,79 +671,16 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
      positions are measured once (and on resize), and work is batched into one rAF. */
   if(!RM){
     const cl=v=>v<0?0:v>1?1:v, eo=t=>1-Math.pow(1-t,3);
-    const cue=$('#cue'), hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qt'), figs=[], rings=$('.rings');
+    const cue=$('#cue'), hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qphone')||$('#qt'), figs=$$('.gal figure'), rings=$('.rings');
     let VH=innerHeight, HH=hero.offsetHeight, T={};
     const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
     function measure(){ VH=innerHeight; HH=hero.offsetHeight; heroH=HH;
-      T.td=td?top(td):0; T.tdH=td?td.offsetHeight:0; rects(); T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
-    /* story: one locked screen. vp runs from -1 (opening aerial) to N-1 (last chapter); the camera flies on this internal
-       timeline and the page itself never scrolls while the story is on screen (no Safari toolbar jumps). */
-    const td=$('#takedown'), stage=$('#stStage'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead');
-    const NC=chs.length; let curP=-1, lastTd=null, vp=-1, fx=null;
-    function rects(){}
-    function scene(){ if(!td) return; const p=vp; curP=p; if(p===lastTd) return; lastTd=p;
-      const hf=cl((p+1)/.45); shead.style.opacity=(1-hf).toFixed(3); shead.style.transform='translate3d(0,'+(-40*hf).toFixed(1)+'px,0) scale('+(1-.05*hf).toFixed(4)+')';
-      rail.style.opacity=cl((p+.45)/.4).toFixed(3);
-      chs.forEach((el,k)=>{ const d=p-k, [lb,tt,dd]=el.children, sp=tt.firstElementChild, cta=el.querySelector('.st-cta');
-        bars[k].style.transform='scaleX('+cl(p-k+1).toFixed(4)+')';
-        const inn=d<0?eo(cl(1+d/.42)):1, out=d>0?cl(d/.3):0, late=(d<0?eo(cl(1+d/.3)):1)*(1-out);
-        sp.style.transform='translate3d(0,'+((1-inn)*110-out*30).toFixed(1)+'%,0)'; tt.style.opacity=(1-out).toFixed(3);
-        lb.style.opacity=(inn*(1-out)).toFixed(3); lb.style.transform='translate3d(0,'+((1-inn)*12).toFixed(1)+'px,0)';
-        dd.style.opacity=late.toFixed(3); dd.style.transform='translate3d(0,'+((1-late)*16).toFixed(1)+'px,0)';
-        if(cta){ const c=d<0?eo(cl(1+d/.2)):1-out; cta.style.opacity=c.toFixed(3); cta.style.transform='translate3d(0,'+((1-c)*14).toFixed(1)+'px,0)'; cta.style.pointerEvents=c>.6?'auto':'none'; } });
-    }
-    if(td){ const boot=()=>import('./story3d.js').then(m=>{ fx=m.initStory({canvas:$('#stCanvas'), stage, getP:()=>curP, T:{N:NC}, mobile:matchMedia('(max-width: 859px)').matches, hud:{alt:$('#hudAlt'), hdg:$('#hudHdg')}});
-        const go=()=>{ const so=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?fx.start():fx.stop()),{rootMargin:'200px 0px'}); so.observe(td); };
-        if(fx.warm) fx.warm(go); else go(); })
-        .catch(err=>{ console.warn('3D story unavailable', err); document.documentElement.classList.remove('motion'); measure(); });
-      const later=()=>setTimeout(boot, document.documentElement.classList.contains('seen')?150:1900);  /* after the opening rings finish */
-      if(document.readyState==='complete') later(); else addEventListener('load',later); }
-
-    if(td){
-      const motionOn=()=>document.documentElement.classList.contains('motion');
-      const hud=$('.st-hud'), ret=$('#hudRet'), hCh=$('#hudCh'), hSt=$('#hudSt'); let softT=0, autoT=0;
-      const label=i=>{ hCh.textContent=i>=0?'Ch '+String(i+1).padStart(2,'0')+' / '+String(NC).padStart(2,'0'):'Survey'; };
-      const DUR=[3200,2500,2600];          // flight time into chapter k from the stop before it (the longest legs get the most time)
-      let locked=false, target=-1, raf=0, flying=false, entering=false, exiting=false, lastY=scrollY, lockedAt=0;
-      const jump=y=>window.scrollTo({top:y,behavior:'instant'});
-      function landed(i){ flying=false; if(fx&&fx.land) fx.land(i); clearTimeout(softT); ret.classList.remove('soft'); ret.classList.add('lock');
-        hud.classList.add('scan'); hSt.textContent='Scanning'; softT=setTimeout(()=>{ ret.classList.add('soft'); hud.classList.remove('scan'); hSt.textContent='Mapped'; },1700); }
-      function fly(i){ const was=flying, from=vp, to=i; let dur=DUR[Math.max(0,Math.max(Math.ceil(from),Math.ceil(to)))]*Math.min(1.3,Math.max(.5,Math.abs(to-from))); if(was) dur*=.8;
-        target=i; flying=true; cancelAnimationFrame(raf); label(i); ret.classList.remove('lock','soft'); hud.classList.remove('scan'); hSt.textContent='Moving'; if(fx&&fx.land) fx.land(-1);
-        const ease=was?(u=>1-Math.pow(1-u,3)):(u=>-(Math.cos(Math.PI*u)-1)/2), t0=performance.now();
-        (function f(t){ const u=Math.min(1,(t-t0)/dur); vp=from+(to-from)*ease(u); scene(); if(u<1) raf=requestAnimationFrame(f); else landed(i); })(t0); }
-      function glideScroll(toY,dur,done){ const fromY=scrollY, t0=performance.now();
-        (function f(t){ const u=Math.min(1,(t-t0)/dur), e=u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2; jump(fromY+(toY-fromY)*e); if(u<1) requestAnimationFrame(f); else { lastY=scrollY; done&&done(); } })(t0); }
-      function enter(fromAbove){ locked=true; entering=true; lockedAt=performance.now(); clearTimeout(autoT); cancelAnimationFrame(raf); flying=false;
-        if(fromAbove){ vp=-1; target=-1; label(-1); hSt.textContent='Live'; ret.classList.remove('lock','soft'); }
-        else { vp=NC-1; target=NC-1; label(NC-1); }
-        scene(); glideScroll(T.td, Math.min(520,Math.abs(scrollY-T.td)*1.1+140), ()=>{ entering=false; if(fromAbove) autoT=setTimeout(()=>{ if(locked&&target<0) fly(0); },700); else landed(NC-1); }); }
-      function exit(dir){ locked=false; exiting=true; clearTimeout(autoT); cancelAnimationFrame(raf); flying=false;
-        glideScroll(dir>0?T.td+T.tdH:Math.max(0,T.td-VH*.75),750,()=>{ exiting=false; }); }
-      function step(dir){ if(!locked||entering||exiting) return; clearTimeout(autoT); const i=target+dir;
-        if(i>NC-1) return exit(1); if(i<0) return exit(-1); fly(i); }
-      // input while the story is on screen: one gesture = one move; a gesture mid-flight retargets
-      let lastW=0, acc=0, fired=false;
-      addEventListener('wheel',e=>{ if(!locked) return; e.preventDefault(); const now=performance.now(); if(now-lastW>200){ acc=0; fired=false; } lastW=now;
-        if(fired) return; acc+=e.deltaY; if(Math.abs(acc)>10){ fired=true; step(acc>0?1:-1); } },{passive:false});
-      let ty=null, tx=null; addEventListener('touchstart',e=>{ ty=e.touches[0].clientY; tx=e.touches[0].clientX; },{passive:true});
-      addEventListener('touchmove',e=>{ if(locked) e.preventDefault(); },{passive:false});
-      addEventListener('touchend',e=>{ if(ty===null) return; const t=e.changedTouches[0], dy=ty-t.clientY, dx=tx-t.clientX; ty=null;
-        if(locked&&performance.now()-lockedAt>650&&Math.abs(dy)>14&&Math.abs(dy)>Math.abs(dx)*.8) step(dy>0?1:-1); },{passive:true});
-      addEventListener('keydown',e=>{ if(!locked) return; const k=e.key; if(k==='ArrowDown'||k==='PageDown'||k===' '){ e.preventDefault(); step(1); } else if(k==='ArrowUp'||k==='PageUp'){ e.preventDefault(); step(-1); } });
-      stage.addEventListener('click',e=>{ if(e.target.closest('a')){ locked=false; clearTimeout(autoT); } });
-      // lock when the story reaches the screen; release when the visitor leaves it
-      addEventListener('scroll',()=>{ const y=scrollY, dir=y>lastY?1:y<lastY?-1:0; if(!motionOn()){ lastY=y; return; }
-        if(locked){ if(!entering&&!exiting){ const off=y-T.td; if(Math.abs(off)>VH*.5) locked=false; else if(Math.abs(off)>1) jump(T.td); } lastY=scrollY; return; }
-        if(!exiting){ const rt=T.td-y; if(dir>0&&rt<VH*.45&&rt>-VH*.25) enter(true); else if(dir<0&&rt>-VH*.45&&rt<VH*.25) enter(false); }
-        lastY=y; },{passive:true});
-    }
+      T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
     function update(){
       const y=scrollY;
       if(y<HH*1.3){ const p=cl(y/HH);
         hw.style.transform='translate3d(0,'+(y*.3).toFixed(1)+'px,0) scale('+(1-p*.06).toFixed(4)+')'; hw.style.opacity=Math.max(0,1-p*1.6).toFixed(3); if(cue) cue.style.opacity=Math.max(0,1-p*4).toFixed(3);
         layers.forEach(l=>l.style.transform='translate3d(0,'+(y*(+l.dataset.depth)).toFixed(1)+'px,0)'); }
-      scene(y);
       if(qt){ const p=eo(cl((y+VH-T.qt-VH*.05)/(VH*.75)));
         qt.style.transform = p>=1 ? 'none' : 'translate3d(0,'+((1-p)*90).toFixed(1)+'px,0) rotateX('+((1-p)*24).toFixed(2)+'deg) scale('+(.9+.1*p).toFixed(4)+')';
         qt.style.opacity=(.25+.75*p).toFixed(3); }
@@ -884,8 +812,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   ['#fName','#fPhone','#fAddr'].forEach(s=>$(s).addEventListener('input',updNav));
   function go(n){
     step=n; $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
+    if(innerWidth>=960) $('#qt').scrollTo({top:0,behavior:RM?'auto':'smooth'});
     if(n===2){ const p={removal:'tree',trim:'tree',storm:'storm',stump:'stump',land:'land'}[S.svc]; $$('[data-pane]').forEach(x=>x.classList.toggle('active',x.dataset.pane===p)); }
-    if(n===3){ buildExtras(); showPrice(); const pb=$('.pricebox'); pb.classList.remove('shine'); void pb.offsetWidth; pb.classList.add('shine'); }
+    if(n===3){ buildExtras(); showPrice(); const pb=$('.pricebox'); pb.classList.remove('shine'); void pb.offsetWidth; pb.classList.add('shine'); const am=$('.pricebox .amt'); am.classList.remove('swing'); void am.offsetWidth; if(!RM) am.classList.add('swing'); }
     if(n===5) finish();
     $('#qtLabel').textContent = n===5?'All set':'Step '+n+' of 4';
     $$('#prog li').forEach(li=>{ const t=+li.dataset.to; li.classList.toggle('on',t<=n); li.classList.toggle('done',t<n&&n<5); });
@@ -904,6 +833,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     try{ fetch(BOOKING_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); }catch(e){}
   }
   function finish(){
+    { const {lo,hi}=price(), nm={removal:'Tree removal',trim:'Trimming',storm:'Storm cleanup',stump:'Stump grinding',land:'Land clearing'}[S.svc], q=$('#qnote');
+      $('#qnT').textContent='New request: '+nm; $('#qnS').textContent='$'+fmt(lo)+' to $'+fmt(hi)+' · '+(S.when||'');
+      clearTimeout(q._t); setTimeout(()=>{ q.classList.add('on'); q._t=setTimeout(()=>q.classList.remove('on'),5600); }, RM?0:900); }
     const {lo,hi}=price(), first=$('#fName').value.trim().split(' ')[0];
     $('#doneTitle').textContent='Got it, '+first+'!';
     const names={removal:'Tree removal',trim:'Trimming',storm:'Storm cleanup',stump:'Stump grinding',land:'Land clearing'};
@@ -917,5 +849,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   }
   $$('.row[data-svc]').forEach(r=>r.addEventListener('click',()=>{ if(step!==1) go(1); const b=$('#svcPick [data-v="'+r.dataset.svc+'"]'); if(b) b.click(); }));
   go(1);
+  // phones: the notification drops in from the top of the screen, so it lives on <body> (a 3D parent would trap a fixed element)
+  { const qn=$('#qnote'), place=()=>{ if(innerWidth<960){ if(qn.parentElement!==document.body) document.body.appendChild(qn); } else if(qn.parentElement!==$('#qphone')) $('#qphone').appendChild(qn); }; place(); addEventListener('resize',place,{passive:true}); }
+  // desktop: the phone tilts toward the pointer and the glass glare slides with it
+  const qp=$('#qphone'), qtl=$('#qtilt');
+  if(qp&&qtl&&!RM&&matchMedia('(hover:hover) and (pointer:fine)').matches){ let pend=null;
+    qp.addEventListener('pointermove',e=>{ if(innerWidth<960) return; const r=qp.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+      if(pend) return; pend=requestAnimationFrame(()=>{ pend=null; qtl.style.transform='rotate(-2deg) rotateY('+(x*7).toFixed(2)+'deg) rotateX('+(-y*5).toFixed(2)+'deg)'; qtl.style.setProperty('--ga',(118+x*40).toFixed(1)+'deg'); }); });
+    qp.addEventListener('pointerleave',()=>{ qtl.style.transform=''; qtl.style.removeProperty('--ga'); }); }
 })();
 </script>
