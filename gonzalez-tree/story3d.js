@@ -1,11 +1,12 @@
 // Gonzalez Tree Service: scroll-driven 3D drone flight.
-// Fast, aggressive swoops between chapters; slow cinematic drifts during each chapter.
+// Realism pass: leaf-card foliage, textured bark/lawn/siding, grass blades, cloud sky,
+// warm key + cool fill lighting with soft shadows. Camera follows `getP()`; a slow idle drift keeps it alive.
 import * as THREE from '../lib/three.module.min.js';
 
 export function initStory({ canvas, stage, getP, T, mobile }) {
   const { IH, TL, HL, N } = T;
 
-  // ---------------------------------------------------------------- noise
+  // ---------------------------------------------------------------- noise + random
   function hash3(x, y, z) { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(z, 1440662683); h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }
   function vnoise(x, y, z) {
     const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z), xf = x - xi, yf = y - yi, zf = z - zi;
@@ -13,9 +14,10 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
     return L(L(L(c(0,0,0), c(1,0,0), u), L(c(0,1,0), c(1,1,0), u), v), L(L(c(0,0,1), c(1,0,1), u), L(c(0,1,1), c(1,1,1), u), v), w) * 2 - 1;
   }
   const fbm = (x, z, o = 5) => { let a = 0, amp = 1, f = 1, n = 0; for (let i = 0; i < o; i++) { a += amp * vnoise(x * f, 0.37 * i, z * f); n += amp; amp *= .5; f *= 2.03; } return a / n; };
-  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  let seed = 11; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const R = (a, b) => a + (b - a) * rnd();
   const sstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const C = h => new THREE.Color(h);
 
   // ---------------------------------------------------------------- world layout
   const S1 = new THREE.Vector2(0, 0), S3 = new THREE.Vector2(78, 46), S4 = new THREE.Vector2(-96, 64);
@@ -28,9 +30,10 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.6 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   const scene = new THREE.Scene();
   const fog = new THREE.FogExp2(0xc99b78, .0042); scene.fog = fog;
-  const camera = new THREE.PerspectiveCamera(50, 1, .4, 1600);
+  const camera = new THREE.PerspectiveCamera(50, 1, .3, 1800);
 
   const U = { time: { value: 0 }, wind: { value: 1 } };
   function windy(mat, amt = 1) {
@@ -43,204 +46,308 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
           vec3 ip = vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]);
         #endif
         float hg = max(position.y, 0.0);
-        float sw = sin(uTime * 1.25 + ip.x * .21 + ip.z * .17) * .7 + sin(uTime * 2.9 + ip.x * .53 + position.x) * .3;
+        float sw = sin(uTime * 1.25 + ip.x * .21 + ip.z * .17) * .7 + sin(uTime * 3.1 + ip.x * .53 + position.x * .8 + position.z * .6) * .3;
         transformed.x += sw * hg * hg * ${(0.0016 * amt).toFixed(5)} * uWind;
         transformed.z += sw * hg * hg * ${(0.0011 * amt).toFixed(5)} * uWind;`);
     };
     return mat;
   }
 
+  // ---------------------------------------------------------------- procedural textures (canvas)
+  function canvasTex(w, h, draw, srgb = true, rep = null) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h);
+    const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = ANISO;
+    if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
+    return t;
+  }
+  const leafTex = canvasTex(256, 256, (g) => {
+    for (let i = 0; i < 110; i++) {
+      const a = rnd() * 6.283, r = Math.sqrt(rnd()) * 96, x = 128 + Math.cos(a) * r, y = 128 + Math.sin(a) * r, l = R(11, 20), wd = l * R(.42, .55);
+      const hue = R(78, 112), sat = R(34, 56), lit = R(38, 62) - r * .06;
+      g.save(); g.translate(x, y); g.rotate(rnd() * 6.283);
+      g.fillStyle = `hsl(${hue},${sat}%,${lit}%)`; g.beginPath(); g.ellipse(0, 0, wd, l, 0, 0, 6.283); g.fill();
+      g.strokeStyle = `hsla(${hue},${sat + 5}%,${lit + 14}%,.55)`; g.lineWidth = 1; g.beginPath(); g.moveTo(0, -l * .9); g.lineTo(0, l * .9); g.stroke(); g.restore();
+    }
+  });
+  const barkTex = canvasTex(128, 512, (g, w, h) => {
+    g.fillStyle = '#8a7461'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 260; i++) { const x = R(0, w), y0 = R(-40, h), len = R(30, 160), wd = R(1.5, 5);
+      g.strokeStyle = rnd() < .65 ? `rgba(28,20,14,${R(.35, .75)})` : `rgba(160,140,118,${R(.15, .35)})`; g.lineWidth = wd; g.beginPath(); g.moveTo(x, y0);
+      for (let y = y0; y < y0 + len; y += 10) g.lineTo(x + Math.sin(y * .05 + i) * 3, y); g.stroke(); }
+    for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(${rnd() < .5 ? '20,14,10' : '150,135,110'},${R(.1, .3)})`; g.fillRect(R(0, w), R(0, h), R(1, 3), R(1, 3)); }
+  }, true, [2, 2]);
+  const groundTex = canvasTex(512, 512, (g, w, h) => {
+    g.fillStyle = 'rgb(225,225,215)'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 9000; i++) { const x = R(0, w), y = R(0, h), l = R(3, 9), a = R(-.5, .5) - 1.57, k = R(150, 255);
+      g.strokeStyle = `rgba(${k * .85 | 0},${k | 0},${k * .7 | 0},${R(.25, .6)})`; g.lineWidth = R(.6, 1.6); g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); }
+    for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(90,80,60,${R(.08, .2)})`; g.beginPath(); g.arc(R(0, w), R(0, h), R(4, 18), 0, 6.283); g.fill(); }
+  }, true, [150, 150]);
+  const sidingTex = canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#ece6d8'; g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 16) { const gr = g.createLinearGradient(0, y, 0, y + 16); gr.addColorStop(0, 'rgba(255,255,255,.25)'); gr.addColorStop(.8, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(60,50,40,.35)'); g.fillStyle = gr; g.fillRect(0, y, w, 16); }
+  }, true, [5, 2.4]);
+  const roofTex = canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#3b3e42'; g.fillRect(0, 0, w, h);
+    for (let row = 0; row < 16; row++) for (let col = 0; col < 9; col++) { const x = col * 32 + (row % 2) * 16, y = row * 16, k = R(45, 75) | 0;
+      g.fillStyle = `rgb(${k},${k + 2},${k + 6})`; g.fillRect(x + 1, y + 1, 30, 14); g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x, y + 13, 32, 3); }
+  }, true, [3, 3]);
+
   // ---------------------------------------------------------------- geometry helpers
-  const C = h => new THREE.Color(h);
   function paint(g, fn) { const p = g.attributes.position, n = g.attributes.normal, a = new Float32Array(p.count * 3), c = new THREE.Color();
     for (let i = 0; i < p.count; i++) { fn(c, p.getX(i), p.getY(i), p.getZ(i), n.getX(i), n.getY(i), n.getZ(i)); a[i*3] = c.r; a[i*3+1] = c.g; a[i*3+2] = c.b; }
     g.setAttribute('color', new THREE.BufferAttribute(a, 3)); return g; }
   function merge(geos) {
     let nv = 0, ni = 0; for (const g of geos) { nv += g.attributes.position.count; ni += g.index ? g.index.count : g.attributes.position.count; }
-    const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), col = new Float32Array(nv * 3), idx = new Uint32Array(ni); let vo = 0, io = 0;
+    const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), col = new Float32Array(nv * 3), uv = new Float32Array(nv * 2), idx = new Uint32Array(ni); let vo = 0, io = 0;
     for (const g of geos) { const cnt = g.attributes.position.count;
-      pos.set(g.attributes.position.array, vo * 3); nor.set(g.attributes.normal.array, vo * 3); col.set(g.attributes.color.array, vo * 3);
+      pos.set(g.attributes.position.array, vo * 3); nor.set(g.attributes.normal.array, vo * 3); col.set(g.attributes.color.array, vo * 3); if (g.attributes.uv) uv.set(g.attributes.uv.array, vo * 2);
       if (g.index) { for (let i = 0; i < g.index.count; i++) idx[io + i] = g.index.array[i] + vo; io += g.index.count; } else { for (let i = 0; i < cnt; i++) idx[io + i] = vo + i; io += cnt; }
       vo += cnt; g.dispose(); }
     const m = new THREE.BufferGeometry(); m.setAttribute('position', new THREE.BufferAttribute(pos, 3)); m.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
-    m.setAttribute('color', new THREE.BufferAttribute(col, 3)); m.setIndex(new THREE.BufferAttribute(idx, 1)); m.computeBoundingSphere(); return m;
+    m.setAttribute('color', new THREE.BufferAttribute(col, 3)); m.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); m.setIndex(new THREE.BufferAttribute(idx, 1)); m.computeBoundingSphere(); return m;
   }
-  function blob(r, ws, hs, base, dark = .55, nz = .28) {
-    const g = new THREE.SphereGeometry(r, ws, hs), p = g.attributes.position, v = new THREE.Vector3(), o = R(0, 99);
-    for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const n = v.clone().normalize(); const d = vnoise(n.x * 1.7 + o, n.y * 1.7, n.z * 1.7 + o) * .7 + vnoise(n.x * 4 + o, n.y * 4, n.z * 4) * .3;
-      v.addScaledVector(n, d * r * nz); v.y *= .82; p.setXYZ(i, v.x, v.y, v.z); }
-    g.computeVertexNormals();
-    const b = C(base), hl = b.clone().offsetHSL(.01, .05, .07);
-    return paint(g, (c, x, y, z, nx, ny) => { const t = (ny + 1) / 2; c.copy(b).lerp(hl, Math.max(0, ny) * .6).multiplyScalar(dark + (1 - dark) * t); });
+  // a foliage cluster made of leaf cards; normals point out from the cluster centre so light wraps softly like a real canopy
+  function leafCluster(cx, cy, cz, r, n, size, hexA, hexB) {
+    const pos = [], nor = [], col = [], uv = [], idx = [], ca = C(hexA), cb = C(hexB), tmp = new THREE.Color(), q = new THREE.Quaternion(), e = new THREE.Euler(), vv3 = new THREE.Vector3();
+    for (let i = 0; i < n; i++) {
+      const u = rnd() * 2 - 1, a = rnd() * 6.283, rr = Math.cbrt(rnd()) * r, s = Math.sqrt(1 - u * u);
+      const ox = Math.cos(a) * s * rr, oy = u * rr * .8, oz = Math.sin(a) * s * rr, len = Math.hypot(ox, oy, oz) || 1;
+      const nx = ox / len, ny = (oy / len) * .8 + .2, nz = oz / len, nl = Math.hypot(nx, ny, nz);
+      const sz = size * R(.75, 1.25); e.set(rnd() * 6.28, rnd() * 6.28, rnd() * 6.28); q.setFromEuler(e);
+      const out = Math.max(0, ny / nl); tmp.copy(ca).lerp(cb, rnd()).multiplyScalar((.72 + .28 * (rr / r)) * (.85 + .15 * out));
+      const b = pos.length / 3;
+      [[-1, -1, 0, 0], [1, -1, 1, 0], [1, 1, 1, 1], [-1, 1, 0, 1]].forEach(([x, y, uu, vv]) => {
+        vv3.set(x * sz * .5, y * sz * .5, 0).applyQuaternion(q); pos.push(cx + ox + vv3.x, cy + oy + vv3.y, cz + oz + vv3.z);
+        nor.push(nx / nl, ny / nl, nz / nl); col.push(tmp.r, tmp.g, tmp.b); uv.push(uu, vv); });
+      idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); return g;
   }
-  function bark(g, hex = 0x4b3a2b) { const b = C(hex); return paint(g, (c, x, y, z, nx, ny, nz) => { c.copy(b).multiplyScalar(.75 + .35 * vnoise(x * 3, y * 6, z * 3) * .5 + .15 * Math.max(0, nx)); }); }
-  function solid(g, hex) { const b = C(hex); return paint(g, c => c.copy(b)); }
+  function barkG(g, hex = 0xb8a693) { const b = C(hex); return paint(g, (c, x, y, z, nx) => c.copy(b).multiplyScalar(.9 + .25 * Math.max(0, nx))); }
+
+  // ---------------------------------------------------------------- materials
+  const leafMat = windy(new THREE.MeshStandardMaterial({ map: leafTex, alphaTest: .38, alphaToCoverage: true, side: THREE.DoubleSide, vertexColors: true, roughness: .78, metalness: 0, emissive: 0x1a2e0d, emissiveIntensity: .55 }));
+  const heroLeafMat = windy(new THREE.MeshStandardMaterial({ map: leafTex, alphaTest: .38, alphaToCoverage: true, side: THREE.DoubleSide, vertexColors: true, roughness: .72, metalness: 0, emissive: 0x2a4414, emissiveIntensity: .6 }), .45);
+  const barkMat = new THREE.MeshStandardMaterial({ map: barkTex, bumpMap: barkTex, bumpScale: 3, vertexColors: true, roughness: .95 });
 
   // ---------------------------------------------------------------- terrain
-  const TS = 760, SEG = mobile ? 170 : 230;
+  const TS = 760, SEG = mobile ? 180 : 240;
   const tg = new THREE.PlaneGeometry(TS, TS, SEG, SEG); tg.rotateX(-Math.PI / 2);
   { const p = tg.attributes.position; for (let i = 0; i < p.count; i++) p.setY(i, height(p.getX(i), p.getZ(i))); tg.computeVertexNormals(); }
-  const grassA = C(0x56743a), grassB = C(0x6b8a42), lawn = C(0x6f9445), forest = C(0x2d4426), dirt = C(0x6e5539), dirt2 = C(0x8a6d4b), rock = C(0x5b5a50);
+  const grassA = C(0x5d7c3c), grassB = C(0x77954a), lawn = C(0x7a9e48), forestC = C(0x34502b), dirt = C(0x7a5f40), dirt2 = C(0x957652), rock = C(0x6b685c);
   paint(tg, (c, x, y, z, nx, ny) => {
     const d1 = Math.hypot(x - S1.x, z - S1.y), d3 = Math.hypot(x - S3.x, z - S3.y), d4 = Math.hypot(x - S4.x, z - S4.y), md = Math.min(d1, d3, d4);
     const n = fbm(x * .05, z * .05, 3) * .5 + .5;
     c.copy(grassA).lerp(grassB, n);
-    const lw = 1 - sstep(24, 40, Math.min(d1, d3)); c.lerp(lawn, lw * .7);
-    if (lw > 0) c.multiplyScalar(1 + Math.sin(x * .9) * .035 * lw);                 // mowing stripes
-    c.lerp(forest, sstep(42, 80, md) * .85);
+    const lw = 1 - sstep(24, 40, Math.min(d1, d3)); c.lerp(lawn, lw * .75);
+    if (lw > 0) c.multiplyScalar(1 + Math.sin((x * .7 + z * .7) * .9) * .045 * lw);           // mowing stripes
+    c.lerp(forestC, sstep(42, 80, md) * .8);
     const dw = 1 - sstep(18, 32, d4); c.lerp(dirt, dw * (.65 + .35 * n)); c.lerp(dirt2, dw * Math.max(0, vnoise(x * .3, 1, z * .3)) * .5);
     c.lerp(rock, Math.max(0, .55 - ny) * 1.6);
+    c.multiplyScalar(1.12);
   });
-  const terrain = new THREE.Mesh(tg, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0 }));
+  const terrain = new THREE.Mesh(tg, new THREE.MeshStandardMaterial({ map: groundTex, vertexColors: true, roughness: 1, metalness: 0 }));
   terrain.receiveShadow = true; scene.add(terrain);
 
-  // ---------------------------------------------------------------- forest (instanced)
-  const decid = merge([bark(new THREE.CylinderGeometry(.16, .3, 4.4, 6).translate(0, 2.2, 0)),
-    blob(2.3, 9, 7, 0x3f6a33).translate(0, 5.6, 0), blob(1.8, 9, 7, 0x4a7638).translate(1.2, 4.8, .5),
-    blob(1.7, 9, 7, 0x36602f).translate(-1.1, 5, -.6), blob(1.5, 8, 6, 0x4f7d3c).translate(.2, 7.1, .2)]);
-  const conif = merge([bark(new THREE.CylinderGeometry(.1, .22, 3, 5).translate(0, 1.5, 0), 0x3b2c21),
-    ...[[2.5, 3.4, 2.4], [2, 3.1, 4.4], [1.5, 2.8, 6.2], [.95, 2.4, 7.8]].map(([r, h, y]) => { const g = new THREE.ConeGeometry(r, h, 8, 2); g.translate(0, y, 0);
-      const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const k = 1 + vnoise(p.getX(i) * 2, p.getY(i), p.getZ(i) * 2) * .14; p.setX(i, p.getX(i) * k); p.setZ(i, p.getZ(i) * k); } g.computeVertexNormals();
-      const b = C(0x24442c); return paint(g, (c, x, yy, z, nx, ny) => c.copy(b).multiplyScalar(.6 + .55 * Math.max(0, ny) + .12 * nx)); })]);
-  const leafMat = windy(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .88, metalness: 0 }));
-  const COUNT = mobile ? 1100 : 1700, insts = [[], []];
+  // ---------------------------------------------------------------- forest (instanced leaf-card trees)
+  const trunkG = barkG(new THREE.CylinderGeometry(.14, .3, 5, 7).translate(0, 2.5, 0));
+  const decidLeaves = merge([leafCluster(0, 6.2, 0, 2.3, mobile ? 18 : 26, 1.9, 0x5f8a3e, 0x3d6a2c), leafCluster(1.3, 5.1, .6, 1.8, mobile ? 12 : 18, 1.7, 0x6a9444, 0x46733a),
+    leafCluster(-1.2, 5.4, -.7, 1.8, mobile ? 12 : 18, 1.7, 0x557f38, 0x36602b), leafCluster(.2, 7.7, .2, 1.6, mobile ? 10 : 14, 1.6, 0x76a04c, 0x4f7d3c)]);
+  const conifG = merge([barkG(new THREE.CylinderGeometry(.1, .22, 3, 6).translate(0, 1.5, 0), 0x6e5a48),
+    ...[[2.5, 3.4, 2.4], [2, 3.1, 4.4], [1.5, 2.8, 6.2], [.95, 2.4, 7.8]].map(([r, h, y]) => { const g = new THREE.ConeGeometry(r, h, 9, 3); g.translate(0, y, 0);
+      const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const k = 1 + vnoise(p.getX(i) * 2.2, p.getY(i) * 1.3, p.getZ(i) * 2.2) * .18; p.setX(i, p.getX(i) * k); p.setZ(i, p.getZ(i) * k); } g.computeVertexNormals();
+      const b = C(0x2b4d31); return paint(g, (c, x, yy, z, nx, ny) => c.copy(b).multiplyScalar(.55 + .6 * Math.max(0, ny) + .12 * nx)); })]);
+  const conifMat = windy(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .9 }));
+  const COUNT = mobile ? 1000 : 1600, insts = [[], []];
   const keep = (x, z) => Math.hypot(x - S1.x, z - S1.y) > 46 && Math.hypot(x - S3.x, z - S3.y) > 30 && Math.hypot(x - S4.x, z - S4.y) > 42;
   for (let i = 0; i < COUNT * 3 && insts[0].length + insts[1].length < COUNT; i++) {
     const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 340, x = Math.cos(a) * r, z = Math.sin(a) * r;
-    if (!keep(x, z)) continue; const cl = fbm(x * .02, z * .02, 2); if (cl < -.25 && rnd() < .6) continue;
-    insts[rnd() < .38 ? 1 : 0].push([x, z, R(.85, 1.55)]);
+    if (!keep(x, z)) continue; if (fbm(x * .02, z * .02, 2) < -.25 && rnd() < .6) continue;
+    insts[rnd() < .35 ? 1 : 0].push([x, z, R(.85, 1.55)]);
   }
   [[-32, -30, 1.4], [-20, -38, 1.5], [22, -34, 1.6], [36, -18, 1.3], [-44, 6, 1.4], [46, 22, 1.3], [64, 26, 1.4], [96, 60, 1.5], [88, 30, 1.2], [-78, 40, 1.5], [-118, 70, 1.4]]
     .forEach(([x, z, s], i) => insts[i % 3 === 0 ? 1 : 0].push([x, z, s]));
   const dummy = new THREE.Object3D(), tint = new THREE.Color();
-  [decid, conif].forEach((g, k) => {
-    const list = insts[k], im = new THREE.InstancedMesh(g, leafMat, list.length);
+  function plant(list, geo, mat, shadow, sd) {
+    seed = sd; const im = new THREE.InstancedMesh(geo, mat, list.length);
     list.forEach(([x, z, s], i) => { dummy.position.set(x, height(x, z) - .25, z); dummy.rotation.set(R(-.04, .04), R(0, 6.28), R(-.04, .04)); dummy.scale.set(s * R(.9, 1.1), s * R(.9, 1.2), s * R(.9, 1.1)); dummy.updateMatrix(); im.setMatrixAt(i, dummy.matrix);
-      const lv = R(.8, 1.08); tint.setRGB(lv * R(.92, 1.06), lv * R(.95, 1.05), lv * R(.85, 1)); im.setColorAt(i, tint); });
-    im.castShadow = !mobile; im.receiveShadow = false; scene.add(im);
-  });
+      const lv = R(.8, 1.1); tint.setRGB(lv * R(.92, 1.08), lv * R(.95, 1.05), lv * R(.85, 1)); im.setColorAt(i, tint); });
+    im.castShadow = shadow; im.receiveShadow = true; scene.add(im); return im;
+  }
+  // trunks and canopies share a seed so each canopy sits on its own trunk
+  plant(insts[0], trunkG, barkMat, !mobile, 4242); plant(insts[0], decidLeaves, leafMat, !mobile, 4242); plant(insts[1], conifG, conifMat, !mobile, 999);
+  seed = 31337;
 
-  // ---------------------------------------------------------------- hero oak (leans toward the house)
-  const barkMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .95 });
-  function bigTree(sc = 1, leafHex = 0x3f6b32, seedOff = 0) {
+  // ---------------------------------------------------------------- hero trees
+  function bigTree(sc = 1, leafA = 0x6a9444, leafB = 0x3e6b2e, dens = 1) {
     const gs = [], fs = [], up = new THREE.Vector3(0, 1, 0);
-    const tr = new THREE.CylinderGeometry(.55, .95, 8, 14, 8, false); tr.translate(0, 4, 0);
-    { const p = tr.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i); p.setX(i, p.getX(i) + Math.sin(y * .35) * .22); p.setZ(i, p.getZ(i) + Math.cos(y * .28) * .12); } tr.computeVertexNormals(); }
-    gs.push(bark(tr, 0x4d3b2b));
-    const NB = 8;
+    const tr = new THREE.CylinderGeometry(.55, 1.0, 8, 16, 10, false); tr.translate(0, 4, 0);
+    { const p = tr.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i), fl = y < 1 ? (1 - y) * .35 : 0;
+        p.setX(i, p.getX(i) * (1 + fl) + Math.sin(y * .35) * .22); p.setZ(i, p.getZ(i) * (1 + fl) + Math.cos(y * .28) * .12); } tr.computeVertexNormals(); }
+    gs.push(barkG(tr));
+    const NB = 9, ends = [];
     for (let i = 0; i < NB; i++) {
-      const a = i / NB * Math.PI * 2 + R(-.3, .3), y0 = R(5.2, 7.6), len = R(4.6, 6.6), dir = new THREE.Vector3(Math.cos(a) * .82, R(.5, .85), Math.sin(a) * .82).normalize();
-      const b = new THREE.CylinderGeometry(.13, .36, len, 8); b.translate(0, len / 2, 0); b.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(up, dir)); b.translate(Math.sin(y0 * .35) * .22, y0, 0); gs.push(bark(b, 0x4d3b2b));
-      const end = dir.clone().multiplyScalar(len).add(new THREE.Vector3(0, y0, 0));
-      for (let k = 0; k < 3; k++) fs.push(blob(R(2.0, 3.0), 14, 10, leafHex, .62).translate(end.x + R(-1.4, 1.4), end.y + R(-.4, 1.8), end.z + R(-1.4, 1.4)));
+      const a = i / NB * Math.PI * 2 + R(-.3, .3), y0 = R(5.2, 7.8), len = R(4.6, 6.8), dir = new THREE.Vector3(Math.cos(a) * .82, R(.45, .85), Math.sin(a) * .82).normalize();
+      const b = new THREE.CylinderGeometry(.12, .38, len, 9, 3); b.translate(0, len / 2, 0); b.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(up, dir)); b.translate(Math.sin(y0 * .35) * .22, y0, 0); gs.push(barkG(b));
+      const end = dir.clone().multiplyScalar(len).add(new THREE.Vector3(0, y0, 0)); ends.push(end);
+      for (let t = 0; t < 2; t++) { const td = dir.clone().add(new THREE.Vector3(R(-.6, .6), R(0, .5), R(-.6, .6))).normalize(), tl = R(1.6, 2.6);
+        const tw = new THREE.CylinderGeometry(.04, .1, tl, 6); tw.translate(0, tl / 2, 0); tw.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(up, td)); tw.translate(end.x - dir.x * .8, end.y - dir.y * .8, end.z - dir.z * .8); gs.push(barkG(tw)); }
     }
-    for (let k = 0; k < 9; k++) fs.push(blob(R(2.6, 3.8), 16, 12, leafHex, .62).translate(R(-3.4, 3.4), R(11, 14.5), R(-3.4, 3.4)));
+    const nC = Math.round(60 * dens);
+    ends.forEach(e => { for (let k = 0; k < 2; k++) fs.push(leafCluster(e.x + R(-1.2, 1.2), e.y + R(-.2, 1.6), e.z + R(-1.2, 1.2), R(2.2, 3.0), nC, R(1.5, 1.9), leafA, leafB)); });
+    for (let k = 0; k < 7; k++) fs.push(leafCluster(R(-3, 3), R(11, 14.5), R(-3, 3), R(2.8, 3.8), Math.round(nC * 1.3), R(1.6, 2.0), leafA, leafB));
     const grp = new THREE.Group();
-    const bm = new THREE.Mesh(merge(gs), barkMat), fm = new THREE.Mesh(merge(fs), windy(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .86 }), .45));
+    const bm = new THREE.Mesh(merge(gs), barkMat), fm = new THREE.Mesh(merge(fs), heroLeafMat);
     [bm, fm].forEach(m => { m.castShadow = true; m.receiveShadow = true; grp.add(m); }); grp.scale.setScalar(sc); return grp;
   }
-  const oak = bigTree(1.12, 0x4f7d3a); oak.position.set(5, 0, 3); oak.rotation.set(0, .4, .075); scene.add(oak);
+  const oak = bigTree(1.12, 0x77a04a, 0x416e30, mobile ? .7 : 1); oak.position.set(5, 0, 3); oak.rotation.set(0, .4, .075); scene.add(oak);
+  const oak2 = bigTree(.95, 0x6a9444, 0x3a6a2c, mobile ? .45 : .7); oak2.position.set(-31, 0, -19); oak2.rotation.y = 1.3; scene.add(oak2);
+
+  // ---------------------------------------------------------------- grass blades near the camera stops
+  {
+    const bg = new THREE.BufferGeometry(), w = .045, h = 1;
+    bg.setAttribute('position', new THREE.Float32BufferAttribute([-w, 0, 0, w, 0, 0, -w * .55, h * .55, 0, w * .55, h * .55, 0, 0, h, 0], 3));
+    bg.setAttribute('normal', new THREE.Float32BufferAttribute([0, 1, .2, 0, 1, .2, 0, 1, .2, 0, 1, .2, 0, 1, .2], 3));
+    const base = C(0x34501f), tip = C(0xa3bf62), mid = base.clone().lerp(tip, .55);
+    bg.setAttribute('color', new THREE.Float32BufferAttribute([...base.toArray(), ...base.toArray(), ...mid.toArray(), ...mid.toArray(), ...tip.toArray()], 3));
+    bg.setIndex([0, 1, 3, 0, 3, 2, 2, 3, 4]);
+    const gm = windy(new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: .9 }), 60);
+    const spots = [[S1, 33, mobile ? 9000 : 22000], [S3, 21, mobile ? 4000 : 9000], [S4, 36, mobile ? 1500 : 3500]];
+    const total = spots.reduce((a, s) => a + s[2], 0), im = new THREE.InstancedMesh(bg, gm, total); let n = 0;
+    const blocked = (x, z) => { const hx = x + 15, hz = z + 5; const lx = hx * Math.cos(.3) - hz * Math.sin(.3), lz = hx * Math.sin(.3) + hz * Math.cos(.3);
+      if (Math.abs(lx) < 7.6 && lz > -5.6 && lz < 7.6) return true; if (Math.hypot(x - 5, z - 3) < 1.3) return true;
+      const dx = x + 6, dz = z - 13, ax = dx * Math.cos(.3) - dz * Math.sin(.3), az = dx * Math.sin(.3) + dz * Math.cos(.3); return Math.abs(ax) < 2.8 && Math.abs(az) < 15; };
+    for (const [c, r, cnt] of spots) for (let i = 0; i < cnt; i++) {
+      const a = rnd() * 6.283, rr = (c === S4 ? 26 + rnd() * 10 : Math.sqrt(rnd()) * r), x = c.x + Math.cos(a) * rr, z = c.y + Math.sin(a) * rr;
+      if (c === S1 && blocked(x, z)) continue;
+      dummy.position.set(x, height(x, z), z); dummy.rotation.set(R(-.25, .25), R(0, 6.28), R(-.25, .25)); const s = R(.28, .62); dummy.scale.set(R(.8, 1.4), s, 1); dummy.updateMatrix(); im.setMatrixAt(n, dummy.matrix);
+      const lv = R(.75, 1.1); tint.setRGB(lv, lv * R(.95, 1.05), lv * R(.8, 1)); im.setColorAt(n, tint); n++;
+    }
+    im.count = n; im.receiveShadow = true; scene.add(im);
+  }
 
   // ---------------------------------------------------------------- house
   const house = new THREE.Group();
   const std = (hex, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color: hex, roughness: .85 }, o));
   const add = (g, m, x, y, z, parent = house) => { const me = new THREE.Mesh(g, m); me.position.set(x, y, z); me.castShadow = true; me.receiveShadow = true; parent.add(me); return me; };
-  add(new THREE.BoxGeometry(13, 5.6, 9.5), std(0xe7e0d0, { roughness: .9 }), 0, 2.8, 0);
-  { const sh = new THREE.Shape(); sh.moveTo(-7.4, 0); sh.lineTo(0, 3.9); sh.lineTo(7.4, 0); sh.lineTo(-7.4, 0);
-    const rg = new THREE.ExtrudeGeometry(sh, { depth: 10.6, bevelEnabled: false }); rg.translate(0, 0, -5.3); add(rg, std(0x34383d, { roughness: .7 }), 0, 5.6, 0); }
-  add(new THREE.BoxGeometry(1.1, 3, 1.1), std(0x7a4a36), 3.6, 8.2, -1.5);
-  const winMat = std(0xffc46b, { emissive: 0xffb54a, emissiveIntensity: 1.6, roughness: .4 });
-  [[-4.3, 2.9], [4.3, 2.9], [-1.6, 2.9]].forEach(([x, y]) => add(new THREE.BoxGeometry(1.7, 1.5, .12), winMat, x, y, 4.78));
-  [[-4.3, 2.9], [0, 2.9], [4.3, 2.9]].forEach(([x, y]) => add(new THREE.BoxGeometry(.12, 1.5, 1.7), winMat, 6.53, y, x * .7));
-  add(new THREE.BoxGeometry(1.4, 2.6, .14), std(0x5a3a28), 1.6, 1.3, 4.8);
-  add(new THREE.BoxGeometry(14, .25, 2.6), std(0x8c8478), 0, .12, 6.1);
+  const trim = std(0xf6f3ec, { roughness: .7 });
+  add(new THREE.BoxGeometry(13, 5.6, 9.5), new THREE.MeshStandardMaterial({ map: sidingTex, roughness: .9 }), 0, 2.8, 0);
+  add(new THREE.BoxGeometry(13.3, .5, 9.8), std(0x9a948a), 0, .25, 0);
+  { const sh = new THREE.Shape(); sh.moveTo(-7.5, 0); sh.lineTo(0, 3.9); sh.lineTo(7.5, 0); sh.lineTo(-7.5, 0);
+    const rg = new THREE.ExtrudeGeometry(sh, { depth: 10.8, bevelEnabled: false }); rg.translate(0, 0, -5.4);
+    const uv = rg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * .12, uv.getY(i) * .12);
+    add(rg, new THREE.MeshStandardMaterial({ map: roofTex, roughness: .8 }), 0, 5.6, 0); }
+  add(new THREE.BoxGeometry(1.1, 3.2, 1.1), std(0x8a5340), 3.6, 8.2, -1.5);
+  const winMat = std(0xffc46b, { emissive: 0xffb54a, emissiveIntensity: 1.6, roughness: .3 });
+  const winAt = (x, y, z, side) => { add(side ? new THREE.BoxGeometry(.1, 1.5, 1.6) : new THREE.BoxGeometry(1.6, 1.5, .1), winMat, x, y, z);
+    add(side ? new THREE.BoxGeometry(.08, 1.8, 1.9) : new THREE.BoxGeometry(1.9, 1.8, .08), trim, x - (side ? .02 : 0), y, z - (side ? 0 : .02));
+    add(side ? new THREE.BoxGeometry(.14, .08, 1.6) : new THREE.BoxGeometry(1.6, .08, .14), trim, x, y, z); };
+  [-4.3, -1.4, 4.3].forEach(x => winAt(x, 3, 4.8, false)); [-3, 0, 3].forEach(z => winAt(6.55, 3, z, true));
+  add(new THREE.BoxGeometry(1.3, 2.5, .14), std(0x6b3f2a), 1.6, 1.5, 4.82); add(new THREE.BoxGeometry(1.6, 2.7, .1), trim, 1.6, 1.5, 4.79);
+  add(new THREE.BoxGeometry(14.5, .22, 2.8), std(0x9c958b), 0, .12, 6.2);
+  [-6.5, 6.5].forEach(x => add(new THREE.BoxGeometry(.18, 5.6, .18), trim, x, 2.8, 4.8));
   house.position.set(-15, 0, -5); house.rotation.y = .3; scene.add(house);
-  { const dg = new THREE.PlaneGeometry(5.2, 30); dg.rotateX(-Math.PI / 2); const dw = new THREE.Mesh(dg, std(0x77746c, { roughness: 1 })); dw.position.set(-6, .06, 13); dw.rotation.y = .3; dw.receiveShadow = true; scene.add(dw); }
+  { const dg = new THREE.PlaneGeometry(5.2, 30); dg.rotateX(-Math.PI / 2); const dw = new THREE.Mesh(dg, std(0x86837b, { roughness: 1 })); dw.position.set(-6, .07, 13); dw.rotation.y = .3; dw.receiveShadow = true; scene.add(dw); }
 
-  // ---------------------------------------------------------------- storm site: fallen tree
+  // ---------------------------------------------------------------- storm site: fallen tree on a fence
   const storm = new THREE.Group(); storm.position.set(S3.x, 0, S3.y); scene.add(storm);
   { const gs = [], fs = [];
-    const t = new THREE.CylinderGeometry(.42, .8, 17, 12, 6); t.rotateZ(Math.PI / 2 - .05); t.translate(0, .75, 0); gs.push(bark(t, 0x4a3a2c));
-    const rp = new THREE.CylinderGeometry(2.6, 2.3, .9, 16, 1); rp.rotateZ(Math.PI / 2); rp.translate(8.8, 2, 0); gs.push(paint(rp, (c, x, y, z) => c.set(0x5e4632).multiplyScalar(.7 + .3 * (vnoise(y * 2, z * 2, 1) * .5 + .5))));
-    for (let i = 0; i < 7; i++) { const b = new THREE.CylinderGeometry(.08, .2, R(2.5, 4.5), 6); b.rotateZ(R(-1.2, 1.2)); b.rotateX(R(-1.2, 1.2)); b.translate(R(-7, 6), R(.8, 1.8), R(-1.5, 1.5)); gs.push(bark(b, 0x4a3a2c)); }
-    for (let i = 0; i < 9; i++) fs.push(blob(R(1.4, 2.6), 12, 9, 0x3d6430, .45).translate(R(-9.5, -2), R(.8, 2.4), R(-2.8, 2.8)));
-    for (let i = 0; i < 12; i++) { const b = new THREE.CylinderGeometry(.05, .12, R(1.2, 2.6), 5); b.rotateZ(Math.PI / 2 + R(-.4, .4)); b.rotateY(R(0, 6.28)); b.translate(R(-12, 12), .15, R(-9, 9)); gs.push(bark(b, 0x54412f)); }
-    const snag = new THREE.CylinderGeometry(.35, .62, 4.2, 10); snag.translate(9.5, 2.1, 3.8); gs.push(bark(snag, 0x463628));
-    const bm = new THREE.Mesh(merge(gs), barkMat), fm = new THREE.Mesh(merge(fs), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .9 }));
+    const t = new THREE.CylinderGeometry(.42, .82, 17, 14, 6); t.rotateZ(Math.PI / 2 - .05); t.translate(0, .75, 0); gs.push(barkG(t));
+    const rp = new THREE.CylinderGeometry(2.6, 2.3, .9, 18, 2); rp.rotateZ(Math.PI / 2); rp.translate(8.8, 2, 0);
+    { const p = rp.attributes.position; for (let i = 0; i < p.count; i++) { const k = 1 + vnoise(p.getY(i) * 1.5, p.getZ(i) * 1.5, 3) * .2; p.setY(i, (p.getY(i) - 2) * k + 2); p.setZ(i, p.getZ(i) * k); } rp.computeVertexNormals(); }
+    gs.push(paint(rp, (c, x, y, z) => c.set(0x7a5a3e).multiplyScalar(.55 + .3 * (vnoise(y * 2, z * 2, 1) * .5 + .5))));
+    for (let i = 0; i < 7; i++) { const b = new THREE.CylinderGeometry(.08, .22, R(2.5, 4.5), 7); b.rotateZ(R(-1.2, 1.2)); b.rotateX(R(-1.2, 1.2)); b.translate(R(-7, 6), R(.8, 1.8), R(-1.5, 1.5)); gs.push(barkG(b)); }
+    for (let i = 0; i < 9; i++) fs.push(leafCluster(R(-9.5, -2), R(.9, 2.4), R(-2.8, 2.8), R(1.4, 2.4), mobile ? 30 : 46, 1.5, 0x5b8a3c, 0x3b662a));
+    for (let i = 0; i < 14; i++) { const b = new THREE.CylinderGeometry(.05, .12, R(1.2, 2.6), 6); b.rotateZ(Math.PI / 2 + R(-.4, .4)); b.rotateY(R(0, 6.28)); b.translate(R(-12, 12), .15, R(-9, 9)); gs.push(barkG(b, 0x9a8470)); }
+    const snag = new THREE.CylinderGeometry(.35, .62, 4.2, 12); snag.translate(9.5, 2.1, 3.8); gs.push(barkG(snag));
+    const bm = new THREE.Mesh(merge(gs), barkMat), fm = new THREE.Mesh(merge(fs), leafMat);
     [bm, fm].forEach(m => { m.castShadow = true; m.receiveShadow = true; storm.add(m); }); storm.rotation.y = -.5;
-    const t2 = bigTree(.9, 0x3a6230); t2.position.set(-14, 0, -12); storm.add(t2);
-    // fence the tree came down on
-    const fm2 = std(0xd9d2c3); for (let i = 0; i < 14; i++) add(new THREE.BoxGeometry(.14, 1.3, .14), fm2, -12 + i * 2, .65, 7.5, storm);
-    add(new THREE.BoxGeometry(26, .14, .1), fm2, 1, 1.1, 7.5, storm);
+    const t2 = bigTree(.9, 0x5f8a3e, 0x34602a, mobile ? .45 : .7); t2.position.set(-14, 0, -12); storm.add(t2);
+    const fwood = std(0xd9d2c3, { roughness: .8 }); for (let i = 0; i < 14; i++) { const pst = add(new THREE.BoxGeometry(.14, 1.3, .14), fwood, -12 + i * 2, .65, 7.5, storm); if (i === 6 || i === 7) { pst.rotation.z = i === 6 ? .5 : -.4; pst.position.y = .45; } }
+    add(new THREE.BoxGeometry(11, .14, .1), fwood, -6.5, 1.1, 7.5, storm); add(new THREE.BoxGeometry(11, .14, .1), fwood, 8.5, 1.1, 7.5, storm);
   }
 
   // ---------------------------------------------------------------- clearing site: stumps, brush, chipper, truck
   const clr = new THREE.Group(); clr.position.set(S4.x, 0, S4.y); scene.add(clr);
   { const gs = [], fs = [];
     for (let i = 0; i < 26; i++) { const a = R(0, 6.28), r = Math.sqrt(rnd()) * 22, x = Math.cos(a) * r, z = Math.sin(a) * r, rr = R(.28, .62);
-      const s = new THREE.CylinderGeometry(rr, rr * 1.15, R(.3, .55), 10); s.translate(x, .2, z);
-      gs.push(paint(s, (c, px, py, pz, nx, ny) => ny > .9 ? c.set(0xd2ae78) : c.set(0x4a3a2b).multiplyScalar(.8 + .3 * Math.random()))); }
-    for (let k = 0; k < 4; k++) { const cx = R(-16, 16), cz = R(-16, -6); for (let i = 0; i < 6; i++) fs.push(blob(R(1.2, 2.2), 10, 8, 0x4c5a30, .45, .45).translate(cx + R(-2.4, 2.4), R(.4, 1.6), cz + R(-1.6, 1.6))); }
-    for (let i = 0; i < 9; i++) { const l = new THREE.CylinderGeometry(.32, .36, 4.4, 10); l.rotateZ(Math.PI / 2); l.translate(10 + (i % 4) * 0 , .35 + Math.floor(i / 4) * .62, 6 + (i % 4) * .66 - Math.floor(i / 4) * .33);
-      gs.push(paint(l, (c, x, y, z, nx) => Math.abs(nx) > .9 ? c.set(0xd4b07a) : c.set(0x4e3c2c))); }
-    const bm = new THREE.Mesh(merge(gs), barkMat), fm = new THREE.Mesh(merge(fs), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .95 }));
+      const s = new THREE.CylinderGeometry(rr, rr * 1.18, R(.3, .55), 12); s.translate(x, .2, z);
+      gs.push(paint(s, (c, px, py, pz, nx, ny) => ny > .9 ? c.set(0xe2c08a) : c.set(0x8f7a66))); }
+    for (let k = 0; k < 4; k++) { const cx = R(-16, 16), cz = R(-16, -6); for (let i = 0; i < 5; i++) fs.push(leafCluster(cx + R(-2.4, 2.4), R(.5, 1.5), cz + R(-1.6, 1.6), R(1.2, 2), mobile ? 26 : 40, 1.4, 0x6c7d40, 0x485a2c)); }
+    for (let i = 0; i < 9; i++) { const l = new THREE.CylinderGeometry(.32, .36, 4.4, 12); l.rotateZ(Math.PI / 2); l.translate(10, .35 + Math.floor(i / 4) * .62, 6 + (i % 4) * .66 - Math.floor(i / 4) * .33);
+      gs.push(paint(l, (c, x, y, z, nx) => Math.abs(nx) > .9 ? c.set(0xe2c08a) : c.set(0x8f7a66))); }
+    const bm = new THREE.Mesh(merge(gs), barkMat), fm = new THREE.Mesh(merge(fs), leafMat);
     [bm, fm].forEach(m => { m.castShadow = true; m.receiveShadow = true; clr.add(m); });
-    const yel = std(0xf2b20e, { roughness: .45, metalness: .1 }), blk = std(0x17191b, { roughness: .6 }), stl = std(0x3a3d40, { roughness: .5, metalness: .4 });
+    const yel = std(0xf2b20e, { roughness: .38, metalness: .15 }), blk = std(0x151719, { roughness: .7 }), stl = std(0x3a3d40, { roughness: .45, metalness: .5 });
     const ch = new THREE.Group(); ch.position.set(-4, 0, 9); ch.rotation.y = -.7; clr.add(ch);
     add(new THREE.BoxGeometry(2.6, 1.5, 1.8), yel, 0, 1.25, 0, ch);
     add(new THREE.BoxGeometry(1.5, 1.1, 1.9), yel, -1.9, 1.35, 0, ch).rotation.z = .35;
     add(new THREE.BoxGeometry(1.4, .9, 1.7), stl, 1.6, 1.6, 0, ch);
-    { const c = add(new THREE.CylinderGeometry(.28, .32, 2.6, 12), yel, 1.8, 2.9, 0, ch); c.rotation.z = -.55; }
-    [[.2, 1.05], [.2, -1.05]].forEach(([x, z]) => { const w = add(new THREE.CylinderGeometry(.5, .5, .38, 18), blk, x, .5, z, ch); w.rotation.x = Math.PI / 2; });
+    { const c = add(new THREE.CylinderGeometry(.28, .32, 2.6, 14), yel, 1.8, 2.9, 0, ch); c.rotation.z = -.55; }
+    [[.2, 1.05], [.2, -1.05]].forEach(([x, z]) => { const w = add(new THREE.CylinderGeometry(.5, .5, .38, 20), blk, x, .5, z, ch); w.rotation.x = Math.PI / 2; });
     add(new THREE.BoxGeometry(2.4, .14, .14), stl, 2.8, .7, 0, ch);
     const tk = new THREE.Group(); tk.position.set(4.5, 0, 13); tk.rotation.y = -.7; clr.add(tk);
-    const body = std(0x1f2a2f, { roughness: .35, metalness: .35 }), glass = std(0x1a2026, { roughness: .1, metalness: .6 });
+    const body = std(0x253239, { roughness: .28, metalness: .45 }), glass = std(0x141a20, { roughness: .08, metalness: .7 });
     add(new THREE.BoxGeometry(5.6, 1.0, 2.1), body, 0, 1.0, 0, tk); add(new THREE.BoxGeometry(2.3, 1.0, 2.0), body, .6, 1.95, 0, tk);
     add(new THREE.BoxGeometry(2.0, .7, 2.04), glass, .6, 2.05, 0, tk);
-    [[-1.9, 1.05], [-1.9, -1.05], [1.8, 1.05], [1.8, -1.05]].forEach(([x, z]) => { const w = add(new THREE.CylinderGeometry(.45, .45, .34, 18), blk, x, .45, z, tk); w.rotation.x = Math.PI / 2; });
+    [[-1.9, 1.05], [-1.9, -1.05], [1.8, 1.05], [1.8, -1.05]].forEach(([x, z]) => { const w = add(new THREE.CylinderGeometry(.45, .45, .34, 20), blk, x, .45, z, tk); w.rotation.x = Math.PI / 2; });
   }
 
-  // ---------------------------------------------------------------- sky, lights, rain
-  const skyU = { top: { value: C(0x46679a) }, hor: { value: C(0xf2b77a) }, sunC: { value: C(0xffd2a0) }, sunDir: { value: new THREE.Vector3() }, flash: { value: 0 } };
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(900, 32, 16), new THREE.ShaderMaterial({ uniforms: skyU, side: THREE.BackSide, depthWrite: false, fog: false,
+  // ---------------------------------------------------------------- sky with clouds, lights, rain
+  const skyU = { top: { value: C(0x46679a) }, hor: { value: C(0xf2b77a) }, sunC: { value: C(0xffd2a0) }, sunDir: { value: new THREE.Vector3() }, flash: { value: 0 },
+    cov: { value: .55 }, cdark: { value: 0 }, uTime: U.time };
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(1000, 48, 24), new THREE.ShaderMaterial({ uniforms: skyU, side: THREE.BackSide, depthWrite: false, fog: false,
     vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position,1.); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; gl_Position.z = gl_Position.w; }',
-    fragmentShader: `uniform vec3 top; uniform vec3 hor; uniform vec3 sunC; uniform vec3 sunDir; uniform float flash; varying vec3 vW;
-      void main(){ vec3 d = normalize(vW - cameraPosition); float h = max(d.y, 0.);
-        vec3 c = mix(hor, top, pow(h, .5)); float s = max(dot(d, normalize(sunDir)), 0.);
-        c += sunC * (pow(s, 900.) * 6. + pow(s, 12.) * .45 + pow(s, 3.) * .12); c = mix(c, hor, smoothstep(0., -.08, d.y)); c += vec3(.75,.8,.95) * flash;
+    fragmentShader: `uniform vec3 top; uniform vec3 hor; uniform vec3 sunC; uniform vec3 sunDir; uniform float flash; uniform float cov; uniform float cdark; uniform float uTime; varying vec3 vW;
+      float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float n2(vec2 p){ vec2 i = floor(p), f = fract(p), u = f * f * (3. - 2. * f); return mix(mix(h2(i), h2(i + vec2(1, 0)), u.x), mix(h2(i + vec2(0, 1)), h2(i + vec2(1, 1)), u.x), u.y); }
+      float fb(vec2 p){ float a = 0., w = .5; for (int i = 0; i < 5; i++){ a += w * n2(p); p = p * 2.03 + 17.1; w *= .5; } return a; }
+      void main(){ vec3 d = normalize(vW - cameraPosition); float h = max(d.y, 0.); vec3 sd = normalize(sunDir);
+        vec3 c = mix(hor, top, pow(h, .48)); float s = max(dot(d, sd), 0.);
+        c += sunC * (pow(s, 1200.) * 8. + pow(s, 14.) * .5 + pow(s, 3.) * .14);
+        if (d.y > 0.) { vec2 uv = d.xz / (d.y + .14) * 1.3 + vec2(uTime * .006, 0.);
+          float f = fb(uv), cl = smoothstep(cov, cov + .28, f) * smoothstep(.0, .22, d.y);
+          float lit = fb(uv + sd.xz * .08); vec3 cc = mix(hor * 1.08, vec3(1.), .35) * mix(1., .55, cdark) * (.8 + .35 * (f - lit) * 4.);
+          cc += sunC * pow(s, 5.) * .55 * (1. - cdark);
+          c = mix(c, cc, cl * .92); }
+        c = mix(c, hor, smoothstep(.02, -.06, d.y)); c += vec3(.75, .8, .95) * flash;
         gl_FragColor = vec4(c, 1.);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
       }` }));
   sky.renderOrder = -1; scene.add(sky);
   const hemi = new THREE.HemisphereLight(0xa9c0dc, 0x3a4a2a, .9); scene.add(hemi);
+  const fill = new THREE.DirectionalLight(0x8eaed6, .45); scene.add(fill, fill.target);
   const sun = new THREE.DirectionalLight(0xffd2a0, 2.6); sun.castShadow = true;
-  sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048); const sc = sun.shadow.camera; sc.left = -48; sc.right = 48; sc.top = 48; sc.bottom = -48; sc.near = 1; sc.far = 400; sun.shadow.bias = -.0004; sun.shadow.normalBias = .04;
+  const SM = mobile ? 2048 : 4096; sun.shadow.mapSize.set(SM, SM); const sc = sun.shadow.camera; sc.left = -42; sc.right = 42; sc.top = 42; sc.bottom = -42; sc.near = 1; sc.far = 420;
+  sun.shadow.bias = -.00025; sun.shadow.normalBias = .035;
   scene.add(sun, sun.target);
-  const RN = mobile ? 1600 : 2600, rp = new Float32Array(RN * 6), re = new Float32Array(RN * 2);
+  const RN = mobile ? 1800 : 3200, rp = new Float32Array(RN * 6), re = new Float32Array(RN * 2);
   for (let i = 0; i < RN; i++) { const x = R(-35, 35), y = R(0, 40), z = R(-35, 35); rp.set([x, y, z, x, y, z], i * 6); re[i * 2 + 1] = 1; }
   const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.BufferAttribute(rp, 3)); rg.setAttribute('aEnd', new THREE.BufferAttribute(re, 1));
   const rainU = { uTime: { value: 0 }, uOp: { value: 0 } };
   const rain = new THREE.LineSegments(rg, new THREE.ShaderMaterial({ uniforms: rainU, transparent: true, depthWrite: false, fog: false,
-    vertexShader: 'uniform float uTime; attribute float aEnd; void main(){ vec3 p = position; p.y = mod(p.y - uTime * 26., 40.) - 12.; p.y += aEnd * 1.1; p.x += aEnd * .22; gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.); }',
-    fragmentShader: 'uniform float uOp; void main(){ gl_FragColor = vec4(.78,.84,.9, uOp * .45); }' }));
+    vertexShader: 'uniform float uTime; attribute float aEnd; varying float vE; void main(){ vec3 p = position; p.y = mod(p.y - uTime * 26., 40.) - 12.; p.y += aEnd * 1.1; p.x += aEnd * .22; vE = aEnd; gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.); }',
+    fragmentShader: 'uniform float uOp; varying float vE; void main(){ gl_FragColor = vec4(.8,.85,.92, uOp * .42 * (1. - vE * .7)); }' }));
   rain.frustumCulled = false; scene.add(rain);
 
   // ---------------------------------------------------------------- moods (golden hour, storm, morning)
   const MOODS = [
-    { top: 0x3d5f92, hor: 0xf0b07a, sunC: 0xffc98f, sunI: 3.1, sunDir: [.55, .3, -.78], hs: 0xb4c8e0, hg: 0x4a5a32, hI: 1.2, fog: 0xc79a7a, fd: .0040, exp: 1.05, wind: 1 },
-    { top: 0x36404d, hor: 0x77808b, sunC: 0xa9b4c2, sunI: .95, sunDir: [-.3, .6, -.4], hs: 0x96a2b0, hg: 0x323b30, hI: 1.15, fog: 0x68727c, fd: .0062, exp: 1.0, wind: 3.2 },
-    { top: 0x5b8fc6, hor: 0xf3d6ae, sunC: 0xfff0d2, sunI: 2.3, sunDir: [.55, .42, -.62], hs: 0xbad2ea, hg: 0x4a5a34, hI: .95, fog: 0xbfcbd0, fd: .0034, exp: 1.08, wind: .8 },
+    { top: 0x3c5f95, hor: 0xf3b37c, sunC: 0xffc78a, sunI: 3.3, sunDir: [.55, .27, -.79], hs: 0xbcd0e6, hg: 0x5d6b3c, hI: 1.25, fillI: .65, fog: 0xd2a684, fd: .0036, exp: 1.04, wind: 1, cov: .56, cdark: 0 },
+    { top: 0x353f4b, hor: 0x737c87, sunC: 0xaab5c3, sunI: .9, sunDir: [-.3, .6, -.4], hs: 0xa8b4c2, hg: 0x46503e, hI: 1.45, fillI: .35, fog: 0x69737d, fd: .0062, exp: 1.0, wind: 3.4, cov: .28, cdark: .85 },
+    { top: 0x5a8fc8, hor: 0xf3d8b2, sunC: 0xfff0d2, sunI: 2.9, sunDir: [.5, .45, -.62], hs: 0xbad2ea, hg: 0x4f5e36, hI: 1.0, fillI: .5, fog: 0xc2cdd2, fd: .0031, exp: 1.06, wind: .8, cov: .6, cdark: 0 },
   ].map(m => ({ ...m, top: C(m.top), hor: C(m.hor), sunC: C(m.sunC), hs: C(m.hs), hg: C(m.hg), fog: C(m.fog), sunDir: new THREE.Vector3(...m.sunDir).normalize() }));
-  const tmpC = new THREE.Color(), tmpV = new THREE.Vector3();
+  const tmpV = new THREE.Vector3();
   function applyMood(m, flash) {
-    const i = Math.min(1, Math.floor(m)), t = Math.min(1, m - i), a = MOODS[i], b = MOODS[i + 1];
+    const i = Math.min(1, Math.floor(m)), t = Math.min(1, m - i), a = MOODS[i], b = MOODS[i + 1], L = (x, y) => x + (y - x) * t;
     skyU.top.value.copy(a.top).lerp(b.top, t); skyU.hor.value.copy(a.hor).lerp(b.hor, t); skyU.sunC.value.copy(a.sunC).lerp(b.sunC, t); skyU.flash.value = flash * .9;
+    skyU.cov.value = L(a.cov, b.cov); skyU.cdark.value = L(a.cdark, b.cdark);
     tmpV.copy(a.sunDir).lerp(b.sunDir, t).normalize(); skyU.sunDir.value.copy(tmpV);
-    sun.color.copy(a.sunC).lerp(b.sunC, t); sun.intensity = a.sunI + (b.sunI - a.sunI) * t;
-    hemi.color.copy(a.hs).lerp(b.hs, t); hemi.groundColor.copy(a.hg).lerp(b.hg, t); hemi.intensity = a.hI + (b.hI - a.hI) * t + flash * 2.4;
-    fog.color.copy(a.fog).lerp(b.fog, t); fog.density = a.fd + (b.fd - a.fd) * t;
-    renderer.toneMappingExposure = a.exp + (b.exp - a.exp) * t; U.wind.value = a.wind + (b.wind - a.wind) * t;
+    sun.color.copy(a.sunC).lerp(b.sunC, t); sun.intensity = L(a.sunI, b.sunI); fill.intensity = L(a.fillI, b.fillI);
+    hemi.color.copy(a.hs).lerp(b.hs, t); hemi.groundColor.copy(a.hg).lerp(b.hg, t); hemi.intensity = L(a.hI, b.hI) + flash * 2.4;
+    fog.color.copy(a.fog).lerp(b.fog, t); fog.density = L(a.fd, b.fd);
+    renderer.toneMappingExposure = L(a.exp, b.exp); U.wind.value = L(a.wind, b.wind);
     winMat.emissiveIntensity = 1.6 * (1 - Math.max(0, m - 1)) + .2;
     return tmpV;
   }
@@ -248,52 +355,56 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
   // ---------------------------------------------------------------- shots
   const v = (x, y, z) => new THREE.Vector3(x, y, z), s3 = (x, y, z) => v(S3.x + x, y, S3.y + z), s4 = (x, y, z) => v(S4.x + x, y, S4.y + z);
   const SHOTS = [
-    { a: [v(70, 96, 210), v(0, 6, 0)], b: [v(52, 70, 160), v(-2, 6, 0)] },                       // intro: aerial approach
-    { a: [v(30, 3.2, 31), v(4, 9, 3)], b: [v(21, 2.6, 26), v(1, 10.5, 2)] },                       // 1 removal: low angle under the oak, house in frame
-    { a: [v(27, 9, 21), v(4, 11, 3)], b: [v(22, 21, 17), v(3, 16, 2)] },                          // 2 trimming: rise up through the canopy
-    { a: [s3(-14, 3.6, 15), s3(0, 1.2, 0)], b: [s3(-9, 2.8, 10), s3(2, 1.4, 0)] },                  // 3 storm: low, close, rain
-    { a: [s4(34, 16, 36), s4(0, 0, 2)], b: [s4(22, 34, 26), s4(-2, 0, -2)] },                      // 4 clearing: aerial reveal at morning
+    { a: [v(70, 96, 210), v(0, 6, 0)], b: [v(52, 70, 160), v(-2, 6, 0)] },                        // intro: aerial approach
+    { a: [v(29, 2.6, 30), v(3, 9.5, 3)], b: [v(21, 2.2, 25), v(1, 10.5, 2)] },                     // 1 removal: low under the oak, house in frame
+    { a: [v(27, 9, 21), v(4, 11, 3)], b: [v(22, 21, 17), v(3, 16, 2)] },                           // 2 trimming: rise alongside the canopy
+    { a: [s3(-14, 3.2, 15), s3(0, 1.2, 0)], b: [s3(-9, 2.6, 10), s3(2, 1.4, 0)] },                  // 3 storm
+    { a: [s4(34, 16, 36), s4(0, 0, 2)], b: [s4(22, 34, 26), s4(-2, 0, -2)] },                       // 4 clearing
   ];
   const END = [s4(28, 92, 120), s4(-10, 0, -20)];
   const ease = { io: t => t < .5 ? 16 * t ** 5 : 1 - Math.pow(-2 * t + 2, 5) / 2, sine: t => -(Math.cos(Math.PI * t) - 1) / 2 };
-  const P = v(0, 0, 0), L = v(0, 0, 0);
+  const P = v(0, 0, 0), Lk = v(0, 0, 0);
   function pose(p) {
-    let roll = 0, fovK = 0, mood = 0, flash = 0;
-    const hold = (sh, u) => { const e = ease.sine(u); P.lerpVectors(sh.a[0], sh.b[0], e); L.lerpVectors(sh.a[1], sh.b[1], e); };
-    const swoop = (from, to, t, k) => { const e = ease.io(t), lift = Math.sin(Math.PI * e); P.lerpVectors(from[0], to[0], e); P.y += lift * 34; L.lerpVectors(from[1], to[1], e); L.y += lift * 8;
+    let roll = 0, fovK = 0, mood = 0, storm = false;
+    const hold = (sh, u) => { const e = ease.sine(Math.min(1, Math.max(0, u))); P.lerpVectors(sh.a[0], sh.b[0], e); Lk.lerpVectors(sh.a[1], sh.b[1], e); };
+    const swoop = (from, to, t, k) => { const e = ease.io(t), lift = Math.sin(Math.PI * e); P.lerpVectors(from[0], to[0], e); P.y += lift * 34; Lk.lerpVectors(from[1], to[1], e); Lk.y += lift * 8;
       roll = Math.sin(Math.PI * e) * (k % 2 ? .16 : -.16); fovK = Math.sin(Math.PI * Math.min(1, t * 1.15)); };
     if (p < IH) hold(SHOTS[0], p / IH);
     else {
       let done = false;
       for (let k = 0; k < N; k++) {
         const t0 = IH + k * (TL + HL), h0 = t0 + TL, h1 = h0 + HL;
-        if (p < h0) { swoop(SHOTS[k].b, SHOTS[k + 1].a, (p - t0) / TL, k); if (k === 2) mood = (p - t0) / TL; if (k === 3) mood = 1 + (p - t0) / TL; if (k > 3) mood = 2; done = true; break; }
-        if (p < h1) { const u = (p - h0) / HL; hold(SHOTS[k + 1], u); mood = k === 2 ? 1 : k === 3 ? 2 : 0; if (k === 2) flash = Math.max(0, 1 - Math.abs(u - .1) / .025) + .6 * Math.max(0, 1 - Math.abs(u - .16) / .015); done = true; break; }
+        if (p < h0) { swoop(SHOTS[k].b, SHOTS[k + 1].a, (p - t0) / TL, k); if (k === 2) mood = (p - t0) / TL; if (k === 3) mood = 1 + (p - t0) / TL; done = true; break; }
+        if (p < h1) { hold(SHOTS[k + 1], (p - h0) / HL); mood = k === 2 ? 1 : k === 3 ? 2 : 0; storm = k === 2; done = true; break; }
       }
-      if (!done) { const t0 = IH + N * (TL + HL), t = Math.min(1, (p - t0) / (1 - t0)), e = ease.sine(t); P.lerpVectors(SHOTS[N].b[0], END[0], e); L.lerpVectors(SHOTS[N].b[1], END[1], e); mood = 2; }
+      if (!done) { const t0 = IH + N * (TL + HL), t = Math.min(1, (p - t0) / (1 - t0)), e = ease.sine(t); P.lerpVectors(SHOTS[N].b[0], END[0], e); Lk.lerpVectors(SHOTS[N].b[1], END[1], e); mood = 2; }
     }
-    return { roll, fovK, mood, flash };
+    return { roll, fovK, mood, storm };
   }
 
   // ---------------------------------------------------------------- loop
-  const cp = v(70, 96, 210), cl = v(0, 6, 0); let cRoll = 0, cFov = 0, last = performance.now(), running = false, raf = 0, W = 0, H = 0;
+  const cp = v(70, 96, 210), cl = v(0, 6, 0); let cRoll = 0, cFov = 0, last = performance.now(), running = false, raf = 0, W = 0, H = 0, wasStorm = false, flashT = -9;
   function resize() { const w = stage.clientWidth, h = stage.clientHeight; if (w === W && h === H) return; W = w; H = h; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  const drift = v(0, 0, 0), up = v(-1, .5, -1);
   function frame(now) {
-    raf = requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000); last = now; U.time.value += dt; rainU.uTime.value = U.time.value;
+    raf = requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000); last = now; const tt = (U.time.value += dt); rainU.uTime.value = tt;
     resize();
-    const p = getP(), st = pose(p), k = 1 - Math.exp(-dt * 6.5);
-    cp.lerp(P, k); cl.lerp(L, k); cRoll += (st.roll - cRoll) * k; cFov += (st.fovK - cFov) * k;
-    const baseFov = camera.aspect < 1 ? 62 : 46; camera.fov = baseFov + cFov * 20; camera.updateProjectionMatrix();
-    camera.position.copy(cp); const gy = height(cp.x, cp.z) + 1.2; if (camera.position.y < gy) camera.position.y = gy;
+    const p = getP(), st = pose(p), k = 1 - Math.exp(-dt * 5.5);
+    cp.lerp(P, k); cl.lerp(Lk, k); cRoll += (st.roll - cRoll) * k; cFov += (st.fovK - cFov) * k;
+    const baseFov = camera.aspect < 1 ? 60 : 44; camera.fov = baseFov + cFov * 20; camera.updateProjectionMatrix();
+    drift.set(Math.sin(tt * .23) * .9, Math.sin(tt * .17) * .35, Math.cos(tt * .19) * .9).multiplyScalar(1 - Math.min(1, cFov * 3));   // slow living drift while resting
+    camera.position.copy(cp).add(drift); const gy = height(camera.position.x, camera.position.z) + 1.1; if (camera.position.y < gy) camera.position.y = gy;
     camera.lookAt(cl); camera.rotateZ(cRoll);
-    const sd = applyMood(Math.max(0, Math.min(2, st.mood)), st.flash);
-    sun.target.position.copy(cl); sun.position.copy(cl).addScaledVector(sd, 160); sky.position.copy(camera.position);
-    rain.position.copy(camera.position); rainU.uOp.value = Math.max(0, 1 - Math.abs(st.mood - 1) * 1.6);
+    if (st.storm && !wasStorm) flashT = tt + .55; wasStorm = st.storm;                                                                  // lightning shortly after the storm shot lands
+    const fe = tt - flashT, fl = fe < 0 ? 0 : Math.max(0, 1 - fe / .12) + (fe > .2 ? Math.max(0, .7 - (fe - .2) / .1) : 0);
+    const sd = applyMood(Math.max(0, Math.min(2, st.mood)), st.mood > .5 && st.mood < 1.5 ? fl : 0);
+    sun.target.position.copy(cl); sun.position.copy(cl).addScaledVector(sd, 180);
+    fill.target.position.copy(cl); up.set(-sd.x, .5, -sd.z); fill.position.copy(cl).addScaledVector(up, 100);
+    sky.position.copy(camera.position); rain.position.copy(camera.position); rainU.uOp.value = Math.max(0, 1 - Math.abs(st.mood - 1) * 1.6);
     renderer.render(scene, camera);
   }
   function start() { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
   function stop() { running = false; cancelAnimationFrame(raf); }
-  // first frame snaps to the current pose
-  { const st = pose(getP()); cp.copy(P); cl.copy(L); resize(); }
+  { pose(getP()); cp.copy(P); cl.copy(Lk); resize(); }
   return { start, stop };
 }
