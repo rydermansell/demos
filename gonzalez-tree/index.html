@@ -133,17 +133,18 @@ html.motion:not(.seen){--intro:1.55s}
 .st-end{padding-top:30px}
 
 /* motion: pinned stage, the photo grows from a card to full screen, chapters play over it */
-.motion .story{height:520vh;padding:0}
+.motion .story{height:640vh;padding:0}
 .motion .st-stage{position:sticky;top:0;height:100vh;height:100svh;max-width:none;padding:0;overflow:hidden;isolation:isolate}
-.motion .st-head,.motion .st-end{position:absolute;left:20px;right:20px;top:clamp(110px,15vh,150px);text-align:center;will-change:opacity,transform}
+.motion .st-head,.motion .st-end{position:absolute;z-index:3;left:20px;right:20px;top:clamp(110px,15vh,150px);text-align:center;will-change:opacity,transform}
 .motion .st-head h2,.motion .st-end h2{font-size:clamp(38px,8.4vw,80px);text-wrap:balance}
 .motion .st-end{opacity:0;display:grid;justify-items:center}
-.motion .st-media{display:block;position:absolute;inset:0;margin:0;background:#0a120d;clip-path:inset(50% 50% 50% 50%);will-change:clip-path}
-.motion .st-media img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;border-radius:0;opacity:0;transform:scale(1.16);will-change:transform,opacity;filter:saturate(.9) contrast(1.06)}
-.motion .st-media img:first-child{opacity:1}
-.motion .st-shade{display:block;position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(9,15,11,.55) 0%,rgba(9,15,11,0) 26%,rgba(9,15,11,0) 42%,rgba(9,15,11,.88) 82%,rgba(9,15,11,.96) 100%),radial-gradient(120% 80% at 50% 50%,transparent 55%,rgba(0,0,0,.35));opacity:0}
-.motion .st-shade::after{content:"";position:absolute;inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.motion .st-media{display:none}
+.st-canvas,.st-grain{display:none}
+.motion .st-canvas{display:block;position:absolute;inset:0;width:100%;height:100%;background:#0d1610}
+.motion .st-shade{display:block;position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(9,15,11,.5) 0%,rgba(9,15,11,0) 22%,rgba(9,15,11,0) 52%,rgba(9,15,11,.72) 86%,rgba(9,15,11,.85) 100%)}
+.motion .st-grain{display:block;position:absolute;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.motion .st-head h2,.motion .st-end h2{text-shadow:0 2px 30px rgba(0,0,0,.35)}
+.motion .st-t,.motion .st-d{text-shadow:0 1px 18px rgba(0,0,0,.45)}
 .motion .st-rail{display:flex;gap:6px;position:absolute;left:22px;right:22px;top:calc(104px + env(safe-area-inset-top,0px));opacity:0}
 .st-rail i{flex:1;height:3px;border-radius:2px;background:rgba(243,238,226,.22);overflow:hidden}
 .st-rail b{display:block;height:100%;background:var(--cream);transform-origin:0 50%;transform:scaleX(0)}
@@ -158,7 +159,7 @@ html.motion:not(.seen){--intro:1.55s}
   .motion .st-chs{top:0;padding:0}
   .motion .st-ch{left:max(40px,calc((100vw - 1140px)/2 + 20px));right:auto;width:min(40vw,440px);bottom:auto;top:calc(50% - 130px)}
   .motion .st-t{font-size:clamp(44px,4.6vw,66px)}
-  .motion .st-shade{background:radial-gradient(120% 80% at 50% 50%,transparent 60%,rgba(0,0,0,.3))}
+  .motion .st-shade{background:linear-gradient(90deg,rgba(9,15,11,.78) 0%,rgba(9,15,11,.35) 38%,rgba(9,15,11,0) 60%),linear-gradient(180deg,rgba(9,15,11,.45) 0%,rgba(9,15,11,0) 20%)}
 }
 
 /* ---------- numbers + rings ---------- */
@@ -405,7 +406,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <section class="story" id="takedown" aria-label="What Gonzalez does">
   <div class="st-stage" id="stStage">
     <div class="st-head" id="stHead"><h2>Every tree job.<br>Start to finish.</h2></div>
-    <div class="st-media" id="stMedia"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" decoding="async"><img src="img/p4.jpg" alt="Tall hardwoods seen from below" loading="lazy" decoding="async"><img src="img/p2.jpg" alt="Gonzalez chipper beside a large tree" loading="lazy" decoding="async"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy" decoding="async"><span class="st-shade" aria-hidden="true"></span></div>
+    <div class="st-media" id="stMedia"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" decoding="async"><img src="img/p4.jpg" alt="Tall hardwoods seen from below" loading="lazy" decoding="async"><img src="img/p2.jpg" alt="Gonzalez chipper beside a large tree" loading="lazy" decoding="async"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy" decoding="async"></div>
+    <canvas class="st-canvas" id="stCanvas" aria-hidden="true"></canvas><span class="st-shade" aria-hidden="true"></span><span class="st-grain" aria-hidden="true"></span>
     <div class="st-rail" id="stRail" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
     <div class="st-chs">
       <div class="st-ch"><p class="st-lbl">Tree removal</p><h3 class="st-t"><span>Down safely, even in tight spots.</span></h3><p class="st-d">Dead, leaning or too close to the house. We can grind the stump while we’re there.</p></div>
@@ -632,7 +634,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
   <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
-  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 9)</span></div>
+  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 10)</span></div>
 </div></footer>
 
 <div class="sticky" id="sticky"><a class="btn hv" href="#quote">Get my price</a><a class="btn dk" href="tel:+18653674667" target="_top" aria-label="Call"><svg width="18" height="18" aria-hidden="true"><use href="#ph"/></svg>Call</a></div>
@@ -664,39 +666,26 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
     function measure(){ VH=innerHeight; HH=hero.offsetHeight; heroH=HH;
       T.td=td?top(td):0; T.tdH=td?td.offsetHeight:0; rects(); T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
-    /* story: photo-led scroll sequence */
-    const td=$('#takedown'), stage=$('#stStage'), media=$('#stMedia'), simgs=$$('#stMedia img'), shade=$('.st-shade'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead'), send=$('#stEnd');
-    const NC=chs.length, A0=.03, A1=.17, B0=.19, BL=(.86-.19)/NC, C0=.88, C1=.98;
-    const lerp=(a,b,t)=>a+(b-a)*t, io3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-    let R=null, lastTd=-1;
-    function rects(){ if(!td) return; const vw=stage.clientWidth, vh=stage.clientHeight, desk=vw>=860;
-      const ht=shead.offsetTop+shead.offsetHeight+22, room=vh-ht-34;
-      let cw=desk?Math.min(320,vw*.24):Math.min(330,Math.max(180,vw*.64)), ch=cw*1.25; if(ch>room){ ch=room; cw=ch/1.25; }
-      const t0=ht+Math.max(0,(room-ch)*.38);
-      const S={t:t0,l:(vw-cw)/2,w:cw,h:ch,r:22};
-      let F={t:0,l:0,w:vw,h:vh,r:0};
-      if(desk){ const hd=$('#top').offsetHeight, W=Math.min(540,vw*.42), H=Math.min(vh-hd-80,W*1.28), rg=Math.max(40,(vw-1140)/2+20); F={t:hd+(vh-hd-H)/2,l:vw-rg-W,w:W,h:H,r:26}; }
-      R={S,F,vw,vh,desk}; lastTd=-1; }
-    function clip(a,b,t){ const r={t:lerp(a.t,b.t,t),l:lerp(a.l,b.l,t),w:lerp(a.w,b.w,t),h:lerp(a.h,b.h,t),r:lerp(a.r,b.r,t)};
-      media.style.clipPath='inset('+r.t.toFixed(1)+'px '+(R.vw-r.l-r.w).toFixed(1)+'px '+(R.vh-r.t-r.h).toFixed(1)+'px '+r.l.toFixed(1)+'px round '+r.r.toFixed(1)+'px)'; }
-    function scene(y){ if(!td||!R) return; const p=cl((y-T.td)/(T.tdH-VH)); if(Math.abs(p-lastTd)<0.0002) return; lastTd=p;
-      const e1=io3(cl((p-A0)/(A1-A0))), e3=io3(cl((p-C0)/(C1-C0)));
-      if(e3>0) clip(R.F,R.S,e3); else clip(R.S,R.F,e1);
-      const full=e1*(1-e3);
-      shead.style.opacity=(1-cl((p-A0)/.07)).toFixed(3); shead.style.transform='translate3d(0,'+(-36*cl((p-A0)/.1)).toFixed(1)+'px,0) scale('+(1-.04*cl((p-A0)/.1)).toFixed(4)+')';
-      const en=eo(cl((p-(C0+.04))/.07)); send.style.opacity=en.toFixed(3); send.style.transform='translate3d(0,'+((1-en)*30).toFixed(1)+'px,0)'; send.style.pointerEvents=en>.5?'auto':'none';
-      shade.style.opacity=full.toFixed(3); rail.style.opacity=cl((full-.6)/.4).toFixed(3);
-      const c=Math.min(NC-.0001,Math.max(0,(p-B0)/BL));
-      simgs.forEach((im,i)=>{ const o=i?cl((c-(i-.14))/.28):1, k=cl((c-(i-.35))/1.5);
-        im.style.opacity=o.toFixed(3); im.style.transform='translate3d(0,'+(lerp(14,-14,k)).toFixed(1)+'px,0) scale('+(lerp(1.17,1.06,k)*(1+.05*(1-e1))).toFixed(4)+')'; });
-      bars.forEach((b,i)=>{ b.style.transform='scaleX('+cl(c-i).toFixed(4)+')'; });
-      chs.forEach((el,k)=>{ const u=c-k, inn=eo(cl((u+.16)/.26))*cl((full-.75)/.25), out=cl((u-.8)/.18)+(k===NC-1?0:0), vis=inn*(1-out);
-        const [lb,tt,dd]=el.children, sp=tt.firstElementChild;
-        sp.style.transform='translate3d(0,'+((1-inn)*110-out*40).toFixed(1)+'%,0)'; tt.style.opacity=(1-out).toFixed(3);
-        const late=eo(cl((u+.08)/.26))*cl((full-.75)/.25)*(1-out);
-        lb.style.opacity=vis.toFixed(3); lb.style.transform='translate3d(0,'+((1-inn)*12).toFixed(1)+'px,0)';
+    /* story: 3D drone flight (camera in story3d.js), overlay text follows the same timeline */
+    const td=$('#takedown'), stage=$('#stStage'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead'), send=$('#stEnd');
+    const ST={IH:.07, TL:.045, HL:.17, N:chs.length}; let curP=0, lastTd=-1;
+    function rects(){}
+    function scene(y){ if(!td) return; const p=cl((y-T.td)/(T.tdH-VH)); curP=p; if(Math.abs(p-lastTd)<0.0002) return; lastTd=p;
+      const IH=ST.IH, TL=ST.TL, HL=ST.HL, endA=IH+ST.N*(TL+HL);
+      const hf=cl((p-IH*.6)/(IH*.5+TL*.3)); shead.style.opacity=(1-hf).toFixed(3); shead.style.transform='translate3d(0,'+(-40*hf).toFixed(1)+'px,0) scale('+(1-.05*hf).toFixed(4)+')';
+      const en=eo(cl((p-(endA+.025))/.03)); send.style.opacity=en.toFixed(3); send.style.transform='translate3d(0,'+((1-en)*30).toFixed(1)+'px,0)'; send.style.pointerEvents=en>.5?'auto':'none';
+      rail.style.opacity=(cl((p-IH)/TL)*(1-cl((p-endA)/.02))).toFixed(3);
+      chs.forEach((el,k)=>{ const h0=IH+k*(TL+HL)+TL, u=(p-h0)/HL, [lb,tt,dd]=el.children, sp=tt.firstElementChild;
+        bars[k].style.transform='scaleX('+cl(u).toFixed(4)+')';
+        const inn=eo(cl((u-.02)/.16)), out=cl((u-.86)/.1), late=eo(cl((u-.07)/.18))*(1-out);
+        sp.style.transform='translate3d(0,'+((1-inn)*110-out*30).toFixed(1)+'%,0)'; tt.style.opacity=(u<-.01?0:1-out).toFixed(3);
+        lb.style.opacity=(inn*(1-out)).toFixed(3); lb.style.transform='translate3d(0,'+((1-inn)*12).toFixed(1)+'px,0)';
         dd.style.opacity=late.toFixed(3); dd.style.transform='translate3d(0,'+((1-late)*16).toFixed(1)+'px,0)'; });
     }
+    if(td){ const boot=()=>import('./story3d.js').then(m=>{ const fx=m.initStory({canvas:$('#stCanvas'), stage, getP:()=>curP, T:ST, mobile:matchMedia('(max-width: 859px)').matches});
+        const so=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?fx.start():fx.stop()),{rootMargin:'200px 0px'}); so.observe(td); })
+        .catch(err=>{ console.warn('3D story unavailable', err); document.documentElement.classList.remove('motion'); measure(); });
+      if(document.readyState==='complete') setTimeout(boot,60); else addEventListener('load',()=>setTimeout(boot,60)); }
     function update(){
       const y=scrollY;
       if(y<HH*1.3){ const p=cl(y/HH);
