@@ -18,6 +18,7 @@
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-io:cubic-bezier(.65,0,.35,1); --sans:'Public Sans',system-ui,-apple-system,sans-serif;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 html,body{overflow-x:hidden}@supports(overflow:clip){html,body{overflow-x:clip}}
 body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -165,8 +166,8 @@ h2 .hv{color:inherit}
 .qt-sec::before{content:"";position:absolute;inset:0;opacity:.05;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 .qt-sec h2 .hv{color:inherit}
 .qt-sec .intro{color:#b7c4b3}
-.qlay{display:grid;gap:10px;position:relative;perspective:1400px}
-@media(min-width:960px){.qlay{grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}.qlay .qside{position:sticky;top:130px}}
+.qlay{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;position:relative}
+@media(min-width:960px){.qlay{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:56px;align-items:start}.qlay .qside{position:sticky;top:130px}}
 .perks{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:12px}
 .perks li{display:flex;gap:12px;align-items:center;font-weight:600;color:#dfe6dc}
 .perks li::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;background:var(--hv) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%231a1203' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
@@ -305,6 +306,32 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .pricebox .amt{transform-origin:0 60%}
 .pricebox .amt.swing{animation:tagswing .7s cubic-bezier(.3,1.6,.5,1)}
 @keyframes tagswing{0%{transform:rotate(-7deg) scale(.94);opacity:.4}60%{transform:rotate(2deg)}100%{transform:none;opacity:1}}
+
+/* ---------- booking: day chips + time grid ---------- */
+.days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;margin:0 -22px;padding:2px 22px 10px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:none;scroll-snap-align:start;width:64px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:9px 4px 8px;text-align:center;cursor:pointer;
+  transition:border-color .2s var(--ease-out),background-color .2s var(--ease-out),transform .14s var(--ease-out)}
+.day small{display:block;font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+.day b{display:block;font-family:var(--cond);font-stretch:80%;font-weight:800;font-size:24px;line-height:1.05}
+.day i{display:block;font-style:normal;font-size:11px;color:#3f8f4c;font-weight:700;margin-top:2px}
+.day:active{transform:scale(.97)}
+.day[aria-selected=true]{border-color:var(--ink);background:var(--ink);color:var(--cream)}.day[aria-selected=true] small{color:#c9d3c5}.day[aria-selected=true] i{color:var(--hv)}
+.times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;min-height:96px}
+.time{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:12px 4px;font-weight:700;font-size:15px;cursor:pointer;font-variant-numeric:tabular-nums;
+  opacity:0;transform:translate3d(0,8px,0);animation:tin .32s var(--ease-out) forwards;animation-delay:calc(var(--k,0) * 28ms);transition:border-color .2s,background-color .2s,transform .14s}
+@keyframes tin{to{opacity:1;transform:none}}
+.time:hover{border-color:#b9ad92}.time:active{transform:scale(.97)}
+.time[aria-pressed=true]{background:var(--hv);border-color:var(--ink);color:#1a1203}
+.time.sk,.day.sk{pointer-events:none;border-color:transparent;background:linear-gradient(90deg,#eee6d3 0%,#f6f0e2 50%,#eee6d3 100%);background-size:200% 100%;animation:sk 1.1s linear infinite;color:transparent;opacity:1;transform:none}
+@keyframes sk{to{background-position:-200% 0}}
+.slotmsg{margin:10px 0 0;padding:11px 13px;border-radius:10px;background:#f6ecd9;font-size:14.5px;font-weight:600}
+.opt.urgent b{color:#9a3412}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+#slotRecap b{color:var(--ink)}#slotRecap button{border:0;background:none;padding:0;color:var(--hv-d);font-weight:700;cursor:pointer;text-decoration:underline}
+.addcal{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:14px;font-weight:700}.addcal a{color:var(--ink);cursor:pointer}
+.inboxlink{display:inline-block;margin-top:12px;font-size:13.5px;font-weight:700;color:var(--ink)}
+#next.busy{opacity:.7;pointer-events:none}
 
 /* ---------- work / gallery ---------- */
 .work{background:var(--night);color:var(--cream);overflow:hidden}
@@ -457,13 +484,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="qside">
       <h2 class="reveal">Your price in <span class="hv">60 seconds.</span></h2>
       <p class="intro reveal">Tell us what needs doing and roughly how big. Not sure on size? Just say so. Final price is set when we see it in person.</p>
-      <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Gonzalez reaches out to set a time</li></ul>
+      <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Pick a time and you’re booked</li></ul>
     </div>
-    <div class="qphone" id="qphone">
+    <div class="qphone reveal" id="qphone">
       <div class="qtilt" id="qtilt"><i class="pwr" aria-hidden="true"></i><i class="vol" aria-hidden="true"></i><div class="qsb" aria-hidden="true"><span>9:41</span><span class="qsbi"><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11"><path d="M7.5 2.2c2.2 0 4.2.9 5.7 2.3l1.1-1.1A9.6 9.6 0 0 0 7.5.6 9.6 9.6 0 0 0 .7 3.4l1.1 1.1a8 8 0 0 1 5.7-2.3zm0 3.2c1.3 0 2.5.5 3.4 1.3l1.1-1.1a6.4 6.4 0 0 0-9 0l1.1 1.1c.9-.8 2.1-1.3 3.4-1.3zm0 3.2c.5 0 .9.2 1.2.5L7.5 10.3 6.3 9.1c.3-.3.7-.5 1.2-.5z"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2"/><rect x="22.6" y="4" width="1.6" height="4" rx=".8" opacity=".5"/></svg></span></div>
     <div class="qt" id="qt">
         <div class="qt-head"><span id="qtLabel">Step 1 of 4</span><span class="qt-time">About 1 minute</span></div>
-        <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Price</li><li data-to="4">Contact</li></ol>
+        <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Price &amp; time</li><li data-to="4">Contact</li></ol>
         <div class="est" id="live" hidden><span>Estimate so far</span><b id="liveAmt">$0</b></div>
         <div class="step active" data-step="1">
           <h3>What do you need?</h3>
@@ -547,22 +574,25 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
           </div>
           <p class="lbl" style="margin-top:0">Add anything? <span style="font-weight:500;color:var(--muted)">Price updates as you tap</span></p>
           <div class="opts" id="extras"></div>
-          <h3 style="margin-top:26px">When do you need it?</h3>
-          <p class="help" style="margin:0">Tap one to book this estimate.</p>
-          <div class="opts" id="when" style="margin-top:12px">
-            <button type="button" class="opt" data-v="Emergency, ASAP" aria-pressed="false"><span class="tick"></span><span><b>Emergency</b><small>Tree on a house, car or road</small></span></button>
-            <button type="button" class="opt" data-v="This week" aria-pressed="false"><span class="tick"></span><span><b>This week</b></span></button>
-            <button type="button" class="opt" data-v="Next couple of weeks" aria-pressed="false"><span class="tick"></span><span><b>Next couple of weeks</b></span></button>
-            <button type="button" class="opt" data-v="Flexible" aria-pressed="false"><span class="tick"></span><span><b>I'm flexible</b></span></button>
+          <h3 style="margin-top:28px">Book your free estimate</h3>
+          <p class="help" style="margin:0 0 14px">Pick a time for Gonzalez to come take a look.</p>
+          <div class="days" id="days" role="tablist" aria-label="Day"></div>
+          <div class="times" id="times" aria-live="polite"></div>
+          <p class="slotmsg" id="slotMsg" hidden></p>
+          <div class="opts" style="margin-top:14px">
+            <button type="button" class="opt urgent" id="urgentBtn" aria-pressed="false"><span class="tick"></span><span><b>Emergency? Tree on a house, car or road</b><small>Skip the calendar. Gonzalez gets alerted right away.</small></span></button>
+            <button type="button" class="opt" id="callBtn" aria-pressed="false" hidden><span class="tick"></span><span><b>Call me to set a time</b><small>Gonzalez will reach out to schedule</small></span></button>
           </div>
         </div>
   
         <div class="step" data-step="4">
           <h3>Where's the job?</h3>
-          <p class="help">We'll call or text to set a time.</p>
+          <p class="help" id="slotRecap">We'll call or text to set a time.</p>
           <label class="field"><span>Name</span><input id="fName" autocomplete="name" placeholder="Your name"></label>
           <label class="field"><span>Phone</span><input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(865) 555-0123"></label>
           <label class="field"><span>Address</span><input id="fAddr" autocomplete="street-address" placeholder="Street, city"></label>
+          <label class="field"><span>Email <small style="font-weight:500;color:var(--muted)">(optional, for your confirmation)</small></span><input id="fEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
+          <label class="hp" aria-hidden="true">Website<input id="fWeb" tabindex="-1" autocomplete="off"></label>
           <label class="field"><span>Anything we should know? <small style="font-weight:500;color:var(--muted)">(optional)</small></span><textarea id="fNote" rows="2" placeholder="Gate code, tree is leaning, etc."></textarea></label>
         </div>
   
@@ -570,9 +600,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
           <div class="done">
             <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="#13241a" stroke-width="6"/><path class="chk" d="M38 62 L54 77 L84 45" fill="none" stroke="#f5b70f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <h3 id="doneTitle">Request received!</h3>
-            <p class="help" style="margin:0">Gonzalez will reach out to set up a time.</p>
+            <p class="help" style="margin:0" id="doneLine">Gonzalez will reach out to set up a time.</p>
+            <div class="addcal" id="addCal" hidden><a id="calApple" download="estimate.ics">Add to Apple Calendar</a><a id="calGoogle" target="_blank" rel="noopener">Google Calendar</a></div>
             <div class="summary" id="summary"></div>
-            <span class="preview">Preview only. Nothing is sent.</span>
+            <span class="preview" id="previewTag">Preview only. Nothing is sent.</span>
+            <a class="inboxlink" id="inboxLink" href="../inbox/?c=gonzalez&amp;demo" target="_blank" rel="noopener">See it in Gonzalez’s inbox</a>
             <div style="margin-top:16px"><button type="button" class="back" id="restart">Start over</button></div>
           </div>
         </div>
@@ -644,7 +676,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
   <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
-  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 16)</span></div>
+  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 17)</span></div>
 </div></footer>
 
 <div class="sticky" id="sticky"><a class="btn hv" href="#quote">Get my price</a><a class="btn dk" href="tel:+18653674667" target="_top" aria-label="Call"><svg width="18" height="18" aria-hidden="true"><use href="#ph"/></svg>Call</a></div>
@@ -681,9 +713,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
       if(y<HH*1.3){ const p=cl(y/HH);
         hw.style.transform='translate3d(0,'+(y*.3).toFixed(1)+'px,0) scale('+(1-p*.06).toFixed(4)+')'; hw.style.opacity=Math.max(0,1-p*1.6).toFixed(3); if(cue) cue.style.opacity=Math.max(0,1-p*4).toFixed(3);
         layers.forEach(l=>l.style.transform='translate3d(0,'+(y*(+l.dataset.depth)).toFixed(1)+'px,0)'); }
-      if(qt){ const p=eo(cl((y+VH-T.qt-VH*.05)/(VH*.75)));
-        qt.style.transform = p>=1 ? 'none' : 'translate3d(0,'+((1-p)*90).toFixed(1)+'px,0) rotateX('+((1-p)*24).toFixed(2)+'deg) scale('+(.9+.1*p).toFixed(4)+')';
-        qt.style.opacity=(.25+.75*p).toFixed(3); }
       figs.forEach((f,i)=>{ const p=eo(cl((y+VH-T.figs[i])/(VH*.6)));
         f.style.transform='translate3d(0,'+((1-p)*44).toFixed(1)+'px,0) scale('+(.86+.14*p).toFixed(4)+')';
         f.firstElementChild.style.transform='scale('+(1.28-.23*p).toFixed(4)+')'; });
@@ -722,8 +751,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
      client signs up. Empty = preview mode (nothing is sent).
      ===================================================================== */
   const BOOKING_ENDPOINT='';
+  const CLIENT_ID='gonzalez';   // this client's row on the backend's Clients tab
 
-  const S={svc:null, trees:1, hMode:'house', h:40, hSize:'m', storm:'one', stumps:1, dMode:'size', d:18, dSize:'m', aMode:'slider', acres:1, thick:'mixed', ex:{}, when:null};
+  const S={svc:null, trees:1, hMode:'house', h:40, hSize:'m', storm:'one', stumps:1, dMode:'size', d:18, dSize:'m', aMode:'slider', acres:1, thick:'mixed', ex:{}, when:null, slot:null, urgent:false};
   const r25=n=>Math.round(n/25)*25;
 
   let autoT; function auto(n){ clearTimeout(autoT); autoT=setTimeout(()=>{ if(valid()) go(n); }, RM?0:320); }
@@ -738,7 +768,33 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   pick('#dSize','data-v',v=>{ S.dSize=v; PICKED['#dSize']=true; auto(3); });
   pick('#aMode','data-m',v=>{ S.aMode=v; $$('.sub3').forEach(p=>p.classList.toggle('active',p.dataset.sub===v)); });
   pick('#thick','data-v',v=>{ S.thick=v; PICKED['#thick']=true; auto(3); });
-  pick('#when','data-v',v=>{ S.when=v; auto(4); });
+  /* ---------- real booking: open times from the backend (or realistic sample times in preview) ---------- */
+  let SL=null, selDay=0, slotsErr=false;
+  function previewSlots(){ const out=[], now=new Date(), earliest=new Date(now.getTime()+12*3600e3), DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    for(let i=0;i<=14&&out.length<12;i++){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i); if(d.getDay()===0) continue; const times=[];
+      for(let h=8;h<=17;h++){ const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),h); const r=Math.sin(d.getDate()*12.9898+h*78.233+d.getMonth()*3.1)*43758.5453, seed=r-Math.floor(r); if(t<earliest||seed<.38) continue;
+        times.push({start:t.toISOString(),label:(h%12||12)+':00 '+(h<12?'AM':'PM')}); }
+      if(times.length) out.push({date:d.toDateString(),label:DW[d.getDay()]+' '+MO[d.getMonth()]+' '+d.getDate(),times}); }
+    return out; }
+  function loadSlots(){ SL=null; slotsErr=false; renderSlots();
+    if(!BOOKING_ENDPOINT){ setTimeout(()=>{ SL=previewSlots(); renderSlots(); }, 350); return; }
+    fetch(BOOKING_ENDPOINT+'?action=slots&c='+encodeURIComponent(CLIENT_ID)).then(r=>r.json()).then(j=>{ if(!j.ok) throw 0; SL=j.days; renderSlots(); })
+      .catch(()=>{ slotsErr=true; SL=[]; renderSlots(); }); }
+  function renderSlots(){ const dbox=$('#days'), tbox=$('#times'), msg=$('#slotMsg');
+    if(!SL){ dbox.innerHTML='<span class="day sk">.</span>'.repeat(5); tbox.innerHTML='<span class="time sk">.</span>'.repeat(6); msg.hidden=true; return; }
+    $('#callBtn').hidden=!(slotsErr||!SL.length);
+    if(!SL.length){ dbox.innerHTML=''; tbox.innerHTML=''; msg.hidden=false; msg.textContent=slotsErr?'The calendar didn’t load. Leave your info and Gonzalez will call to set a time.':'No open times in the next two weeks. Leave your info and Gonzalez will call you.'; return; }
+    if(selDay>=SL.length) selDay=0;
+    dbox.innerHTML=SL.map((d,i)=>{ const [w,m,n]=d.label.split(' '); return '<button type="button" class="day" role="tab" aria-selected="'+(i===selDay)+'" data-i="'+i+'"><small>'+w+'</small><b>'+n+'</b><i>'+d.times.length+' open</i></button>'; }).join('');
+    tbox.innerHTML=SL[selDay].times.map((t,k)=>'<button type="button" class="time" style="--k:'+k+'" aria-pressed="'+(S.slot&&S.slot.start===t.start)+'" data-k="'+k+'">'+t.label+'</button>').join('');
+  }
+  $('#days').addEventListener('click',e=>{ const b=e.target.closest('.day'); if(!b||!SL) return; selDay=+b.dataset.i; renderSlots(); });
+  $('#times').addEventListener('click',e=>{ const b=e.target.closest('.time'); if(!b||!SL) return; const d=SL[selDay], t=d.times[+b.dataset.k];
+    S.slot={start:t.start, label:d.label.replace(/^(\w+) /,'$1, ').replace(/ (\d+)$/,' $1')+' at '+t.label}; S.urgent=false; S.when=S.slot.label;
+    $$('#times .time').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); ['#urgentBtn','#callBtn'].forEach(q=>$(q).setAttribute('aria-pressed','false')); updNav(); auto(4); });
+  $('#urgentBtn').addEventListener('click',()=>{ S.urgent=true; S.slot=null; S.when='Emergency, ASAP'; $('#urgentBtn').setAttribute('aria-pressed','true'); $('#callBtn').setAttribute('aria-pressed','false'); $$('#times .time').forEach(x=>x.setAttribute('aria-pressed','false')); updNav(); auto(4); });
+  $('#callBtn').addEventListener('click',()=>{ S.urgent=false; S.slot=null; S.when='Call me to set a time'; $('#callBtn').setAttribute('aria-pressed','true'); $('#urgentBtn').setAttribute('aria-pressed','false'); updNav(); auto(4); });
+  loadSlots();
   ['#h','#d'].forEach(sel=>$(sel).addEventListener('input',updNav));
   $$('.stepper').forEach(st=>{ const k=st.dataset.count, [m,o,p]=st.children; m.onclick=()=>{ S[k]=Math.max(1,S[k]-1); o.textContent=S[k]; }; p.onclick=()=>{ S[k]=Math.min(15,S[k]+1); o.textContent=S[k]; }; });
 
@@ -802,50 +858,76 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     if(step===2){ if(S.svc==='storm') return PICKED['#stormPick']; if(S.svc==='land') return PICKED['#thick'];
       if(S.svc==='stump') return S.dMode!=='size'||PICKED['#dSize']; return S.hMode!=='house'||PICKED['#hSize']; }
     if(step===3) return !!S.when; if(step===4) return $('#fName').value.trim().length>1 && $('#fPhone').value.replace(/\D/g,'').length>=10 && $('#fAddr').value.trim().length>4; return true; }
-  const WHY={4:'Add your name, phone and address'};
+  const WHY={4:'Add your name, phone and address'}; let sending=false;
   function updNav(){ const ok=valid(), need=(step===2&&sliderMode())||step===4; $('#next').hidden=!need; $('#navRow').classList.toggle('quiet',!need); $('#next').disabled=!ok; $('#why').textContent=need&&!ok?(WHY[step]||''):''; }
   function live(){ const el=$('#live'); const on=step===2; el.hidden=!on; if(!on) return; const {lo,hi}=price(), t='$'+fmt(lo)+' – $'+fmt(hi), b=$('#liveAmt'); if(b.textContent!==t){ b.textContent=t; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); } }
   $('#qt').addEventListener('click',()=>setTimeout(live,0)); $('#qt').addEventListener('input',()=>setTimeout(live,0));
   $('#prog').addEventListener('click',e=>{ const li=e.target.closest('li.done'); if(li) go(+li.dataset.to); });
   $('#fPhone').addEventListener('input',e=>{ const d=e.target.value.replace(/\D/g,'').slice(0,10); let o=d; if(d.length>6) o='('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6); else if(d.length>3) o='('+d.slice(0,3)+') '+d.slice(3); e.target.value=o; });
-  ['#fName','#fPhone','#fAddr'].forEach((sel,i,arr)=>$(sel).addEventListener('keydown',e=>{ if(e.key!=='Enter') return; e.preventDefault(); const nx=arr[i+1]; if(nx) $(nx).focus(); else if(valid()) go(5); }));
+  ['#fName','#fPhone','#fAddr','#fEmail'].forEach((sel,i,arr)=>$(sel).addEventListener('keydown',e=>{ if(e.key!=='Enter') return; e.preventDefault(); const nx=arr[i+1]; if(nx) $(nx).focus(); else if(valid()) submit(); }));
   ['#fName','#fPhone','#fAddr'].forEach(s=>$(s).addEventListener('input',updNav));
   function go(n){
     step=n; $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
     if(innerWidth>=960) $('#qt').scrollTo({top:0,behavior:RM?'auto':'smooth'});
     if(n===2){ const p={removal:'tree',trim:'tree',storm:'storm',stump:'stump',land:'land'}[S.svc]; $$('[data-pane]').forEach(x=>x.classList.toggle('active',x.dataset.pane===p)); }
     if(n===3){ buildExtras(); showPrice(); const pb=$('.pricebox'); pb.classList.remove('shine'); void pb.offsetWidth; pb.classList.add('shine'); const am=$('.pricebox .amt'); am.classList.remove('swing'); void am.offsetWidth; if(!RM) am.classList.add('swing'); }
-    if(n===5) finish();
+    if(n===3) renderSlots();
+    if(n===4) recap();
     $('#qtLabel').textContent = n===5?'All set':'Step '+n+' of 4';
     $$('#prog li').forEach(li=>{ const t=+li.dataset.to; li.classList.toggle('on',t<=n); li.classList.toggle('done',t<n&&n<5); });
     $('#prog').style.display=n===5?'none':''; live();
-    $('#prev').hidden=n===1; $('#navRow').style.display=(n===5||n===1)?'none':'flex'; $('#next').textContent=n===4?'Request my estimate':'See my price';
+    $('#prev').hidden=n===1; $('#navRow').style.display=(n===5||n===1)?'none':'flex'; $('#next').textContent=n===4?submitLabel():'See my price';
     updNav();
     if(!booted){ booted=true; return; }
     const t=$('#qt').getBoundingClientRect().top; if(t<0||t>innerHeight*.6) $('#qt').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
   }
-  $('#next').addEventListener('click',()=>{ if(valid()) go(step+1); });
+  $('#next').addEventListener('click',()=>{ if(!valid()||sending) return; if(step===4) submit(); else go(step+1); });
   $('#prev').addEventListener('click',()=>go(Math.max(1,step-1)));
-  $('#restart').addEventListener('click',()=>go(1));
-  // Posts the booking to the Google Apps Script web app (saves to Sheet, emails owner, feeds the inbox).
-  function sendBooking(data){
-    if(!BOOKING_ENDPOINT) return; // preview mode
-    try{ fetch(BOOKING_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); }catch(e){}
+  $('#restart').addEventListener('click',()=>{ S.slot=null; S.urgent=false; S.when=null; ['#urgentBtn','#callBtn'].forEach(q=>$(q).setAttribute('aria-pressed','false')); loadSlots(); go(1); });
+  const NAMES={removal:'Tree removal',trim:'Trimming',storm:'Storm cleanup',stump:'Stump grinding',land:'Land clearing'};
+  function shortSlot(){ return S.slot ? S.slot.label.replace(/^(\w+), \w+ \d+ at /,'$1 ') : ''; }
+  function submitLabel(){ return S.slot?'Book '+shortSlot():(S.urgent?'Send emergency request':'Send my request'); }
+  function recap(){ const r=$('#slotRecap'); r.innerHTML='';
+    if(S.slot){ r.append('Your free estimate: '); const b=document.createElement('b'); b.textContent=S.slot.label; r.append(b,' '); const c=document.createElement('button'); c.type='button'; c.textContent='Change'; c.onclick=()=>go(3); r.append(c); }
+    else r.textContent=S.urgent?'Emergency request. Gonzalez gets alerted the moment you send this.':'We’ll call or text to set a time.'; }
+  // Sends the booking to the PriceWink backend (Google Apps Script). Success is shown only after the backend confirms it.
+  async function submit(){
+    if(sending) return; const btn=$('#next'), why=$('#why'); sending=true; btn.classList.add('busy'); btn.textContent=S.slot?'Booking…':'Sending…'; why.textContent='';
+    const {lo,hi}=price(), note=$('#fNote').value.trim();
+    const data={action:'book', client:CLIENT_ID, job:NAMES[S.svc], estimateLow:lo, estimateHigh:hi, slotStart:S.slot?S.slot.start:null, when:S.when, urgent:S.urgent,
+      name:$('#fName').value.trim(), phone:$('#fPhone').value.trim(), email:$('#fEmail').value.trim(), address:$('#fAddr').value.trim(), notes:note, website:$('#fWeb').value,
+      details:price().L.map(([n,a,b])=>n+': $'+fmt(r25(a))+'–$'+fmt(r25(b))).join('; ')};
+    let res;
+    try{
+      if(BOOKING_ENDPOINT){ const r=await fetch(BOOKING_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); res=await r.json(); }
+      else { await new Promise(r=>setTimeout(r,650)); res={ok:true, slotLabel:S.slot?S.slot.label:S.when, id:'DEMO-'+Date.now().toString(36).toUpperCase()};
+        try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push({id:res.id, created:new Date().toISOString(), client:CLIENT_ID, status:'New', slotStart:data.slotStart||'', slotLabel:res.slotLabel, service:data.job, details:data.details, estimateLow:lo, estimateHigh:hi, urgent:S.urgent?'Yes':'', name:data.name, phone:data.phone, email:data.email, address:data.address, notes:note}); localStorage.setItem(k,JSON.stringify(all.slice(-40))); }catch(e){} }
+    }catch(e){ res={ok:false, error:'network'}; }
+    sending=false; btn.classList.remove('busy'); btn.textContent=submitLabel();
+    if(res&&res.ok){ go(5); finish(res); return; }
+    if(res&&res.error==='slot_taken'){ S.slot=null; S.when=null; loadSlots(); go(3); const m=$('#slotMsg'); setTimeout(()=>{ m.hidden=false; m.textContent='Someone just booked that time. Please pick another.'; },400); return; }
+    why.innerHTML=''; why.append(res&&res.error==='missing_fields'?'Check your name, phone and address.':'Couldn’t send that. Please call ');
+    if(!(res&&res.error==='missing_fields')){ const a=document.createElement('a'); a.href='tel:+18653674667'; a.textContent='(865) 367-4667'; why.append(a); }
   }
-  function finish(){
-    { const {lo,hi}=price(), nm={removal:'Tree removal',trim:'Trimming',storm:'Storm cleanup',stump:'Stump grinding',land:'Land clearing'}[S.svc], q=$('#qnote');
-      $('#qnT').textContent='New request: '+nm; $('#qnS').textContent='$'+fmt(lo)+' to $'+fmt(hi)+' · '+(S.when||'');
-      clearTimeout(q._t); setTimeout(()=>{ q.classList.add('on'); q._t=setTimeout(()=>q.classList.remove('on'),5600); }, RM?0:900); }
-    const {lo,hi}=price(), first=$('#fName').value.trim().split(' ')[0];
-    $('#doneTitle').textContent='Got it, '+first+'!';
-    const names={removal:'Tree removal',trim:'Trimming',storm:'Storm cleanup',stump:'Stump grinding',land:'Land clearing'};
-    const rows=[['Job',names[S.svc]],['Estimate','$'+fmt(lo)+' – $'+fmt(hi)],['When',S.when],['Address',$('#fAddr').value.trim()]];
-    const note=$('#fNote').value.trim(); if(note) rows.push(['Notes',note]);
+  function icsFor(start,label){ const s=new Date(start), e=new Date(s.getTime()+3600e3), z=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+    return 'data:text/calendar;charset=utf-8,'+encodeURIComponent(['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//PriceWink//EN','BEGIN:VEVENT','UID:'+z(s)+'@pricewink','DTSTAMP:'+z(new Date()),'DTSTART:'+z(s),'DTEND:'+z(e),
+      'SUMMARY:Gonzalez Tree Service: free estimate','LOCATION:'+$('#fAddr').value.trim().replace(/[,;]/g,'\\$&'),'DESCRIPTION:Questions? Call (865) 367-4667','END:VEVENT','END:VCALENDAR'].join('\r\n')); }
+  function finish(res){
+    const {lo,hi}=price(), first=$('#fName').value.trim().split(' ')[0], nm=NAMES[S.svc], q=$('#qnote');
+    $('#qnT').textContent=(S.urgent?'Emergency: ':'New booking: ')+nm; $('#qnS').textContent=(S.slot?shortSlot():S.when)+' · $'+fmt(lo)+' to $'+fmt(hi);
+    clearTimeout(q._t); setTimeout(()=>{ q.classList.add('on'); q._t=setTimeout(()=>q.classList.remove('on'),5600); }, RM?0:900);
+    $('#doneTitle').textContent=(S.slot?'You’re booked, ':'Got it, ')+first+'!';
+    const dl=$('#doneLine'); dl.innerHTML='';
+    if(S.slot){ dl.append('Gonzalez will see you '); const b=document.createElement('b'); b.textContent=res.slotLabel||S.slot.label; dl.append(b,'.'+($('#fEmail').value.trim()?' A confirmation is on its way to your email.':'')); }
+    else dl.textContent=S.urgent?'Gonzalez is being alerted now. Keep your phone close.':'Gonzalez will reach out to set up a time.';
+    $('#addCal').hidden=!S.slot;
+    if(S.slot){ const s0=new Date(S.slot.start), z=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''); $('#calApple').href=icsFor(S.slot.start);
+      $('#calGoogle').href='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('Gonzalez Tree Service: free estimate')+'&dates='+z(s0)+'/'+z(new Date(s0.getTime()+3600e3))+'&location='+encodeURIComponent($('#fAddr').value.trim()); }
+    const rows=[['Job',nm],['Estimate','$'+fmt(lo)+' – $'+fmt(hi)],['When',res.slotLabel||S.when],['Address',$('#fAddr').value.trim()]];
+    if($('#fNote').value.trim()) rows.push(['Notes',$('#fNote').value.trim()]);
     $('#summary').innerHTML=rows.map(()=>'<div><span></span><b></b></div>').join('');
     $$('#summary div').forEach((d,i)=>{ d.children[0].textContent=rows[i][0]; d.children[1].textContent=rows[i][1]; });
-    sendBooking({business:'Gonzalez Tree Service', submittedAt:new Date().toISOString(), job:names[S.svc], estimateLow:lo, estimateHigh:hi,
-      when:S.when, name:$('#fName').value.trim(), phone:$('#fPhone').value.trim(), address:$('#fAddr').value.trim(), notes:note,
-      details:price().L.map(([n,a,b])=>n+': $'+fmt(r25(a))+'–$'+fmt(r25(b))).join('; ')});
+    $('#previewTag').hidden=!!BOOKING_ENDPOINT; $('#inboxLink').hidden=!!BOOKING_ENDPOINT;
   }
   $$('.row[data-svc]').forEach(r=>r.addEventListener('click',()=>{ if(step!==1) go(1); const b=$('#svcPick [data-v="'+r.dataset.svc+'"]'); if(b) b.click(); }));
   go(1);

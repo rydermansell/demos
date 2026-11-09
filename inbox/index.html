@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bookings | PriceWink</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0E1B2E">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Bookings">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* PriceWink owner inbox. Same paper + ink + yellow price tag as getpricewink.com. */
+:root{--paper:#F5F1E8;--paper2:#ECE6D8;--card:#FFFDF8;--ink:#0E1B2E;--body:#3A4556;--muted:#6C7280;--line:#DED6C5;--tag:#FFC933;--tag-ink:#1A1400;--ok:#1F9D6B;--red:#C2410C;
+  --disp:"Bricolage Grotesque",system-ui,sans-serif;--f:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.23,1,.32,1)}
+*{box-sizing:border-box}[hidden]{display:none!important}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font:16px/1.5 var(--f);-webkit-font-smoothing:antialiased;min-height:100svh}
+button{font:inherit;color:inherit}a{color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:8px}
+.top{position:sticky;top:0;z-index:5;background:rgba(14,27,46,.97);color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 14px}
+.top .row{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:720px;margin:0 auto}
+.top small{display:block;font-size:12px;font-weight:600;color:#9DB4E6}
+.top h1{margin:0;font:800 22px/1.15 var(--disp);letter-spacing:-.02em}
+.ref{width:42px;height:42px;border-radius:12px;border:0;background:rgba(255,255,255,.1);display:grid;place-items:center;cursor:pointer;transition:background-color .2s,transform .14s var(--ease)}
+.ref:active{transform:scale(.94)}.ref svg{transition:transform .6s var(--ease)}.ref.spin svg{transform:rotate(360deg)}
+.stats{display:flex;gap:8px;max-width:720px;margin:14px auto 0}
+.stat{flex:1;background:rgba(255,255,255,.07);border-radius:12px;padding:8px 10px}
+.stat b{display:block;font:800 22px/1.1 var(--disp);font-variant-numeric:tabular-nums}.stat span{font-size:11.5px;color:#B8C4D9;font-weight:600}
+.stat.hot b{color:var(--tag)}
+main{max-width:720px;margin:0 auto;padding:16px 14px calc(40px + env(safe-area-inset-bottom,0px))}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--paper2);border-radius:12px;padding:4px;margin-bottom:16px}
+.tabs button{border:0;background:transparent;border-radius:9px;padding:9px 4px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:background-color .2s,color .2s}
+.tabs button[aria-pressed=true]{background:#fff;color:var(--ink);box-shadow:0 2px 8px -3px rgba(14,27,46,.25)}
+.day{margin:18px 4px 8px;font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;
+  box-shadow:0 1px 1px rgba(14,27,46,.04),0 10px 20px -10px rgba(14,27,46,.14);opacity:0;transform:translate3d(0,12px,0);animation:in .45s var(--ease) forwards;animation-delay:calc(var(--k,0)*45ms)}
+@keyframes in{to{opacity:1;transform:none}}
+.card.urgent{border-color:#F3B39A;box-shadow:0 1px 1px rgba(14,27,46,.04),0 12px 26px -12px rgba(194,65,12,.45)}
+.c1{display:flex;gap:12px;align-items:flex-start}
+.when{flex:none;width:62px;text-align:center;border-radius:12px;background:var(--ink);color:#fff;padding:7px 4px}
+.when small{display:block;font-size:11px;font-weight:700;color:#9DB4E6;line-height:1.3}.when b{display:block;font:800 19px/1.1 var(--disp);font-variant-numeric:tabular-nums}
+.when.u{background:var(--red)}
+.c1 .who{flex:1;min-width:0}
+.who h2{margin:0;font:700 17px/1.25 var(--disp);color:var(--ink);letter-spacing:-.01em}
+.who p{margin:2px 0 0;font-size:14px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{display:inline-flex;align-items:center;background:var(--tag);color:var(--tag-ink);font:800 14px/1.2 var(--disp);padding:.2em .7em .2em 1.05em;clip-path:polygon(.55em 0,100% 0,100% 100%,.55em 100%,0 50%);margin-top:6px;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px;background:#E7F5EE;color:var(--ok)}
+.badge.New{background:#FFF1C7;color:#7A5500;animation:pulse 2.4s ease-in-out 3}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(255,201,51,.35)}}
+.badge.Done{background:#ECEEF2;color:var(--muted)}.badge.Canceled{background:#FBE4DC;color:var(--red)}
+.det{margin:10px 0 0;font-size:14px;color:var(--body)}
+.det span{display:block}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.acts a{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-weight:600;font-size:14px;border-radius:11px;padding:10px 4px;background:var(--paper2);color:var(--ink);transition:transform .14s var(--ease),background-color .2s}
+.acts a:active{transform:scale(.97)}.acts a.call{background:var(--ink);color:#fff}
+.st{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.st button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;transition:background-color .2s,border-color .2s,transform .14s var(--ease)}
+.st button:active{transform:scale(.96)}.st button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.empty,.msg{text-align:center;color:var(--muted);padding:48px 16px}
+.empty b{display:block;font:700 18px var(--disp);color:var(--ink);margin-bottom:4px}
+.demo{background:#FFF1C7;color:#5A4100;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;margin-bottom:12px}
+.sk{height:118px;border-radius:18px;margin-bottom:10px;background:linear-gradient(90deg,#ECE6D8 0%,#F5F1E8 50%,#ECE6D8 100%);background-size:200% 100%;animation:sk 1.1s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:10px 16px;border-radius:999px;transition:transform .45s cubic-bezier(.2,.9,.3,1.2);z-index:9}
+.toast.on{transform:translate(-50%,0)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card{opacity:1;transform:none}}
+</style></head><body>
+<header class="top"><div class="row"><div><small id="sub">Bookings</small><h1 id="biz">Loading…</h1></div>
+  <button class="ref" id="ref" aria-label="Refresh"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
+  <div class="stats"><div class="stat hot"><b id="nNew">0</b><span>New</span></div><div class="stat"><b id="nWeek">0</b><span>Next 7 days</span></div><div class="stat"><b id="nVal">$0</b><span>Booked value</span></div></div>
+</header>
+<main>
+  <div class="demo" id="demo" hidden>Demo inbox: these are the bookings made on this device from the preview site. Live clients see their real bookings here.</div>
+  <div class="tabs" role="tablist"><button aria-pressed="true" data-t="up">Upcoming</button><button aria-pressed="false" data-t="new">New</button><button aria-pressed="false" data-t="past">Past</button></div>
+  <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+  /* Paste the PriceWink backend web-app URL here (the same one used on client sites). Empty = demo mode. */
+  const API='';
+  const q=new URLSearchParams(location.search), C=q.get('c')||'', KEY=location.hash.slice(1), DEMO=!API||q.has('demo');
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
+  let B=[], tab='up';
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),2200); }
+  async function load(){
+    $('#ref').classList.add('spin'); setTimeout(()=>$('#ref').classList.remove('spin'),600);
+    if(DEMO){ $('#demo').hidden=false; $('#biz').textContent=({gonzalez:'Gonzalez Tree Service'})[C]||'Your business';
+      try{ B=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]').filter(b=>!C||b.client===C); }catch(e){ B=[]; } render(); return; }
+    try{ const r=await fetch(API+'?action=inbox&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)), j=await r.json();
+      if(!j.ok){ $('#biz').textContent='Can’t open this inbox'; $('#list').innerHTML='<p class="msg">'+(j.error==='bad_key'?'This link is missing its key. Use the full link you were sent.':'Something went wrong. Try again in a minute.')+'</p>'; return; }
+      $('#biz').textContent=j.name; B=j.bookings; render();
+    }catch(e){ $('#list').innerHTML='<p class="msg">No connection. Pull down or tap refresh to try again.</p>'; }
+  }
+  async function setStatus(id,status){
+    const b=B.find(x=>x.id===id); if(!b) return; const old=b.status; b.status=status; render(); toast(status==='Canceled'?'Canceled. That time is open again.':'Marked '+status.toLowerCase());
+    if(DEMO){ try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.forEach(x=>{ if(x.id===id) x.status=status; }); localStorage.setItem(k,JSON.stringify(all)); }catch(e){} return; }
+    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'status',client:C,key:KEY,id,status})}), j=await r.json(); if(!j.ok) throw 0; }
+    catch(e){ b.status=old; render(); toast('Couldn’t save. Try again.'); }
+  }
+  const tOf=b=>b.slotStart?new Date(b.slotStart).getTime():new Date(b.created).getTime();
+  function render(){
+    const now=Date.now(), wk=now+7*864e5, live=B.filter(b=>b.status!=='Canceled');
+    $('#nNew').textContent=B.filter(b=>b.status==='New').length;
+    $('#nWeek').textContent=live.filter(b=>b.slotStart&&tOf(b)>=now&&tOf(b)<wk).length;
+    $('#nVal').textContent=fmt(live.reduce((a,b)=>a+((+b.estimateLow||0)+(+b.estimateHigh||0))/2,0));
+    let list=tab==='new'?B.filter(b=>b.status==='New'):tab==='past'?B.filter(b=>b.status==='Done'||b.status==='Canceled'||(b.slotStart&&tOf(b)<now-3600e3)):B.filter(b=>b.status!=='Done'&&b.status!=='Canceled'&&(!b.slotStart||tOf(b)>=now-3600e3));
+    list.sort((a,b)=>tab==='past'?tOf(b)-tOf(a):(b.urgent?1:0)-(a.urgent?1:0)||tOf(a)-tOf(b));
+    if(!list.length){ $('#list').innerHTML='<div class="empty"><b>'+(tab==='new'?'You’re all caught up':'Nothing here yet')+'</b>'+(DEMO?'Book a time on the preview site and it shows up here.':'New bookings show up here the moment they’re made.')+'</div>'; return; }
+    let html='', lastDay='';
+    list.forEach((b,k)=>{
+      const d=b.slotStart?new Date(b.slotStart):null, day=b.urgent?'Emergency':d?d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}):'Needs a time';
+      if(day!==lastDay){ html+='<p class="day">'+esc(day)+'</p>'; lastDay=day; }
+      const tel=String(b.phone||'').replace(/[^\d+]/g,''), est=b.estimateLow?fmt(b.estimateLow)+' – '+fmt(b.estimateHigh):'';
+      html+='<article class="card'+(b.urgent?' urgent':'')+'" style="--k:'+Math.min(k,8)+'">'+
+        '<div class="c1"><div class="when'+(b.urgent?' u':'')+'">'+(b.urgent?'<small>NOW</small><b>ASAP</b>':d?(()=>{ const t=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).split(' '); return '<small>'+d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase()+' '+d.getDate()+'</small><b>'+t[0]+'</b><small>'+(t[1]||'')+'</small>'; })():'<small>TBD</small><b>Call</b>')+'</div>'+
+        '<div class="who"><h2>'+esc(b.name)+'<span class="badge '+esc(b.status)+'">'+esc(b.status)+'</span></h2><p>'+esc(b.service)+(b.address?' · '+esc(b.address):'')+'</p>'+(est?'<span class="tag">'+est+'</span>':'')+'</div></div>'+
+        ((b.details||b.notes)?'<div class="det">'+(b.details?'<span>'+esc(b.details)+'</span>':'')+(b.notes?'<span>Note: '+esc(b.notes)+'</span>':'')+'</div>':'')+
+        '<div class="acts"><a class="call" href="tel:'+esc(tel)+'">Call</a><a href="sms:'+esc(tel)+'">Text</a><a href="https://maps.google.com/?q='+encodeURIComponent(b.address||'')+'" target="_blank" rel="noopener">Directions</a></div>'+
+        '<div class="st">'+STS.map(s=>'<button type="button" data-id="'+esc(b.id)+'" data-s="'+s+'" aria-pressed="'+(b.status===s)+'">'+s+'</button>').join('')+'</div></article>';
+    });
+    $('#list').innerHTML=html;
+  }
+  $('#list').addEventListener('click',e=>{ const b=e.target.closest('.st button'); if(b&&b.getAttribute('aria-pressed')!=='true') setStatus(b.dataset.id,b.dataset.s); });
+  $$('.tabs button').forEach(t=>t.addEventListener('click',()=>{ tab=t.dataset.t; $$('.tabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===t))); render(); }));
+  $('#ref').addEventListener('click',load);
+  addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
+  setInterval(()=>{ if(!document.hidden) load(); },60000);
+  load();
+})();
+</script>
+</body></html>
