@@ -54,6 +54,13 @@ header.top.solid{background:rgba(13,22,16,.97);box-shadow:0 1px 0 rgba(255,255,2
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.07;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hero .wrap{width:100%;padding-top:150px;padding-bottom:56px;position:relative}
+.cue{display:none}
+.motion .hero .wrap{padding-bottom:92px}
+.motion .cue{display:flex;flex-direction:column;align-items:center;gap:8px;position:absolute;left:0;right:0;bottom:20px;text-decoration:none;color:#c9d3c5;font-size:13.5px;font-weight:700;letter-spacing:.02em}
+.motion .cue span{display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fade .8s var(--ease-out) calc(var(--intro) + 1.3s) forwards}
+.cue i{position:relative;width:2px;height:30px;border-radius:2px;background:rgba(243,238,226,.18);overflow:hidden}
+.cue i::after{content:"";position:absolute;left:0;right:0;top:0;height:12px;border-radius:2px;background:var(--hv);animation:cueRun 2.2s var(--ease-io) calc(var(--intro) + 1.8s) infinite}
+@keyframes cueRun{0%{transform:translateY(-14px)}70%,100%{transform:translateY(32px)}}
 .live{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);margin-bottom:18px}
 .live i{width:9px;height:9px;border-radius:50%;background:#62d26f;box-shadow:0 0 0 0 rgba(98,210,111,.6);animation:ping 2s 3 1.2s}
 @keyframes ping{70%{box-shadow:0 0 0 10px rgba(98,210,111,0)}100%{box-shadow:0 0 0 0 rgba(98,210,111,0)}}
@@ -386,6 +393,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="ctas"><a class="btn hv" href="#quote">Get my price</a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>Call now</a></div>
     <div class="rating"><b>4.9</b><span class="st" aria-hidden="true">★★★★★</span><span>56 Google reviews</span></div>
   </div>
+  <a class="cue" id="cue" href="#takedown"><span>Scroll to watch us take one down<i aria-hidden="true"></i></span></a>
 </section>
 
 <section class="td" id="takedown" aria-label="How Gonzalez takes down a tree">
@@ -667,7 +675,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
      positions are measured once (and on resize), and work is batched into one rAF. */
   if(!RM){
     const cl=v=>v<0?0:v>1?1:v, eo=t=>1-Math.pow(1-t,3);
-    const hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qt'), figs=$$('.gal figure'), rings=$('.rings');
+    const cue=$('#cue'), hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qt'), figs=$$('.gal figure'), rings=$('.rings');
     let VH=innerHeight, HH=hero.offsetHeight, T={};
     const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
     function measure(){ VH=innerHeight; HH=hero.offsetHeight; heroH=HH;
@@ -706,7 +714,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     function update(){
       const y=scrollY;
       if(y<HH*1.3){ const p=cl(y/HH);
-        hw.style.transform='translate3d(0,'+(y*.3).toFixed(1)+'px,0) scale('+(1-p*.06).toFixed(4)+')'; hw.style.opacity=Math.max(0,1-p*1.6).toFixed(3);
+        hw.style.transform='translate3d(0,'+(y*.3).toFixed(1)+'px,0) scale('+(1-p*.06).toFixed(4)+')'; hw.style.opacity=Math.max(0,1-p*1.6).toFixed(3); if(cue) cue.style.opacity=Math.max(0,1-p*4).toFixed(3);
         layers.forEach(l=>l.style.transform='translate3d(0,'+(y*(+l.dataset.depth)).toFixed(1)+'px,0)'); }
       scene(y);
       if(qt){ const p=eo(cl((y+VH-T.qt-VH*.05)/(VH*.75)));
