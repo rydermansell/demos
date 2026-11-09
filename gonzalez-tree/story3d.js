@@ -405,21 +405,29 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
   const END = [s4(28, 92, 120), s4(-10, 0, -20)];
   const ease = { io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, sine: t => -(Math.cos(Math.PI * t) - 1) / 2 };
   const P = v(0, 0, 0), Lk = v(0, 0, 0);
+  // One fixed camera pose per stop (intro, 4 chapters, close). Flights between stops follow a terrain-aware
+  // altitude profile: a single smooth climb to a safe cruise height over the highest ground, then a single descent.
+  const STEPS = [IH * .45]; for (let k = 0; k < N; k++) STEPS.push(IH + k * (TL + HL) + TL + HL * .42); STEPS.push(.995);
+  const at = (sh, u) => { const e = ease.sine(u); return [sh.a[0].clone().lerp(sh.b[0], e), sh.a[1].clone().lerp(sh.b[1], e)]; };
+  const STOPS = [at(SHOTS[0], .45), ...SHOTS.slice(1).map(sh => at(sh, .42)), [END[0].clone(), END[1].clone()]];
+  const STOP_MOOD = [0, 0, 0, 1, 2, 2];
+  STOPS.forEach(([pos]) => { pos.y = Math.max(pos.y, height(pos.x, pos.z) + 1.8); });
+  const LEGS = STOPS.slice(0, -1).map(([a], i) => { const b = STOPS[i + 1][0]; let mx = -1e9;
+    for (let j = 1; j < 40; j++) { const e = j / 40; if (e < .08 || e > .92) continue; mx = Math.max(mx, height(a.x + (b.x - a.x) * e, a.z + (b.z - a.z) * e)); }
+    const far = Math.hypot(b.x - a.x, b.z - a.z); return { cruise: Math.max(mx + 14 + far * .04, Math.min(a.y, b.y) + 6), far }; });
+  const hump = e => Math.pow(Math.sin(Math.PI * e), .75);
   function pose(p) {
-    let roll = 0, fovK = 0, mood = 0, storm = false;
-    const hold = (sh, u) => { const e = ease.sine(Math.min(1, Math.max(0, u))); P.lerpVectors(sh.a[0], sh.b[0], e); Lk.lerpVectors(sh.a[1], sh.b[1], e); };
-    const swoop = (from, to, t, k) => { const e = ease.io(t), lift = Math.sin(Math.PI * e); P.lerpVectors(from[0], to[0], e); P.y += lift * 34; Lk.lerpVectors(from[1], to[1], e); Lk.y += lift * 8;
-      roll = Math.sin(Math.PI * e) * (k % 2 ? .16 : -.16); fovK = Math.sin(Math.PI * Math.min(1, t * 1.15)); };
-    if (p < IH) hold(SHOTS[0], p / IH);
-    else {
-      let done = false;
-      for (let k = 0; k < N; k++) {
-        const t0 = IH + k * (TL + HL), h0 = t0 + TL, h1 = h0 + HL;
-        if (p < h0) { swoop(SHOTS[k].b, SHOTS[k + 1].a, (p - t0) / TL, k); if (k === 2) mood = (p - t0) / TL; if (k === 3) mood = 1 + (p - t0) / TL; done = true; break; }
-        if (p < h1) { hold(SHOTS[k + 1], (p - h0) / HL); mood = k === 2 ? 1 : k === 3 ? 2 : 0; storm = k === 2; done = true; break; }
-      }
-      if (!done) { const t0 = IH + N * (TL + HL), t = Math.min(1, (p - t0) / (1 - t0)), e = ease.sine(t); P.lerpVectors(SHOTS[N].b[0], END[0], e); Lk.lerpVectors(SHOTS[N].b[1], END[1], e); mood = 2; }
-    }
+    let i = 0; while (i < STEPS.length - 2 && p > STEPS[i + 1]) i++;
+    const t = Math.min(1, Math.max(0, (p - STEPS[i]) / (STEPS[i + 1] - STEPS[i]))), e = ease.io(t), A = STOPS[i], B = STOPS[i + 1], leg = LEGS[i], h = hump(e);
+    P.lerpVectors(A[0], B[0], e);
+    const yA = A[0].y, yB = B[0].y, sm = x => x * x * (3 - 2 * x);
+    if (leg.cruise > Math.max(yA, yB) + 3) P.y = e < .5 ? yA + (leg.cruise - yA) * sm(e * 2) : leg.cruise + (yB - leg.cruise) * sm(e * 2 - 1);   // one climb, one descent
+    else P.y = yA + (yB - yA) * sm(t);                                                                                                         // short hop: one smooth glide
+    P.y = Math.max(P.y, height(P.x, P.z) + 1.8);
+    Lk.lerpVectors(A[1], B[1], e); Lk.y += h * Math.min(6, leg.far * .02);
+    const big = Math.min(1, leg.far / 60), roll = Math.sin(Math.PI * e) * (i % 2 ? .12 : -.12) * big, fovK = Math.sin(Math.PI * e) * big;
+    const mood = STOP_MOOD[i] + (STOP_MOOD[i + 1] - STOP_MOOD[i]) * e;
+    const storm = (i === 3 && t < .04) || (i === 2 && t > .96);
     return { roll, fovK, mood, storm };
   }
 
@@ -434,8 +442,8 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
     const p = getP(), st = pose(p), k = 1 - Math.exp(-dt * 4.2);
     cp.lerp(P, k); cl.lerp(Lk, k); cRoll += (st.roll - cRoll) * k; cFov += (st.fovK - cFov) * k;
     const baseFov = camera.aspect < 1 ? 60 : 44; camera.fov = baseFov + cFov * 20; camera.updateProjectionMatrix();
-    drift.set(Math.sin(tt * .23) * .9, Math.sin(tt * .17) * .35, Math.cos(tt * .19) * .9).multiplyScalar(1 - Math.min(1, cFov * 3));   // slow living drift while resting
-    camera.position.copy(cp).add(drift); const gy = height(camera.position.x, camera.position.z) + 1.1; if (camera.position.y < gy) camera.position.y = gy;
+    drift.set(Math.sin(tt * .21) * .8, 0, Math.cos(tt * .17) * .8).multiplyScalar(1 - Math.min(1, cFov * 3));   // slow living drift while resting
+    camera.position.copy(cp).add(drift); const gy = height(camera.position.x, camera.position.z) + .6; if (camera.position.y < gy) camera.position.y += (gy - camera.position.y) * .25;
     camera.lookAt(cl); camera.rotateZ(cRoll);
     if (st.storm && !wasStorm) flashT = tt + .55; wasStorm = st.storm;                                                                  // lightning shortly after the storm shot lands
     const fe = tt - flashT, fl = fe < 0 ? 0 : Math.max(0, 1 - fe / .12) + (fe > .2 ? Math.max(0, .7 - (fe - .2) / .1) : 0);
@@ -455,8 +463,7 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
     const hidden = []; scene.traverse(o => { if (!o.visible) { hidden.push(o); o.visible = true; } });
     [leafTex, barkTex, groundTex, sidingTex, roofTex, cloudTex].forEach(t => renderer.initTexture(t));
     renderer.compile(scene, camera);
-    const poses = []; SHOTS.forEach(sh => { poses.push(sh.a, sh.b); }); poses.push(END);
-    const moods = [0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2]; let i = 0; resize();
+    const poses = STOPS, moods = STOP_MOOD; let i = 0; resize();
     (function next() {
       if (i < poses.length) { camera.position.copy(poses[i][0]); camera.lookAt(poses[i][1]); applyMood(moods[i] || 0, 0); renderer.shadowMap.needsUpdate = true;
         const an = anchorOf(poses[i][1]); sun.target.position.set(an.x, 0, an.y); sun.position.copy(sun.target.position).addScaledVector(skyU.sunDir.value, 180); sun.target.updateMatrixWorld();
@@ -467,6 +474,6 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
   function start() { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
   function stop() { running = false; cancelAnimationFrame(raf); }
   { pose(getP()); cp.copy(P); cl.copy(Lk); resize(); }
-  if (/[?&]perf\b/.test(location.search)) window.__st = { scene, renderer, camera };
+  if (/[?&]perf\b/.test(location.search)) window.__st = { scene, renderer, camera, pose, STEPS, P, height };
   return { start, stop, land, warm };
 }
