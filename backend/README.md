@@ -49,6 +49,10 @@ Then set `CLIENT_ID` (= id) and `BOOKING_ENDPOINT` in the client's site. Hours, 
 
 (`addClient` in the editor still works if you prefer it.)
 
+## Bookings in the owner's calendar app (iPhone, Outlook, anything)
+
+Gmail owners see the "[name] bookings" Google Calendar automatically (it's shared with them). Everyone else opens **Connect your calendar** in their inbox and taps **iPhone** or **Outlook** under "See bookings in your phone's calendar" (or **Copy link** for any other app). That subscribes their calendar app to a private, read-only feed (`?action=ics&c=<id>&t=<token>`) with every booking and blocked time, plus a 1-hour reminder before each estimate. iPhone checks for changes about every 15 minutes (owners can set this under Settings > Calendar > Accounts > Fetch); Outlook every few hours. The feed token is separate from the inbox key, so a leaked calendar link can't open the inbox. Changing a client's `inboxKey` resets both.
+
 ## Connecting the owner's calendar (auto-blocking)
 
 Anything on the owner's own calendar becomes unavailable on their booking page within about 5 minutes. Only busy/free is read, never event titles.

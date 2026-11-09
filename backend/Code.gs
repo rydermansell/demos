@@ -113,9 +113,13 @@ function doGet(e) {
     if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
     client = prepare_(client, true);
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
+    if (p.action === 'ics') {   // calendar subscription for owners on iPhone / Outlook (read-only, its own token)
+      if (!p.t || p.t !== feedToken_(client)) return ContentService.createTextOutput('Not found').setMimeType(ContentService.MimeType.TEXT);
+      return ContentService.createTextOutput(feed_(client)).setMimeType(ContentService.MimeType.ICAL);
+    }
     if (p.action === 'inbox') {
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client) });
+      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client) });
     }
     if (p.action === 'connectInfo') {   // used by the Connect app (connect/Code.gs) before it shares the owner's calendar
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
@@ -355,6 +359,35 @@ function zonedIn_(ymd, minutes, tz) {
 function syncedSources_(client) {
   return { google: String(client.busyCalendars || '').split(',').filter(x => x.trim()).length, links: String(client.busyIcs || '').split(/[\s,]+/).filter(String).length };
 }
+
+/* ------------------------------------------------------------------ bookings in the owner's own calendar app */
+
+/** Read-only token for the calendar feed: derived from the inbox key, but a leaked feed link can't open the inbox. Changing inboxKey changes both. */
+function feedToken_(client) {
+  const d = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, 'feed:' + client.inboxKey);
+  return d.map(b => ('0' + (b & 255).toString(16)).slice(-2)).join('').slice(0, 24);
+}
+/** Everything on the client's bookings calendar (bookings, blocked time, jobs they added) from a week ago to 60 days out, as an .ics feed. */
+function feed_(client) {
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId), now = new Date();
+  const evs = cal ? cal.getEvents(new Date(now.getTime() - 7 * 86400000), new Date(now.getTime() + 60 * 86400000)) : [];
+  const t = d => Utilities.formatDate(d, 'UTC', "yyyyMMdd'T'HHmmss'Z'");
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PriceWink//Bookings//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'X-WR-CALNAME:' + icsText_(client.name + ' bookings'), 'X-WR-TIMEZONE:' + TZ, 'REFRESH-INTERVAL;VALUE=DURATION:PT15M', 'X-PUBLISHED-TTL:PT15M'];
+  evs.forEach(ev => {
+    const title = ev.getTitle(), loc = ev.getLocation ? ev.getLocation() : '', desc = ev.getDescription ? ev.getDescription() : '';
+    L.push('BEGIN:VEVENT', 'UID:' + icsText_(ev.getId()), 'DTSTAMP:' + t(now), 'DTSTART:' + t(ev.getStartTime()), 'DTEND:' + t(ev.getEndTime()),
+      'SUMMARY:' + icsText_(title));
+    if (loc) L.push('LOCATION:' + icsText_(loc));
+    if (desc) L.push('DESCRIPTION:' + icsText_(desc));
+    if (title.indexOf(BLOCK_PREFIX) !== 0) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText_(title), 'TRIGGER:-PT60M', 'END:VALARM');
+    L.push('END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  return L.map(icsFold_).join('\r\n') + '\r\n';
+}
+function icsText_(s) { return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+function icsFold_(line) { let out = '', n = 0; for (const ch of line) { const w = encodeURIComponent(ch).replace(/%[0-9A-F]{2}/g, '.').length; if (n + w > 74) { out += '\r\n '; n = 1; } out += ch; n += w; } return out; }
 
 /* ------------------------------------------------------------------ connect the owner's calendar (from the inbox) */
 
