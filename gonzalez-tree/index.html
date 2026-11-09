@@ -60,10 +60,10 @@ header.top.solid{background:rgba(13,22,16,.97);box-shadow:0 1px 0 rgba(255,255,2
 .hero h1{font-family:var(--cond);font-stretch:62%;font-weight:900;text-transform:uppercase;font-size:clamp(56px,min(15.5vw,15vh),132px);line-height:.9;letter-spacing:-.01em;margin:0 0 22px}
 .hero h1 .ln{display:block;overflow:hidden;padding-bottom:.02em}
 .hero h1 .ln>span{display:block}
-.js .hero h1 .ln>span{transform:translateY(105%);animation:rise .85s var(--ease-out) .1s forwards}
+.js .hero h1 .ln>span{transform:translateY(105%);filter:blur(12px);animation:rise 1.1s var(--ease-out) .1s forwards}
 .js .hero h1 .ln:nth-child(2)>span{animation-delay:.2s}
 .js .hero h1 .ln:nth-child(3)>span{animation-delay:.3s}
-@keyframes rise{to{transform:none}}
+@keyframes rise{to{transform:none;filter:blur(0)}}
 .hero h1 .out{color:#c3cfbd}
 .hero h1 .hv{color:var(--cream)}
 .lede{font-size:clamp(17px,2.2vw,20px);color:#d3dccf;max-width:34ch;margin:0 0 28px}
@@ -86,14 +86,6 @@ header.top.solid{background:rgba(13,22,16,.97);box-shadow:0 1px 0 rgba(255,255,2
 .st{color:var(--hv);letter-spacing:2px}
 
 /* spinning 24/7 seal */
-.seal{position:absolute;right:14px;bottom:126px;width:104px;height:104px}
-.js .seal{opacity:0;animation:fade .9s var(--ease-out) 1s forwards}
-.js .seal .rg path{stroke-dasharray:240;stroke-dashoffset:240;animation:sdraw 1.6s var(--ease-io) 1.2s forwards}
-.js .seal .rg path:nth-child(2){animation-delay:1.35s}.js .seal .rg path:nth-child(3){animation-delay:1.5s}
-@keyframes sdraw{to{stroke-dashoffset:0}}
-.seal text{font-family:var(--cond);font-stretch:75%;font-weight:800;font-size:13px;letter-spacing:.12em;fill:var(--cream)}
-@media(min-width:860px){.seal{width:190px;height:190px;top:auto;bottom:70px;right:40px}}
-@media(max-width:380px){.seal{width:88px;height:88px;bottom:132px}}
 
 
 /* ---------- storm strip ---------- */
@@ -103,12 +95,18 @@ header.top.solid{background:rgba(13,22,16,.97);box-shadow:0 1px 0 rgba(255,255,2
 .storm p b{color:var(--cream)}
 .storm a{font-family:var(--cond);font-stretch:70%;font-weight:900;font-size:clamp(30px,7vw,40px);text-decoration:none;color:var(--hv);line-height:1;display:inline-flex;align-items:center;gap:10px}
 
+/* ---------- statement: words light up with scroll ---------- */
+.say{background:var(--night);color:var(--cream);padding:clamp(90px,14vw,170px) 0 clamp(50px,7vw,90px)}
+.say-t{font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:clamp(34px,6.4vw,66px);line-height:1.08;letter-spacing:-.015em;margin:0;max-width:21ch;text-wrap:pretty}
+.say-t .w{opacity:.15}
+.say-t .lit-end{color:var(--hv)}
+
 /* ---------- numbers + rings ---------- */
 .nums{background:var(--night);color:var(--cream);position:relative;overflow:hidden;padding:20px 0 84px}
 .rings{position:absolute;right:-180px;top:50%;width:620px;height:620px;transform:translateY(-50%);opacity:.5;pointer-events:none}
 .rings path{fill:none;stroke:var(--leaf);stroke-opacity:.35;stroke-width:1.4}
-.js .rings{opacity:0;transform:translateY(-50%) scale(.92);transition:opacity 1.4s var(--ease-out),transform 1.8s var(--ease-out)}
-.js .nums.in .rings{opacity:.5;transform:translateY(-50%) scale(1)}
+.js .rings{opacity:0;transition:opacity 1.4s var(--ease-out)}
+.js .nums.in .rings{opacity:.5}
 .ngrid{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;border-top:1px solid rgba(255,255,255,.12)}
 .ngrid div{padding:26px 0 0;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:22px}
 .ngrid div:nth-child(odd){padding-right:14px;border-right:1px solid rgba(255,255,255,.12)}
@@ -150,13 +148,13 @@ h2 .hv{color:inherit}
 .qt-sec::before{content:"";position:absolute;inset:0;opacity:.05;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 .qt-sec h2 .hv{color:inherit}
 .qt-sec .intro{color:#b7c4b3}
-.qlay{display:grid;gap:10px;position:relative}
+.qlay{display:grid;gap:10px;position:relative;perspective:1400px}
 @media(min-width:960px){.qlay{grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}.qlay .qside{position:sticky;top:130px}}
 .perks{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:12px}
 .perks li{display:flex;gap:12px;align-items:center;font-weight:600;color:#dfe6dc}
 .perks li::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;background:var(--hv) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%231a1203' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
 @media(max-width:959px){.perks{display:none}}
-.qt{scroll-margin-top:110px;background:var(--paper);color:var(--ink);border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);overflow:hidden}
+.qt{scroll-margin-top:110px;transform-origin:50% 0;background:var(--paper);color:var(--ink);border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);overflow:hidden}
 .qt-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .dots{display:flex;gap:5px}
 .dots i{width:26px;height:5px;border-radius:3px;background:var(--line);transition:background .4s}
@@ -202,6 +200,9 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .note{margin-top:14px;padding:12px 14px;background:#f6ecd9;border-radius:10px;font-size:15px}
 .lbl{font-weight:700;font-size:14px;margin:18px 0 8px}
 .pricebox{background:var(--night);color:var(--cream);border-radius:14px;padding:22px;margin-bottom:24px;position:relative;overflow:hidden}
+.pricebox::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(255,236,170,.16) 48%,rgba(255,255,255,.22) 50%,rgba(255,236,170,.16) 52%,transparent 70%);transform:translateX(-120%)}
+.pricebox.shine::before{animation:shine 1.3s var(--ease-io) .35s}
+@keyframes shine{to{transform:translateX(120%)}}
 .pricebox::after{content:"";position:absolute;right:-70px;top:-70px;width:200px;height:200px;border-radius:50%;box-shadow:0 0 0 14px rgba(143,191,106,.07),0 0 0 30px rgba(143,191,106,.05),0 0 0 48px rgba(143,191,106,.04);pointer-events:none}
 .pricebox .k{font-weight:700;font-size:13.5px;color:var(--hv)}
 .pricebox .amt{font-family:var(--cond);font-stretch:62%;font-weight:900;font-size:clamp(50px,13vw,72px);line-height:1;margin:6px 0 8px}
@@ -254,9 +255,9 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .gal{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20px 18px;margin:0 -20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .gal::-webkit-scrollbar{display:none}
 .gal figure{margin:0;flex:none;width:78vw;max-width:340px;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:16px;background:#000;scroll-snap-align:center}
-.gal img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);transition:transform .9s var(--ease-out);filter:saturate(.88) contrast(1.03)}
+.gal img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);will-change:transform;transition:transform .9s var(--ease-out);filter:saturate(.88) contrast(1.03)}
 .gal figure::after{content:"";position:absolute;inset:0;background:var(--forest);opacity:.1;pointer-events:none}
-@media(hover:hover){.gal figure:hover img{transform:scale(1.08)}}
+
 .gal figcaption{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:50px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
 .gal figcaption b{display:block;font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:24px;line-height:1.05}
 .gal figcaption span{font-size:13px;color:#c9d3c5}
@@ -322,10 +323,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .js .reveal,.js .lede,.js .hero .ctas,.js .hero .rating,.js .seal{opacity:1;transform:none}
+  .js .reveal,.js .lede,.js .hero .ctas,.js .hero .rating{opacity:1;transform:none}
   .js .hero h1 .ln>span{transform:none}
   .js .rings{opacity:.5;transform:translateY(-50%)}
-  .js .seal .rg path,.done .ring,.done .chk{stroke-dashoffset:0}
+  .done .ring,.done .chk{stroke-dashoffset:0}
 }
 </style>
 </head><body>
@@ -354,14 +355,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="ctas"><a class="btn hv" href="#quote">Get my price</a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>Call now</a></div>
     <div class="rating"><b>4.9</b><span class="st" aria-hidden="true">★★★★★</span><span>56 Google reviews</span></div>
   </div>
-  <svg class="seal" viewBox="0 0 200 200" aria-hidden="true">
-    <defs><path id="circ" d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0"/></defs>
-    <circle cx="100" cy="100" r="98" fill="rgba(13,22,16,.55)" stroke="rgba(243,238,226,.25)"/>
-    <g><text><textPath href="#circ" textLength="486" lengthAdjust="spacingAndGlyphs">AVAILABLE 24/7 • STORM EMERGENCIES • MARYVILLE TN •</textPath></text></g>
-    <g class="rg" fill="none" stroke="#f5b70f" stroke-width="2.2"><path d="M100 64c20 0 35 16 35 36 0 21-16 36-36 36-19 0-34-16-34-36s15-36 35-36z"/><path d="M100.5 77c13 0 22.5 10 22.5 23s-10 23-23 23-22.5-10-22.5-23 10-23 23-23z" opacity=".75"/><path d="M99.5 89c6 0 11 5 11 11s-5 11-11 11-10.5-5-10.5-11 4.6-11 10.5-11z" opacity=".55"/></g>
-    <circle cx="100" cy="100" r="3" fill="#f5b70f"/>
-  </svg>
 </section>
+
+<section class="say" aria-label="What Gonzalez does"><div class="wrap"><p class="say-t" id="sayT">Big hardwood leaning over the house. A storm at 2 a.m. A lot that needs clearing. Whatever is growing, falling or in the way, Gonzalez takes it down and <span class="lit-end">leaves the yard clean.</span></p></div></section>
 
 <div class="storm"><div class="wrap"><p><b>Tree down after a storm?</b> Day or night, Gonzalez picks up the phone.</p><a href="tel:+18653674667" target="_top"><svg width="26" height="26" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a></div></div>
 
@@ -407,7 +403,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
       <p class="intro reveal">Tell us what needs doing and roughly how big. Not sure on size? Just say so. Final price is set when we see it in person.</p>
       <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Gonzalez reaches out to set a time</li></ul>
     </div>
-    <div class="qt reveal" id="qt">
+    <div class="qt" id="qt">
       <div class="qt-head"><span id="qtLabel">Step 1 of 4</span><span class="qt-time">About 1 minute</span></div>
       <ol class="prog" id="prog"><li data-to="1">Job</li><li data-to="2">Size</li><li data-to="3">Price</li><li data-to="4">Contact</li></ol>
       <div class="est" id="live" hidden><span>Estimate so far</span><b id="liveAmt">$0</b></div>
@@ -534,10 +530,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <h2 class="reveal">Real crews. Real work.</h2>
     <p class="intro reveal">A few recent jobs around East Tennessee.</p>
     <div class="gal">
-      <figure class="reveal"><img src="img/p2.jpg" alt="Gonzalez chipper parked beside a large tree" loading="lazy"><figcaption><b>Ready to work</b><span>Chipper set up before a big removal</span></figcaption></figure>
-      <figure class="reveal"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy"><figcaption><b>Lot clearing</b><span>Brush and trees cleared off a hillside</span></figcaption></figure>
-      <figure class="reveal"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" loading="lazy"><figcaption><b>Dead tree down</b><span>Cut, stacked and ready to haul</span></figcaption></figure>
-      <figure class="reveal"><img src="img/p4.jpg" alt="Tall bare trees seen from below" loading="lazy"><figcaption><b>No tree too tall</b><span>Big hardwoods, tight yards</span></figcaption></figure>
+      <figure><img src="img/p2.jpg" alt="Gonzalez chipper parked beside a large tree" loading="lazy"><figcaption><b>Ready to work</b><span>Chipper set up before a big removal</span></figcaption></figure>
+      <figure><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy"><figcaption><b>Lot clearing</b><span>Brush and trees cleared off a hillside</span></figcaption></figure>
+      <figure><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" loading="lazy"><figcaption><b>Dead tree down</b><span>Cut, stacked and ready to haul</span></figcaption></figure>
+      <figure><img src="img/p4.jpg" alt="Tall bare trees seen from below" loading="lazy"><figcaption><b>No tree too tall</b><span>Big hardwoods, tight yards</span></figcaption></figure>
     </div>
     <p class="swipe">Swipe for more <svg width="16" height="16" aria-hidden="true"><use href="#arr"/></svg></p>
 
@@ -608,7 +604,42 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   $$('.reveal').forEach(el=>{ const sib=[...el.parentElement.children].filter(c=>c.classList.contains('reveal')); el.style.setProperty('--i',Math.min(sib.indexOf(el),4)); io?io.observe(el):el.classList.add('in'); });
 
   const nums=$('#nums'); if(io&&nums){ const io2=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ nums.classList.add('in'); io2.disconnect(); } }),{threshold:0,rootMargin:'0px 0px -10% 0px'}); io2.observe(nums); } else if(nums) nums.classList.add('in');
-  const bg=$('#heroBg'); if(bg && !RM && matchMedia('(min-width:860px) and (hover:hover)').matches){ const ls=[...bg.querySelectorAll('.tl')]; let tk=false; addEventListener('scroll',()=>{ if(tk) return; tk=true; requestAnimationFrame(()=>{ const y=Math.min(scrollY,innerHeight); ls.forEach(l=>l.style.transform='translateY('+(y*(+l.dataset.depth))+'px)'); tk=false; }); },{passive:true}); }
+  /* ---------- scroll engine (Apple-style, scroll-linked) ----------
+     Everything here moves with the finger. Only transform/opacity change per frame,
+     positions are measured once (and on resize), and work is batched into one rAF. */
+  if(!RM){
+    const cl=v=>v<0?0:v>1?1:v, eo=t=>1-Math.pow(1-t,3);
+    const hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qt'), figs=$$('.gal figure'), rings=$('.rings'), say=$('#sayT');
+    let words=[];
+    if(say){ const parts=[]; say.childNodes.forEach(n=>{ const end=n.nodeType===1; n.textContent.trim().split(/\s+/).forEach(w=>parts.push([w,end])); });
+      say.setAttribute('aria-label',say.textContent.trim()); say.textContent='';
+      parts.forEach(([w,end],i)=>{ const sp=document.createElement('span'); sp.textContent=w; sp.setAttribute('aria-hidden','true'); sp.className=end?'w lit-end':'w'; say.appendChild(sp); if(i<parts.length-1) say.appendChild(document.createTextNode(' ')); });
+      words=$$('#sayT .w'); }
+    let VH=innerHeight, HH=hero.offsetHeight, T={};
+    const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
+    function measure(){ VH=innerHeight; HH=hero.offsetHeight; heroH=HH;
+      T.say=say?top(say):0; T.sayH=say?say.offsetHeight:0; T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
+    let lastW=-1;
+    function update(){
+      const y=scrollY;
+      if(y<HH*1.3){ const p=cl(y/HH);
+        hw.style.transform='translate3d(0,'+(y*.3).toFixed(1)+'px,0) scale('+(1-p*.06).toFixed(4)+')'; hw.style.opacity=Math.max(0,1-p*1.6).toFixed(3);
+        layers.forEach(l=>l.style.transform='translate3d(0,'+(y*(+l.dataset.depth)).toFixed(1)+'px,0)'); }
+      if(words.length){ const start=T.say-VH*.7, end=T.say+T.sayH-VH*.52, p=cl((y-start)/(end-start)), n=words.length, lit=p*(n+2);
+        const k=Math.round(lit*4); if(k!==lastW){ lastW=k; words.forEach((w,i)=>{ w.style.opacity=(.15+.85*cl(lit-i)).toFixed(3); }); } }
+      if(qt){ const p=eo(cl((y+VH-T.qt-VH*.05)/(VH*.75)));
+        qt.style.transform = p>=1 ? 'none' : 'translate3d(0,'+((1-p)*90).toFixed(1)+'px,0) rotateX('+((1-p)*24).toFixed(2)+'deg) scale('+(.9+.1*p).toFixed(4)+')';
+        qt.style.opacity=(.25+.75*p).toFixed(3); }
+      figs.forEach((f,i)=>{ const p=eo(cl((y+VH-T.figs[i])/(VH*.6)));
+        f.style.transform='translate3d(0,'+((1-p)*44).toFixed(1)+'px,0) scale('+(.86+.14*p).toFixed(4)+')';
+        f.firstElementChild.style.transform='scale('+(1.28-.23*p).toFixed(4)+')'; });
+      if(rings){ const d=y+VH-T.rings; if(d>0&&d<VH*2.4) rings.style.transform='translate3d(0,-50%,0) rotate('+(d*.03).toFixed(2)+'deg) scale('+(.9+.1*eo(cl(d/VH))).toFixed(4)+')'; }
+    }
+    let tick=false; addEventListener('scroll',()=>{ if(tick) return; tick=true; requestAnimationFrame(()=>{ update(); tick=false; }); },{passive:true});
+    addEventListener('resize',()=>requestAnimationFrame(measure),{passive:true});
+    addEventListener('load',measure); if(document.fonts) document.fonts.ready.then(measure);
+    measure();
+  }
 
   /* ---------- quote tool ---------- */
   /* =====================================================================
@@ -728,7 +759,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   function go(n){
     step=n; $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
     if(n===2){ const p={removal:'tree',trim:'tree',storm:'storm',stump:'stump',land:'land'}[S.svc]; $$('[data-pane]').forEach(x=>x.classList.toggle('active',x.dataset.pane===p)); }
-    if(n===3){ buildExtras(); showPrice(); }
+    if(n===3){ buildExtras(); showPrice(); const pb=$('.pricebox'); pb.classList.remove('shine'); void pb.offsetWidth; pb.classList.add('shine'); }
     if(n===5) finish();
     $('#qtLabel').textContent = n===5?'All set':'Step '+n+' of 4';
     $$('#prog li').forEach(li=>{ const t=+li.dataset.to; li.classList.toggle('on',t<=n); li.classList.toggle('done',t<n&&n<5); });
