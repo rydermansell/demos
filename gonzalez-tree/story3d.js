@@ -3,9 +3,10 @@
 // warm key + cool fill lighting with soft shadows. Camera follows `getP()`; a slow idle drift keeps it alive.
 import * as THREE from '../lib/three.module.min.js';
 
-export function initStory({ canvas, stage, getP, T, mobile }) {
+export function initStory({ canvas, stage, getP, T, mobile, hud }) {
   const { IH, TL, HL, N } = T;
 
+  const v = (x, y, z) => new THREE.Vector3(x, y, z), v2 = (x, z) => new THREE.Vector2(x, z);
   // ---------------------------------------------------------------- noise + random
   function hash3(x, y, z) { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(z, 1440662683); h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }
   function vnoise(x, y, z) {
@@ -27,7 +28,7 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
 
   // ---------------------------------------------------------------- renderer / scene
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.6 : 2));
+  let PR = Math.min(devicePixelRatio || 1, mobile ? 1.4 : 2); const PR_MIN = 1; renderer.setPixelRatio(PR);
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -159,7 +160,7 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
       const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const k = 1 + vnoise(p.getX(i) * 2.2, p.getY(i) * 1.3, p.getZ(i) * 2.2) * .18; p.setX(i, p.getX(i) * k); p.setZ(i, p.getZ(i) * k); } g.computeVertexNormals();
       const b = C(0x2b4d31); return paint(g, (c, x, yy, z, nx, ny) => c.copy(b).multiplyScalar(.55 + .6 * Math.max(0, ny) + .12 * nx)); })]);
   const conifMat = windy(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .9 }));
-  const COUNT = mobile ? 1000 : 1600, insts = [[], []];
+  const COUNT = mobile ? 800 : 1600, insts = [[], []];
   const keep = (x, z) => Math.hypot(x - S1.x, z - S1.y) > 46 && Math.hypot(x - S3.x, z - S3.y) > 30 && Math.hypot(x - S4.x, z - S4.y) > 42;
   for (let i = 0; i < COUNT * 3 && insts[0].length + insts[1].length < COUNT; i++) {
     const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 340, x = Math.cos(a) * r, z = Math.sin(a) * r;
@@ -213,7 +214,7 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
     bg.setAttribute('color', new THREE.Float32BufferAttribute([...base.toArray(), ...base.toArray(), ...mid.toArray(), ...mid.toArray(), ...tip.toArray()], 3));
     bg.setIndex([0, 1, 3, 0, 3, 2, 2, 3, 4]);
     const gm = windy(new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: .9 }), 60);
-    const spots = [[S1, 33, mobile ? 9000 : 22000], [S3, 21, mobile ? 4000 : 9000], [S4, 36, mobile ? 1500 : 3500]];
+    const spots = [[S1, 33, mobile ? 6500 : 22000], [S3, 21, mobile ? 3000 : 9000], [S4, 36, mobile ? 1000 : 3500]];
     const total = spots.reduce((a, s) => a + s[2], 0), im = new THREE.InstancedMesh(bg, gm, total); let n = 0;
     const blocked = (x, z) => { const hx = x + 15, hz = z + 5; const lx = hx * Math.cos(.3) - hz * Math.sin(.3), lz = hx * Math.sin(.3) + hz * Math.cos(.3);
       if (Math.abs(lx) < 7.6 && lz > -5.6 && lz < 7.6) return true; if (Math.hypot(x - 5, z - 3) < 1.3) return true;
@@ -352,8 +353,40 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
     return tmpV;
   }
 
+
+  // ---------------------------------------------------------------- LIDAR-style scan: a glowing ring sweeps up the subject and maps it as points
+  scene.updateMatrixWorld(true);
+  function sample(objs, max) { const pts = [], v3 = new THREE.Vector3();
+    objs.forEach(o => o.traverse(m => { if (!m.isMesh || m.isInstancedMesh) return; const pa = m.geometry.attributes.position; for (let i = 0; i < pa.count; i += 1) pts.push([pa, i, m.matrixWorld]); }));
+    const out = new Float32Array(Math.min(max, pts.length) * 3); for (let i = 0; i < out.length / 3; i++) { const [pa, j, mw] = pts[Math.floor(rnd() * pts.length)]; v3.fromBufferAttribute(pa, j).applyMatrix4(mw); out.set([v3.x, v3.y, v3.z], i * 3); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(out, 3)); return g; }
+  const scanU = { uScan: { value: -99 }, uAlpha: { value: 0 }, uSize: { value: 1.45 }, uPR: { value: PR }, uCol: { value: C(0xffe39a) } };
+  const scanMat = new THREE.ShaderMaterial({ uniforms: scanU, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, fog: false,
+    vertexShader: 'uniform float uScan; uniform float uAlpha; uniform float uSize; uniform float uPR; varying float vA; void main(){ vec4 wp = modelMatrix * vec4(position, 1.); float d = uScan - wp.y; vA = (d > 0. ? .28 + .72 * exp(-d * 1.4) : 0.) * uAlpha; vec4 mv = viewMatrix * wp; gl_Position = projectionMatrix * mv; gl_PointSize = uSize * uPR * (1. + 1.6 * exp(-abs(d) * 2.)) * (55. / max(1., -mv.z)); }',
+    fragmentShader: 'uniform vec3 uCol; varying float vA; void main(){ vec2 c = gl_PointCoord - .5; float r = dot(c, c); if (r > .25 || vA < .01) discard; gl_FragColor = vec4(mix(uCol, vec3(1.), .45 * (1. - r * 4.)) * (1. + vA), vA * (1. - r * 4.)); }' });
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0xffd65a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
+  const ringMat2 = ringMat.clone();
+  const SUBJ = [
+    { objs: [oak, house], c: v2(5, 3), y0: 0, y1: 18.5, r: 10 },
+    { objs: [oak], c: v2(5, 3), y0: 6, y1: 18.5, r: 9 },
+    { objs: [storm], c: S3, y0: 0, y1: 6, r: 13 },
+    { objs: [clr], c: S4, y0: 0, y1: 4.5, r: 25 },
+  ].map(s => { const pts = new THREE.Points(sample(s.objs, mobile ? 3600 : 7000), scanMat); pts.visible = false; pts.frustumCulled = false; scene.add(pts);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(s.r * .985, s.r, 128), ringMat); ring.rotation.x = -Math.PI / 2; ring.position.set(s.c.x, 0, s.c.y); ring.visible = false; scene.add(ring);
+    const halo = new THREE.Mesh(new THREE.RingGeometry(s.r * 1.02, s.r * 1.06, 128), ringMat2); halo.rotation.x = -Math.PI / 2; halo.position.set(s.c.x, 0, s.c.y); halo.visible = false; scene.add(halo);
+    return { ...s, pts, ring, halo }; });
+  let scanI = -1, scanT0 = 0;
+  function land(step) { const i = step - 1; SUBJ.forEach(s => { s.pts.visible = s.ring.visible = s.halo.visible = false; }); if (i < 0 || i >= SUBJ.length) { scanI = -1; return; } scanI = i; scanT0 = U.time.value + .15; }
+  function scanFrame(tt) {
+    if (scanI < 0) return; const s = SUBJ[scanI], e = (tt - scanT0) / 1.6;
+    if (e > 2.6) { s.pts.visible = s.ring.visible = s.halo.visible = false; scanI = -1; return; }
+    const k = Math.max(0, Math.min(1, e)), ke = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, y = s.y0 + (s.y1 - s.y0) * ke;
+    s.pts.visible = s.ring.visible = s.halo.visible = e > 0; scanU.uScan.value = e < 1 ? y : 1e3; scanU.uAlpha.value = e < 1 ? 1 : Math.max(0, 1 - (e - 1) / 1.6) * .8;
+    s.ring.position.y = s.halo.position.y = y; ringMat.opacity = e < 1 ? .9 * Math.sin(Math.PI * Math.min(1, e * 1.1)) ** .4 : 0; ringMat2.opacity = ringMat.opacity * .35;
+  }
+
   // ---------------------------------------------------------------- shots
-  const v = (x, y, z) => new THREE.Vector3(x, y, z), s3 = (x, y, z) => v(S3.x + x, y, S3.y + z), s4 = (x, y, z) => v(S4.x + x, y, S4.y + z);
+  const s3 = (x, y, z) => v(S3.x + x, y, S3.y + z), s4 = (x, y, z) => v(S4.x + x, y, S4.y + z);
   const SHOTS = [
     { a: [v(70, 96, 210), v(0, 6, 0)], b: [v(52, 70, 160), v(-2, 6, 0)] },                        // intro: aerial approach
     { a: [v(29, 2.6, 30), v(3, 9.5, 3)], b: [v(21, 2.2, 25), v(1, 10.5, 2)] },                     // 1 removal: low under the oak, house in frame
@@ -385,7 +418,7 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
   // ---------------------------------------------------------------- loop
   const cp = v(70, 96, 210), cl = v(0, 6, 0); let cRoll = 0, cFov = 0, last = performance.now(), running = false, raf = 0, W = 0, H = 0, wasStorm = false, flashT = -9;
   function resize() { const w = stage.clientWidth, h = stage.clientHeight; if (w === W && h === H) return; W = w; H = h; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
-  const drift = v(0, 0, 0), up = v(-1, .5, -1);
+  const drift = v(0, 0, 0), up = v(-1, .5, -1), dirV = v(0, 0, 0); let fc = 0, slow = 0, lastDrop = 0;
   function frame(now) {
     raf = requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000); last = now; const tt = (U.time.value += dt); rainU.uTime.value = tt;
     resize();
@@ -401,10 +434,13 @@ export function initStory({ canvas, stage, getP, T, mobile }) {
     sun.target.position.copy(cl); sun.position.copy(cl).addScaledVector(sd, 180);
     fill.target.position.copy(cl); up.set(-sd.x, .5, -sd.z); fill.position.copy(cl).addScaledVector(up, 100);
     sky.position.copy(camera.position); rain.position.copy(camera.position); rainU.uOp.value = Math.max(0, 1 - Math.abs(st.mood - 1) * 1.6);
+    scanFrame(tt);
     renderer.render(scene, camera);
+    if (hud && (++fc % 6 === 0)) { hud.alt.textContent = Math.max(0, camera.position.y - height(camera.position.x, camera.position.z)).toFixed(1); camera.getWorldDirection(dirV); hud.hdg.textContent = String(Math.round((Math.atan2(dirV.x, -dirV.z) * 180 / Math.PI + 360) % 360)).padStart(3, '0'); }
+    slow = slow * .95 + (dt > 1 / 38 ? 1 : 0) * .05; if (slow > .6 && PR > PR_MIN && tt - lastDrop > 1.5) { PR = Math.max(PR_MIN, PR - .15); renderer.setPixelRatio(PR); scanU.uPR.value = PR; W = 0; lastDrop = tt; slow = 0; }
   }
   function start() { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
   function stop() { running = false; cancelAnimationFrame(raf); }
   { pose(getP()); cp.copy(P); cl.copy(Lk); resize(); }
-  return { start, stop };
+  return { start, stop, land };
 }

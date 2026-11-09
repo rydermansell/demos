@@ -135,7 +135,7 @@ html.motion:not(.seen){--intro:1.55s}
 /* motion: pinned stage, the photo grows from a card to full screen, chapters play over it */
 .motion .story{height:640vh;padding:0}
 .motion .st-stage{position:sticky;top:0;height:100vh;height:100svh;max-width:none;padding:0;overflow:hidden;isolation:isolate}
-.motion .st-head,.motion .st-end{position:absolute;z-index:3;left:20px;right:20px;top:clamp(110px,15vh,150px);text-align:center;will-change:opacity,transform}
+.motion .st-head,.motion .st-end{position:absolute;z-index:3;left:20px;right:20px;top:clamp(168px,22vh,200px);text-align:center;will-change:opacity,transform}
 .motion .st-head h2,.motion .st-end h2{font-size:clamp(38px,8.4vw,80px);text-wrap:balance}
 .motion .st-end{opacity:0;display:grid;justify-items:center}
 .motion .st-media{display:none}
@@ -146,6 +146,24 @@ html.motion:not(.seen){--intro:1.55s}
 .motion .st-head h2,.motion .st-end h2{text-shadow:0 2px 30px rgba(0,0,0,.35)}
 .motion .st-t,.motion .st-d{text-shadow:0 1px 18px rgba(0,0,0,.45)}
 .motion .st-rail{display:flex;gap:6px;position:absolute;left:22px;right:22px;top:calc(104px + env(safe-area-inset-top,0px));opacity:0}
+.st-hud{display:none}
+.motion .st-hud{display:block;position:absolute;inset:0;pointer-events:none;z-index:2;color:rgba(243,238,226,.78);font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.st-hud .c{position:absolute;width:18px;height:18px;border:0 solid rgba(243,238,226,.5)}
+.st-hud .tl{top:100px;left:12px;border-width:1.5px 0 0 1.5px}.st-hud .tr{top:100px;right:12px;border-width:1.5px 1.5px 0 0}
+.st-hud .bl{bottom:12px;left:12px;border-width:0 0 1.5px 1.5px}.st-hud .br{bottom:12px;right:12px;border-width:0 1.5px 1.5px 0}
+.hud-l,.hud-r{position:absolute;top:122px;display:grid;gap:5px;font-variant-numeric:tabular-nums}
+.hud-l{left:22px}.hud-r{right:22px;text-align:right}
+.hud-l #hudCh{color:var(--hv)}
+#hudSt{display:inline-flex;align-items:center;gap:6px}#hudSt::before{content:"";width:6px;height:6px;border-radius:50%;background:#62d26f;box-shadow:0 0 8px #62d26f}
+.st-hud.scan #hudSt::before{background:var(--hv);box-shadow:0 0 10px var(--hv)}
+.hud-r b{color:var(--cream);font-weight:800;letter-spacing:.06em}
+.ret{position:absolute;left:50%;top:44%;width:76px;height:76px;margin:-38px 0 0 -38px;opacity:0;transform:scale(1.6) rotate(45deg);transition:opacity .35s var(--ease-out),transform .7s var(--ease-out)}
+.ret i{position:absolute;width:14px;height:14px;border:0 solid var(--hv)}
+.ret i:nth-child(1){top:0;left:0;border-width:2px 0 0 2px}.ret i:nth-child(2){top:0;right:0;border-width:2px 2px 0 0}
+.ret i:nth-child(3){bottom:0;left:0;border-width:0 0 2px 2px}.ret i:nth-child(4){bottom:0;right:0;border-width:0 2px 2px 0}
+.ret b{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--hv);box-shadow:0 0 10px var(--hv)}
+.ret.lock{opacity:.95;transform:none}.ret.lock.soft{opacity:.28;transition-duration:1.2s}
+@media(min-width:860px){.st-hud .tl,.st-hud .tr{top:108px}.hud-l,.hud-r{top:128px}.hud-l{left:max(30px,calc((100vw - 1140px)/2 + 20px))}.ret{left:62%}}
 .st-rail i{flex:1;height:3px;border-radius:2px;background:rgba(243,238,226,.22);overflow:hidden}
 .st-rail b{display:block;height:100%;background:var(--cream);transform-origin:0 50%;transform:scaleX(0)}
 .motion .st-chs{position:absolute;left:0;right:0;bottom:0;padding:0 22px calc(44px + env(safe-area-inset-bottom,0px));pointer-events:none}
@@ -408,6 +426,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="st-head" id="stHead"><h2>Every tree job.<br>Start to finish.</h2></div>
     <div class="st-media" id="stMedia"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" decoding="async"><img src="img/p4.jpg" alt="Tall hardwoods seen from below" loading="lazy" decoding="async"><img src="img/p2.jpg" alt="Gonzalez chipper beside a large tree" loading="lazy" decoding="async"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy" decoding="async"></div>
     <canvas class="st-canvas" id="stCanvas" aria-hidden="true"></canvas><span class="st-shade" aria-hidden="true"></span><span class="st-grain" aria-hidden="true"></span>
+    <div class="st-hud" aria-hidden="true"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><div class="hud-l"><span id="hudCh">Survey</span><span id="hudSt">Live</span></div><div class="hud-r"><span>Alt <b id="hudAlt">0.0</b> m</span><span>Hdg <b id="hudHdg">000</b>°</span></div><div class="ret" id="hudRet"><i></i><i></i><i></i><i></i><b></b></div></div>
     <div class="st-rail" id="stRail" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
     <div class="st-chs">
       <div class="st-ch"><p class="st-lbl">Tree removal</p><h3 class="st-t"><span>Down safely, even in tight spots.</span></h3><p class="st-d">Dead, leaning or too close to the house. We can grind the stump while we’re there.</p></div>
@@ -634,7 +653,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
   <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
-  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 11)</span></div>
+  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 12)</span></div>
 </div></footer>
 
 <div class="sticky" id="sticky"><a class="btn hv" href="#quote">Get my price</a><a class="btn dk" href="tel:+18653674667" target="_top" aria-label="Call"><svg width="18" height="18" aria-hidden="true"><use href="#ph"/></svg>Call</a></div>
@@ -668,9 +687,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
       T.td=td?top(td):0; T.tdH=td?td.offsetHeight:0; rects(); T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
     /* story: 3D drone flight (camera in story3d.js), overlay text follows the same timeline */
     const td=$('#takedown'), stage=$('#stStage'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead'), send=$('#stEnd');
-    const ST={IH:.07, TL:.045, HL:.17, N:chs.length}; let curP=0, lastTd=-1;
+    const ST={IH:.07, TL:.045, HL:.17, N:chs.length}; let curP=0, lastTd=-1, vp=null, fx=null;
     function rects(){}
-    function scene(y){ if(!td) return; const p=cl((y-T.td)/(T.tdH-VH)); curP=p; if(Math.abs(p-lastTd)<0.0002) return; lastTd=p;
+    function scene(y){ if(!td) return; const p=vp!==null?vp:cl((y-T.td)/(T.tdH-VH)); curP=p; if(Math.abs(p-lastTd)<0.0002) return; lastTd=p;
       const IH=ST.IH, TL=ST.TL, HL=ST.HL, endA=IH+ST.N*(TL+HL);
       const hf=cl((p-IH*.6)/(IH*.5+TL*.3)); shead.style.opacity=(1-hf).toFixed(3); shead.style.transform='translate3d(0,'+(-40*hf).toFixed(1)+'px,0) scale('+(1-.05*hf).toFixed(4)+')';
       const en=eo(cl((p-(endA+.025))/.03)); send.style.opacity=en.toFixed(3); send.style.transform='translate3d(0,'+((1-en)*30).toFixed(1)+'px,0)'; send.style.pointerEvents=en>.5?'auto':'none';
@@ -682,33 +701,46 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
         lb.style.opacity=(inn*(1-out)).toFixed(3); lb.style.transform='translate3d(0,'+((1-inn)*12).toFixed(1)+'px,0)';
         dd.style.opacity=late.toFixed(3); dd.style.transform='translate3d(0,'+((1-late)*16).toFixed(1)+'px,0)'; });
     }
-    if(td){ const boot=()=>import('./story3d.js').then(m=>{ const fx=m.initStory({canvas:$('#stCanvas'), stage, getP:()=>curP, T:ST, mobile:matchMedia('(max-width: 859px)').matches});
+    if(td){ const boot=()=>import('./story3d.js').then(m=>{ fx=m.initStory({canvas:$('#stCanvas'), stage, getP:()=>curP, T:ST, mobile:matchMedia('(max-width: 859px)').matches, hud:{alt:$('#hudAlt'), hdg:$('#hudHdg')}});
         const so=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?fx.start():fx.stop()),{rootMargin:'200px 0px'}); so.observe(td); })
         .catch(err=>{ console.warn('3D story unavailable', err); document.documentElement.classList.remove('motion'); measure(); });
       if(document.readyState==='complete') setTimeout(boot,60); else addEventListener('load',()=>setTimeout(boot,60)); }
 
-    /* story steps: one gesture = one chapter; the page glides there and holds */
+    /* story steps: every gesture moves one chapter. The camera flies on a virtual timeline (no page scrolling mid-flight),
+       a gesture during a flight retargets to the following chapter, and the page position is synced when it lands. */
     if(td){
       const steps=[ST.IH*.45]; for(let k=0;k<ST.N;k++) steps.push(ST.IH+k*(ST.TL+ST.HL)+ST.TL+ST.HL*.42); steps.push(.995);
       const span=()=>T.tdH-VH, yOf=p=>T.td+p*span(), inPin=y=>document.documentElement.classList.contains('motion')&&y>=T.td-2&&y<=T.td+span()+2;
       const near=y=>{ const p=(y-T.td)/span(); let b=0,d=9; steps.forEach((s,i)=>{ const dd=Math.abs(s-p); if(dd<d){ d=dd; b=i; } }); return b; };
-      let gliding=false, lockUntil=0, lastY=scrollY, at=-1;
       const jump=y=>window.scrollTo({top:y,behavior:'instant'});
-      function glide(toY,dur){ const fromY=scrollY, t0=performance.now(); gliding=true;
-        (function f(t){ const u=Math.min(1,(t-t0)/dur), e=u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2; jump(fromY+(toY-fromY)*e); if(u<1) requestAnimationFrame(f); else { gliding=false; lockUntil=performance.now()+420; lastY=scrollY; } })(t0); }
-      function step(dir){ if(gliding||performance.now()<lockUntil) return; const i=(at>=0&&inPin(scrollY)?at:near(scrollY))+dir;
-        if(i<0){ at=-1; glide(T.td-VH*.6,900); return; }
-        if(i>=steps.length){ at=-1; glide(T.td+span()+VH*.55,900); return; }
-        at=i; glide(yOf(steps[i]), i===0||i===steps.length-1?1100:1650); }
-      addEventListener('wheel',e=>{ if(!inPin(scrollY)) return; e.preventDefault(); if(Math.abs(e.deltaY)<6) return; step(e.deltaY>0?1:-1); },{passive:false});
-      let ty=null; addEventListener('touchstart',e=>{ ty=e.touches[0].clientY; },{passive:true});
+      const hud=$('.st-hud'), ret=$('#hudRet'), hCh=$('#hudCh'), hSt=$('#hudSt'); let softT=0;
+      function label(i){ hCh.textContent = i>=1&&i<=ST.N ? 'Ch '+String(i).padStart(2,'0')+' / '+String(ST.N).padStart(2,'0') : (i===0?'Survey':'Complete'); }
+      let target=-1, raf=0, flying=false, leaving=false, lastY=scrollY, entered=0;
+      function landed(i){ flying=false; vp=null; jump(yOf(steps[i])); lastY=scrollY; scene(scrollY);
+        if(fx&&fx.land) fx.land(i); clearTimeout(softT); ret.classList.remove('soft'); ret.classList.add('lock');
+        if(i>=1&&i<=ST.N){ hud.classList.add('scan'); hSt.textContent='Scanning'; softT=setTimeout(()=>{ ret.classList.add('soft'); hud.classList.remove('scan'); hSt.textContent='Mapped'; },1700); }
+        else { hSt.textContent='Live'; softT=setTimeout(()=>ret.classList.add('soft'),900); } }
+      function fly(i){ const moving=flying, from=vp!==null?vp:curP, to=steps[i], dist=Math.abs(to-from), dur=Math.min(1700,Math.max(650,(moving?1150:1500)*Math.min(1,dist/.2))), t0=performance.now();
+        target=i; flying=true; cancelAnimationFrame(raf); label(i); ret.classList.remove('lock','soft'); hud.classList.remove('scan'); hSt.textContent='Moving'; if(fx&&fx.land) fx.land(-1);
+        const ease=moving?(u=>1-Math.pow(1-u,3)):(u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2);
+        (function f(t){ const u=Math.min(1,(t-t0)/dur); vp=from+(to-from)*ease(u); scene(scrollY); if(u<1) raf=requestAnimationFrame(f); else landed(i); })(t0); }
+      function leave(toY){ cancelAnimationFrame(raf); flying=false; vp=null; target=-1; leaving=true; const fromY=scrollY, t0=performance.now();
+        (function f(t){ const u=Math.min(1,(t-t0)/800), e=u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2; jump(fromY+(toY-fromY)*e); if(u<1) requestAnimationFrame(f); else { leaving=false; lastY=scrollY; } })(t0); }
+      function step(dir){ if(leaving) return; const base=target>=0?target:near(scrollY), i=base+dir;
+        if(i<0) return leave(T.td-VH*.6); if(i>=steps.length) return leave(T.td+span()+VH*.55); fly(i); }
+      // wheel / trackpad: a gesture is a burst of events; act once per burst, on the first meaningful movement
+      let lastW=0, acc=0, fired=false;
+      addEventListener('wheel',e=>{ if(!inPin(scrollY)) return; e.preventDefault(); const now=performance.now(); if(now-lastW>200){ acc=0; fired=false; } lastW=now;
+        if(fired) return; acc+=e.deltaY; if(Math.abs(acc)>10){ fired=true; step(acc>0?1:-1); } },{passive:false});
+      let ty=null, tx=null; addEventListener('touchstart',e=>{ ty=e.touches[0].clientY; tx=e.touches[0].clientX; },{passive:true});
       addEventListener('touchmove',e=>{ if(inPin(scrollY)) e.preventDefault(); },{passive:false});
-      addEventListener('touchend',e=>{ if(ty===null) return; const dy=ty-(e.changedTouches[0]||{clientY:ty}).clientY; ty=null; if(inPin(scrollY)&&Math.abs(dy)>22) step(dy>0?1:-1); },{passive:true});
+      addEventListener('touchend',e=>{ if(ty===null) return; const t=e.changedTouches[0]; const dy=ty-t.clientY, dx=tx-t.clientX; ty=null; if(performance.now()-entered<700) return; if(inPin(scrollY)&&Math.abs(dy)>14&&Math.abs(dy)>Math.abs(dx)*.8) step(dy>0?1:-1); },{passive:true});
       addEventListener('keydown',e=>{ if(!inPin(scrollY)) return; const k=e.key; if(k==='ArrowDown'||k==='PageDown'||k===' '){ e.preventDefault(); step(1); } else if(k==='ArrowUp'||k==='PageUp'){ e.preventDefault(); step(-1); } });
-      // scrolling into the story from above or below lands on the first or last chapter
-      addEventListener('scroll',()=>{ const y=scrollY; if(gliding){ lastY=y; return; }
-        if(inPin(y)&&performance.now()>=lockUntil){ const i=near(y), ty2=yOf(steps[i]); if(Math.abs(y-ty2)>3){ const wasOut=!inPin(lastY); at=wasOut?(lastY<T.td?0:steps.length-1):i; glide(yOf(steps[at]),700); } }
-        else if(!inPin(y)) at=-1;
+      // arriving by normal scrolling: stop the momentum and fly to the first (from above) or last (from below) chapter
+      addEventListener('scroll',()=>{ const y=scrollY; if(flying||leaving){ lastY=y; return; }
+        if(inPin(y)){ const i=near(y); if(Math.abs(y-yOf(steps[i]))>3){ const wasOut=!inPin(lastY); if(wasOut) entered=performance.now(); jump(y); fly(wasOut?(lastY<T.td?0:steps.length-1):i); } }
+        else target=-1;
+        if(inPin(y)&&!flying&&target<0) label(near(y));
         lastY=y; },{passive:true});
     }
     function update(){
