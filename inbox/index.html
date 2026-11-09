@@ -57,6 +57,13 @@ main{max-width:720px;margin:0 auto;padding:16px 14px calc(40px + env(safe-area-i
 .demo{background:#FFF1C7;color:#5A4100;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;margin-bottom:12px}
 .sk{height:118px;border-radius:18px;margin-bottom:10px;background:linear-gradient(90deg,#ECE6D8 0%,#F5F1E8 50%,#ECE6D8 100%);background-size:200% 100%;animation:sk 1.1s linear infinite}
 @keyframes sk{to{background-position:-200% 0}}
+.calrow{margin:0 0 14px;animation:in .5s var(--ease) both}
+.calbtn{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:9px 12px 9px 11px;border:1.5px solid var(--ink);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px -10px rgba(14,27,46,.45);transition:transform .14s var(--ease),background-color .2s}
+.calbtn:active{transform:scale(.97)}.calbtn svg{flex:none;width:19px;height:19px}.calbtn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calbtn small{flex:none;padding:2px 8px;border-radius:999px;background:var(--tag);color:var(--tag-ink);font-size:11.5px;font-weight:700;letter-spacing:.01em}
+.calbtn.on{border-color:#BFE3D2;background:#EAF6F0;color:#1B7A54;box-shadow:none;font-weight:600}.calbtn.on u{flex:none;color:var(--ink);font-weight:700;text-underline-offset:3px}
+.calbtn .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(31,157,107,.15)}
+.ver{margin:28px 0 0;text-align:center;font-size:11.5px;color:#B3AB98}
 .conn{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:12px 12px 12px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 1px rgba(14,27,46,.04),0 10px 24px -14px rgba(14,27,46,.3);animation:in .5s var(--ease) both}
 .conn .ic{flex:none}.conn div{flex:1;min-width:0}.conn b{display:block;font-size:15px;color:var(--ink)}.conn span{display:block;font-size:13px;color:var(--muted);line-height:1.35}
 .conn button{flex:none;border:0;border-radius:999px;padding:10px 16px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:transform .14s var(--ease)}.conn button:active{transform:scale(.96)}
@@ -104,7 +111,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .save{display:block;width:100%;margin-top:18px;border:0;border-radius:14px;padding:15px;background:var(--ink);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .save:disabled{opacity:.6}
 .cancel{display:block;width:100%;margin-top:6px;border:0;background:none;padding:10px;font-weight:600;color:var(--muted);cursor:pointer}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,calc(100% + 60px));visibility:hidden;background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:10px 16px;border-radius:999px;transition:transform .45s cubic-bezier(.2,.9,.3,1.2);z-index:9}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:max-content;max-width:calc(100% - 32px);text-align:center;transform:translate(-50%,calc(100% + 130px));visibility:hidden;background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:10px 16px;border-radius:999px;transition:transform .45s cubic-bezier(.2,.9,.3,1.2);z-index:9}
 .toast.on{transform:translate(-50%,0);visibility:visible}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card{opacity:1;transform:none}}
 </style></head><body>
@@ -117,6 +124,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   <div id="sync" hidden></div>
   <div class="tabs" role="tablist"><button aria-pressed="true" data-t="up">Upcoming</button><button aria-pressed="false" data-t="new">New</button><button aria-pressed="false" data-t="past">Past</button></div>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+  <p class="ver">PriceWink inbox · build 21</p>
 </main>
 <button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Block time</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -256,9 +264,11 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   /* ---------- Connect your calendar ---------- */
   const CAL_ICON='<i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1B2E" stroke-width="1.7" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M8.5 14.5l2.2 2.2 4.8-4.8" stroke="#1F9D6B" stroke-width="2"/></svg></i>';
   function renderSync(){ const sy=$('#sync'); sy.hidden=false;
-    if(!SRC.length){ sy.className='conn'; sy.innerHTML=CAL_ICON+'<div><b>Connect your calendar</b><span>Jobs you put on your calendar get blocked here automatically.</span></div><button type="button" data-open-connect>Connect</button>'; return; }
-    const names=[...new Set(SRC.map(x=>x.label))];
-    sy.className='sync'; sy.innerHTML='<span>Synced with '+esc(names.length>1?'your calendars':names[0])+'</span><button type="button" data-open-connect>Manage</button>'; }
+    const names=[...new Set(SRC.map(x=>x.label))]; sy.className='calrow';
+    sy.innerHTML=SRC.length
+      ? '<button type="button" class="calbtn on" data-open-connect><i class="dot" aria-hidden="true"></i><span>Synced with '+esc(names.length>1?'your calendars':names[0])+'</span><u>Manage</u></button>'
+      : '<button type="button" class="calbtn" data-open-connect>'+CAL_SVG+'<span>Connect your calendar</span><small>Optional</small></button>'; }
+  const CAL_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.5h17M8 3v4M16 3v4M12 12.5v5M9.5 15h5"/></svg>';
   const STEPS={
     ios:['Open the <b>Calendar</b> app and tap <b>Calendars</b> at the bottom.','Tap <b>ⓘ</b> next to the calendar you put jobs on.','Turn on <b>Public Calendar</b>, tap <b>Share Link</b>, then <b>Copy</b>.','Come back here and tap <b>Paste</b>.'],
     ol:['Open <b>outlook.com</b> (or Outlook on the web) and tap the gear <b>⚙</b>.','Go to <b>Calendar</b> → <b>Shared calendars</b>.','Under <b>Publish a calendar</b>, pick your calendar and <b>Can view when I’m busy</b>, then <b>Publish</b>.','Copy the <b>ICS</b> link, come back here and tap <b>Paste</b>.']};
