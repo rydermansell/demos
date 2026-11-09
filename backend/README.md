@@ -14,7 +14,7 @@ One Google Apps Script web app runs bookings for **every** PriceWink client. It 
 1. Go to [script.google.com](https://script.google.com) signed in as the PriceWink Google account, click **New project**, name it `PriceWink bookings`.
 2. Delete the sample code, paste in all of `Code.gs` from this folder, and save. Then open **Project Settings**, tick **Show "appsscript.json" manifest file in editor**, and replace that file's contents with `appsscript.json` from this folder (it turns on the Calendar API used for free/busy checks and sets the web-app access).
 3. In **Project Settings** (gear icon), set the time zone to `(GMT-05:00) Eastern Time`.
-4. Pick `setup` in the function menu at the top and click **Run**. Approve the permissions (Sheets, Calendar, Gmail). It creates a spreadsheet called "PriceWink bookings".
+4. Pick `setup` in the function menu at the top and click **Run**. Approve the permissions (Sheets, Calendar, Gmail). It creates a spreadsheet called "PriceWink bookings" and schedules the nightly summary emails and new-client setup.
 5. Click **Deploy > New deployment**, type **Web app**:
    - Execute as: **Me**
    - Who has access: **Anyone**
@@ -23,17 +23,31 @@ One Google Apps Script web app runs bookings for **every** PriceWink client. It 
 6. Paste that URL into:
    - each client site: `const BOOKING_ENDPOINT='...'` near the top of the quote tool script
    - `inbox/index.html`: `const API='...'`
-7. Pick `installTriggers` and **Run** it once. This schedules the nightly summary emails.
 
-## Adding a client
+## Adding a client (no script editor needed)
 
-1. In the script editor, open `addClient`, fill in the client's details (id, name, owner email, days, hours, phone, site) and **Run** it.
-2. The log (View > Logs) prints:
-   - their new bookings calendar
-   - their private **owner inbox link**. Send this to the owner; they can add it to their home screen.
-3. In Google Calendar, open **Settings > [Client] bookings > Share with specific people** and add the owner's email, so bookings show up on their phone. They can also block off time there, and the booking page stops offering it.
-4. In the client's site, set `CLIENT_ID` to the same id and paste the web-app URL into `BOOKING_ENDPOINT`.
-5. Show the owner the **Connect your calendar** card in their inbox (or connect it with them on the setup call).
+Add one row to the **Clients** tab (by hand, or Claude does it through the Google Sheets connector):
+
+| column | example | notes |
+|---|---|---|
+| id | `acme-roof` | lowercase, used in the site and inbox links |
+| name | Acme Roofing | |
+| ownerEmail | owner@gmail.com | booking alerts; the bookings calendar is shared here |
+| ownerSms | 8655551234@vtext.com | optional text alerts |
+| days / start / end | `Mon,Tue,Wed,Thu,Fri` / `08:00` / `16:00` | estimate hours (first and last start time) |
+| slotMinutes / leadHours | 60 / 12 | |
+| active | TRUE | |
+| digest | TRUE | 7 PM summary email |
+| phone / site | | shown in emails |
+
+Leave `calendarId` and `inboxKey` blank (or pre-fill a 20-character key). Within 10 minutes, or the first time the site loads, the backend:
+- creates "[name] bookings" calendar and shares it with the owner (they can add jobs to it, which block times too)
+- creates the inbox key
+- emails **you** the owner's inbox link
+
+Then set `CLIENT_ID` (= id) and `BOOKING_ENDPOINT` in the client's site. Hours, emails and calendars can be changed on the row any time, no redeploy.
+
+(`addClient` in the editor still works if you prefer it.)
 
 ## Connecting the owner's calendar (auto-blocking)
 

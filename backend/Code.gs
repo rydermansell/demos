@@ -37,6 +37,7 @@ function setup() {
   ensureSheet_(ss, 'Clients', CLIENT_COLS);
   ensureSheet_(ss, 'Bookings', BOOKING_COLS);
   const first = ss.getSheetByName('Sheet1'); if (first && ss.getSheets().length > 1) ss.deleteSheet(first);
+  installTriggers();   // nightly summary emails + auto-setup of new client rows
   Logger.log('Spreadsheet ready: ' + ss.getUrl());
 }
 
@@ -62,14 +63,45 @@ function addClient() {
   };
   const ss = sheet_();
   if (findClient_(c.id)) throw new Error('A client with id "' + c.id + '" already exists. Edit their row on the Clients tab instead.');
-  const cal = CalendarApp.createCalendar(c.name + ' bookings', { timeZone: TZ, color: CalendarApp.Color.YELLOW });
-  c.calendarId = cal.getId();
-  c.inboxKey = Utilities.getUuid().replace(/-/g, '').slice(0, 20);
   c.active = true;
   ss.getSheetByName('Clients').appendRow(CLIENT_COLS.map(k => c[k] === undefined ? '' : c[k]));
-  Logger.log('Added ' + c.name + '.\nCalendar: ' + c.calendarId +
-    '\nShare that calendar with ' + c.ownerEmail + ' in Google Calendar (Settings > ' + c.name + ' bookings > Share with specific people).' +
-    '\nOwner inbox link: ' + INBOX_BASE + '?c=' + c.id + '#' + c.inboxKey);
+  const done = prepare_(findClient_(c.id), false);
+  Logger.log('Added ' + c.name + '.\nOwner inbox link: ' + INBOX_BASE + '?c=' + c.id + '#' + done.inboxKey);
+}
+
+/**
+ * New client = new row on the Clients tab (by hand, or by Claude through Google Sheets).
+ * The first time a row is used (or within 10 minutes, via the trigger) it gets its bookings calendar,
+ * that calendar is shared with the owner (they can add jobs to it too), an inbox key if blank,
+ * and you get an email with the owner's inbox link. Safe to run any time.
+ */
+function setupNewClients() {
+  const rows = sheet_().getSheetByName('Clients').getDataRange().getValues();
+  for (let r = 1; r < rows.length; r++) { const c = findClient_(rows[r][0]); if (c && isOn_(c.active) && (!c.calendarId || !c.inboxKey)) prepare_(c, true); }
+}
+function prepare_(client, lock) {
+  if (!client || (client.calendarId && client.inboxKey)) return client;
+  const l = lock ? LockService.getScriptLock() : null;
+  if (l) l.waitLock(15000);
+  try {
+    client = findClient_(client.id);   // re-read inside the lock so two visits can't make two calendars
+    if (client.calendarId && client.inboxKey) return client;
+    let shared = false;
+    if (!client.calendarId) {
+      const cal = CalendarApp.createCalendar(client.name + ' bookings', { timeZone: TZ, color: CalendarApp.Color.YELLOW });
+      setClientField_(client.id, 'calendarId', cal.getId());
+      if (client.ownerEmail) {
+        try { Calendar.Acl.insert({ role: 'writer', scope: { type: 'user', value: String(client.ownerEmail).trim() } }, cal.getId(), { sendNotifications: true }); shared = true; } catch (err) {}
+      }
+    }
+    if (!client.inboxKey) setClientField_(client.id, 'inboxKey', Utilities.getUuid().replace(/-/g, '').slice(0, 20));
+    const ready = findClient_(client.id), me = Session.getEffectiveUser().getEmail();
+    if (me) MailApp.sendEmail({ to: me, subject: 'PriceWink: ' + ready.name + ' is set up',
+      body: ready.name + ' is ready to take bookings.\n\nOwner inbox link (send this to them):\n' + INBOX_BASE + '?c=' + ready.id + '#' + ready.inboxKey +
+        '\n\nBookings calendar: ' + (shared ? 'created and shared with ' + ready.ownerEmail + '.' : 'created. Share it with the owner in Google Calendar (no owner email on the row, or sharing failed).') +
+        '\nSite: ' + (ready.site || '(not set)') + '\nClient id for the site: ' + ready.id });
+    return ready;
+  } finally { if (l) try { l.releaseLock(); } catch (err) {} }
 }
 
 /* ------------------------------------------------------------------ web endpoints */
@@ -77,8 +109,9 @@ function addClient() {
 function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
-    const client = findClient_(p.c);
+    let client = findClient_(p.c);
     if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
+    client = prepare_(client, true);
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
     if (p.action === 'inbox') {
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
@@ -98,8 +131,9 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(15000);
-    const client = findClient_(d.client);
+    let client = findClient_(d.client);
     if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
+    client = prepare_(client, false);   // already holding the script lock
     if (d.action === 'status') return json_(setStatus_(client, d));
     if (d.action === 'block') return json_(block_(client, d));
     if (d.action === 'unblock') return json_(unblock_(client, d));
@@ -408,7 +442,8 @@ function blocksFor_(client) {
 
 /** Run once from the editor: emails every owner tomorrow's schedule at 7pm Eastern. */
 function installTriggers() {
-  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'sendDigests').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.getProjectTriggers().filter(t => ['sendDigests', 'setupNewClients'].indexOf(t.getHandlerFunction()) >= 0).forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('setupNewClients').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('sendDigests').timeBased().atHour(19).everyDays(1).inTimezone(TZ).create();
 }
 function sendDigests() {
