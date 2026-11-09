@@ -4,7 +4,7 @@
 import * as THREE from '../lib/three.module.min.js';
 
 export function initStory({ canvas, stage, getP, T, mobile, hud }) {
-  const { IH, TL, HL, N } = T;
+  const { N } = T;
 
   const v = (x, y, z) => new THREE.Vector3(x, y, z), v2 = (x, z) => new THREE.Vector2(x, z);
   // ---------------------------------------------------------------- noise + random
@@ -384,7 +384,7 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
     const halo = new THREE.Mesh(new THREE.RingGeometry(s.r * 1.02, s.r * 1.06, 128), ringMat2); halo.rotation.x = -Math.PI / 2; halo.position.set(s.c.x, 0, s.c.y); halo.visible = false; scene.add(halo);
     return { ...s, pts, ring, halo }; });
   let scanI = -1, scanT0 = 0;
-  function land(step) { const i = step - 1; SUBJ.forEach(s => { s.pts.visible = s.ring.visible = s.halo.visible = false; }); if (i < 0 || i >= SUBJ.length) { scanI = -1; return; } scanI = i; scanT0 = U.time.value + .15; }
+  function land(step) { const i = step >= 0 && step < STOP_SUBJ.length ? STOP_SUBJ[step] : -1; SUBJ.forEach(s => { s.pts.visible = s.ring.visible = s.halo.visible = false; }); if (i < 0 || i >= SUBJ.length) { scanI = -1; return; } scanI = i; scanT0 = U.time.value + .15; }
   function scanFrame(tt) {
     if (scanI < 0) return; const s = SUBJ[scanI], e = (tt - scanT0) / 1.6;
     if (e > 2.6) { s.pts.visible = s.ring.visible = s.halo.visible = false; scanI = -1; return; }
@@ -405,29 +405,28 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
   const END = [s4(28, 92, 120), s4(-10, 0, -20)];
   const ease = { io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, sine: t => -(Math.cos(Math.PI * t) - 1) / 2 };
   const P = v(0, 0, 0), Lk = v(0, 0, 0);
-  // One fixed camera pose per stop (intro, 4 chapters, close). Flights between stops follow a terrain-aware
-  // altitude profile: a single smooth climb to a safe cruise height over the highest ground, then a single descent.
-  const STEPS = [IH * .45]; for (let k = 0; k < N; k++) STEPS.push(IH + k * (TL + HL) + TL + HL * .42); STEPS.push(.995);
+  // Stops: opening aerial, then one fixed pose per chapter (removal, storm, clearing). getP() runs from -1 (aerial) to N-1.
+  // Flights follow a terrain-aware altitude profile: one climb then one descent, or a single glide for short hops.
+  // The page eases the timeline once; nothing here adds a second easing, so speed changes stay gentle.
   const at = (sh, u) => { const e = ease.sine(u); return [sh.a[0].clone().lerp(sh.b[0], e), sh.a[1].clone().lerp(sh.b[1], e)]; };
-  const STOPS = [at(SHOTS[0], .45), ...SHOTS.slice(1).map(sh => at(sh, .42)), [END[0].clone(), END[1].clone()]];
-  const STOP_MOOD = [0, 0, 0, 1, 2, 2];
+  const STOPS = [at(SHOTS[0], .45), at(SHOTS[1], .3), at(SHOTS[3], .42), at(SHOTS[4], .42)];
+  const STOP_MOOD = [0, 0, 1, 2], STOP_SUBJ = [0, 2, 3];
   STOPS.forEach(([pos]) => { pos.y = Math.max(pos.y, height(pos.x, pos.z) + 1.8); });
   const LEGS = STOPS.slice(0, -1).map(([a], i) => { const b = STOPS[i + 1][0]; let mx = -1e9;
     for (let j = 1; j < 40; j++) { const e = j / 40; if (e < .08 || e > .92) continue; mx = Math.max(mx, height(a.x + (b.x - a.x) * e, a.z + (b.z - a.z) * e)); }
     const far = Math.hypot(b.x - a.x, b.z - a.z); return { cruise: Math.max(mx + 14 + far * .04, Math.min(a.y, b.y) + 6), far }; });
-  const hump = e => Math.pow(Math.sin(Math.PI * e), .75);
+  const sm = x => x * x * (3 - 2 * x);
   function pose(p) {
-    let i = 0; while (i < STEPS.length - 2 && p > STEPS[i + 1]) i++;
-    const t = Math.min(1, Math.max(0, (p - STEPS[i]) / (STEPS[i + 1] - STEPS[i]))), e = ease.io(t), A = STOPS[i], B = STOPS[i + 1], leg = LEGS[i], h = hump(e);
-    P.lerpVectors(A[0], B[0], e);
-    const yA = A[0].y, yB = B[0].y, sm = x => x * x * (3 - 2 * x);
-    if (leg.cruise > Math.max(yA, yB) + 3) P.y = e < .5 ? yA + (leg.cruise - yA) * sm(e * 2) : leg.cruise + (yB - leg.cruise) * sm(e * 2 - 1);   // one climb, one descent
-    else P.y = yA + (yB - yA) * sm(t);                                                                                                         // short hop: one smooth glide
+    const s = Math.min(STOPS.length - 1, Math.max(0, p + 1)), i = Math.min(STOPS.length - 2, Math.floor(s)), t = s - i;
+    const A = STOPS[i], B = STOPS[i + 1], leg = LEGS[i], yA = A[0].y, yB = B[0].y;
+    P.lerpVectors(A[0], B[0], t);
+    if (leg.cruise > Math.max(yA, yB) + 3) P.y = t < .5 ? yA + (leg.cruise - yA) * sm(t * 2) : leg.cruise + (yB - leg.cruise) * sm(t * 2 - 1);
+    else P.y = yA + (yB - yA) * t;
     P.y = Math.max(P.y, height(P.x, P.z) + 1.8);
-    Lk.lerpVectors(A[1], B[1], e); Lk.y += h * Math.min(6, leg.far * .02);
-    const big = Math.min(1, leg.far / 60), roll = Math.sin(Math.PI * e) * (i % 2 ? .12 : -.12) * big, fovK = Math.sin(Math.PI * e) * big;
-    const mood = STOP_MOOD[i] + (STOP_MOOD[i + 1] - STOP_MOOD[i]) * e;
-    const storm = (i === 3 && t < .04) || (i === 2 && t > .96);
+    const h = Math.sin(Math.PI * t), big = Math.min(1, leg.far / 60);
+    Lk.lerpVectors(A[1], B[1], t); Lk.y += h * Math.min(5, leg.far * .02);
+    const roll = h * (i % 2 ? .1 : -.1) * big, fovK = h * big * .8;
+    const mood = STOP_MOOD[i] + (STOP_MOOD[i + 1] - STOP_MOOD[i]) * t, storm = Math.abs(s - 2) < .03;
     return { roll, fovK, mood, storm };
   }
 
@@ -474,6 +473,6 @@ export function initStory({ canvas, stage, getP, T, mobile, hud }) {
   function start() { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
   function stop() { running = false; cancelAnimationFrame(raf); }
   { pose(getP()); cp.copy(P); cl.copy(Lk); resize(); }
-  if (/[?&]perf\b/.test(location.search)) window.__st = { scene, renderer, camera, pose, STEPS, P, height };
+  if (/[?&]perf\b/.test(location.search)) window.__st = { scene, renderer, camera, pose, P, Lk, height, NS: STOPS.length };
   return { start, stop, land, warm };
 }

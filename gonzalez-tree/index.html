@@ -130,10 +130,12 @@ html.motion:not(.seen){--intro:1.55s}
 .st-t{font-family:var(--cond);font-stretch:76%;font-weight:800;font-size:clamp(28px,6vw,44px);line-height:1.02;letter-spacing:-.015em;margin:0 0 8px}
 .st-t span{display:block}
 .st-d{margin:0;color:#c9d3c5;max-width:40ch;font-size:16.5px}
-.st-end{padding-top:30px}
+.st-cta{margin-top:20px}
+.motion .st-ch{pointer-events:none}
+.motion .st-cta{opacity:0;transform:translate3d(0,14px,0)}
 
 /* motion: pinned stage, the photo grows from a card to full screen, chapters play over it */
-.motion .story{height:640vh;padding:0}
+.motion .story{height:100vh;height:100svh;padding:0}
 .motion .st-stage{position:sticky;top:0;height:100vh;height:100svh;max-width:none;padding:0;overflow:hidden;isolation:isolate}
 .motion .st-head,.motion .st-end{position:absolute;z-index:3;left:20px;right:20px;top:clamp(168px,22vh,200px);text-align:center;will-change:opacity,transform}
 .motion .st-head h2,.motion .st-end h2{font-size:clamp(38px,8.4vw,80px);text-wrap:balance}
@@ -427,14 +429,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="st-media" id="stMedia"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" decoding="async"><img src="img/p4.jpg" alt="Tall hardwoods seen from below" loading="lazy" decoding="async"><img src="img/p2.jpg" alt="Gonzalez chipper beside a large tree" loading="lazy" decoding="async"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy" decoding="async"></div>
     <canvas class="st-canvas" id="stCanvas" aria-hidden="true"></canvas><span class="st-shade" aria-hidden="true"></span><span class="st-grain" aria-hidden="true"></span>
     <div class="st-hud" aria-hidden="true"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><div class="hud-l"><span id="hudCh">Survey</span><span id="hudSt">Live</span></div><div class="hud-r"><span>Alt <b id="hudAlt">0.0</b> m</span><span>Hdg <b id="hudHdg">000</b>°</span></div><div class="ret" id="hudRet"><i></i><i></i><i></i><i></i><b></b></div></div>
-    <div class="st-rail" id="stRail" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+    <div class="st-rail" id="stRail" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i></div>
     <div class="st-chs">
-      <div class="st-ch"><p class="st-lbl">Tree removal</p><h3 class="st-t"><span>Down safely, even in tight spots.</span></h3><p class="st-d">Dead, leaning or too close to the house. We can grind the stump while we’re there.</p></div>
-      <div class="st-ch"><p class="st-lbl">Trimming & pruning</p><h3 class="st-t"><span>Off the roof. Off the lines.</span></h3><p class="st-d">Thinning and shaping that keeps big trees healthy and away from the house.</p></div>
-      <div class="st-ch"><p class="st-lbl">Storm cleanup & haul away</p><h3 class="st-t"><span>Day or night, we pick up.</span></h3><p class="st-d">Downed trees and limbs cleared, chipped and hauled off. Yard left clean.</p></div>
-      <div class="st-ch"><p class="st-lbl">Land clearing</p><h3 class="st-t"><span>From overgrown to usable.</span></h3><p class="st-d">Brush and trees cleared for a build, a fence line or a yard you can use.</p></div>
+      <div class="st-ch"><p class="st-lbl">Tree removal &amp; trimming</p><h3 class="st-t"><span>Down safely, even in tight spots.</span></h3><p class="st-d">Dead, leaning or hanging over the roof. Taken down or trimmed back, stump ground while we’re there.</p></div>
+      <div class="st-ch"><p class="st-lbl">Storm cleanup &amp; haul away</p><h3 class="st-t"><span>Day or night, we pick up.</span></h3><p class="st-d">Downed trees and limbs cleared, chipped and hauled off. Yard left clean.</p></div>
+      <div class="st-ch"><p class="st-lbl">Land clearing</p><h3 class="st-t"><span>From overgrown to usable.</span></h3><p class="st-d">Brush and trees cleared for a build, a fence line or a yard you can use.</p><a class="btn hv st-cta" href="#quote">Get my free estimate</a></div>
     </div>
-    <div class="st-end" id="stEnd"><h2>Free estimate on every job.</h2><a class="btn hv" href="#quote">Get my price</a></div>
   </div>
 </section>
 
@@ -653,7 +653,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
   <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
-  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 14)</span></div>
+  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 15)</span></div>
 </div></footer>
 
 <div class="sticky" id="sticky"><a class="btn hv" href="#quote">Get my price</a><a class="btn dk" href="tel:+18653674667" target="_top" aria-label="Call"><svg width="18" height="18" aria-hidden="true"><use href="#ph"/></svg>Call</a></div>
@@ -685,64 +685,66 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
     function measure(){ VH=innerHeight; HH=hero.offsetHeight; heroH=HH;
       T.td=td?top(td):0; T.tdH=td?td.offsetHeight:0; rects(); T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
-    /* story: 3D drone flight (camera in story3d.js), overlay text follows the same timeline */
-    const td=$('#takedown'), stage=$('#stStage'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead'), send=$('#stEnd');
-    const ST={IH:.07, TL:.045, HL:.17, N:chs.length}; let curP=0, lastTd=-1, vp=null, fx=null;
+    /* story: one locked screen. vp runs from -1 (opening aerial) to N-1 (last chapter); the camera flies on this internal
+       timeline and the page itself never scrolls while the story is on screen (no Safari toolbar jumps). */
+    const td=$('#takedown'), stage=$('#stStage'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead');
+    const NC=chs.length; let curP=-1, lastTd=null, vp=-1, fx=null;
     function rects(){}
-    function scene(y){ if(!td) return; const p=vp!==null?vp:cl((y-T.td)/(T.tdH-VH)); curP=p; if(Math.abs(p-lastTd)<0.0002) return; lastTd=p;
-      const IH=ST.IH, TL=ST.TL, HL=ST.HL, endA=IH+ST.N*(TL+HL);
-      const hf=cl((p-IH*.6)/(IH*.5+TL*.3)); shead.style.opacity=(1-hf).toFixed(3); shead.style.transform='translate3d(0,'+(-40*hf).toFixed(1)+'px,0) scale('+(1-.05*hf).toFixed(4)+')';
-      const en=eo(cl((p-(endA+.025))/.03)); send.style.opacity=en.toFixed(3); send.style.transform='translate3d(0,'+((1-en)*30).toFixed(1)+'px,0)'; send.style.pointerEvents=en>.5?'auto':'none';
-      rail.style.opacity=(cl((p-IH)/TL)*(1-cl((p-endA)/.02))).toFixed(3);
-      chs.forEach((el,k)=>{ const h0=IH+k*(TL+HL)+TL, u=(p-h0)/HL, [lb,tt,dd]=el.children, sp=tt.firstElementChild;
-        bars[k].style.transform='scaleX('+cl(u).toFixed(4)+')';
-        const inn=eo(cl((u-.02)/.16)), out=cl((u-.86)/.1), late=eo(cl((u-.07)/.18))*(1-out);
-        sp.style.transform='translate3d(0,'+((1-inn)*110-out*30).toFixed(1)+'%,0)'; tt.style.opacity=(u<-.01?0:1-out).toFixed(3);
+    function scene(){ if(!td) return; const p=vp; curP=p; if(p===lastTd) return; lastTd=p;
+      const hf=cl((p+1)/.45); shead.style.opacity=(1-hf).toFixed(3); shead.style.transform='translate3d(0,'+(-40*hf).toFixed(1)+'px,0) scale('+(1-.05*hf).toFixed(4)+')';
+      rail.style.opacity=cl((p+.45)/.4).toFixed(3);
+      chs.forEach((el,k)=>{ const d=p-k, [lb,tt,dd]=el.children, sp=tt.firstElementChild, cta=el.querySelector('.st-cta');
+        bars[k].style.transform='scaleX('+cl(p-k+1).toFixed(4)+')';
+        const inn=d<0?eo(cl(1+d/.42)):1, out=d>0?cl(d/.3):0, late=(d<0?eo(cl(1+d/.3)):1)*(1-out);
+        sp.style.transform='translate3d(0,'+((1-inn)*110-out*30).toFixed(1)+'%,0)'; tt.style.opacity=(1-out).toFixed(3);
         lb.style.opacity=(inn*(1-out)).toFixed(3); lb.style.transform='translate3d(0,'+((1-inn)*12).toFixed(1)+'px,0)';
-        dd.style.opacity=late.toFixed(3); dd.style.transform='translate3d(0,'+((1-late)*16).toFixed(1)+'px,0)'; });
+        dd.style.opacity=late.toFixed(3); dd.style.transform='translate3d(0,'+((1-late)*16).toFixed(1)+'px,0)';
+        if(cta){ const c=d<0?eo(cl(1+d/.2)):1-out; cta.style.opacity=c.toFixed(3); cta.style.transform='translate3d(0,'+((1-c)*14).toFixed(1)+'px,0)'; cta.style.pointerEvents=c>.6?'auto':'none'; } });
     }
-    if(td){ const boot=()=>import('./story3d.js').then(m=>{ fx=m.initStory({canvas:$('#stCanvas'), stage, getP:()=>curP, T:ST, mobile:matchMedia('(max-width: 859px)').matches, hud:{alt:$('#hudAlt'), hdg:$('#hudHdg')}});
+    if(td){ const boot=()=>import('./story3d.js').then(m=>{ fx=m.initStory({canvas:$('#stCanvas'), stage, getP:()=>curP, T:{N:NC}, mobile:matchMedia('(max-width: 859px)').matches, hud:{alt:$('#hudAlt'), hdg:$('#hudHdg')}});
         const go=()=>{ const so=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?fx.start():fx.stop()),{rootMargin:'200px 0px'}); so.observe(td); };
         if(fx.warm) fx.warm(go); else go(); })
         .catch(err=>{ console.warn('3D story unavailable', err); document.documentElement.classList.remove('motion'); measure(); });
       const later=()=>setTimeout(boot, document.documentElement.classList.contains('seen')?150:1900);  /* after the opening rings finish */
       if(document.readyState==='complete') later(); else addEventListener('load',later); }
 
-    /* story steps: every gesture moves one chapter. The camera flies on a virtual timeline (no page scrolling mid-flight),
-       a gesture during a flight retargets to the following chapter, and the page position is synced when it lands. */
     if(td){
-      const steps=[ST.IH*.45]; for(let k=0;k<ST.N;k++) steps.push(ST.IH+k*(ST.TL+ST.HL)+ST.TL+ST.HL*.42); steps.push(.995);
-      const span=()=>T.tdH-VH, yOf=p=>T.td+p*span(), inPin=y=>document.documentElement.classList.contains('motion')&&y>=T.td-2&&y<=T.td+span()+2;
-      const near=y=>{ const p=(y-T.td)/span(); let b=0,d=9; steps.forEach((s,i)=>{ const dd=Math.abs(s-p); if(dd<d){ d=dd; b=i; } }); return b; };
+      const motionOn=()=>document.documentElement.classList.contains('motion');
+      const hud=$('.st-hud'), ret=$('#hudRet'), hCh=$('#hudCh'), hSt=$('#hudSt'); let softT=0, autoT=0;
+      const label=i=>{ hCh.textContent=i>=0?'Ch '+String(i+1).padStart(2,'0')+' / '+String(NC).padStart(2,'0'):'Survey'; };
+      const DUR=[3200,2500,2600];          // flight time into chapter k from the stop before it (the longest legs get the most time)
+      let locked=false, target=-1, raf=0, flying=false, entering=false, exiting=false, lastY=scrollY, lockedAt=0;
       const jump=y=>window.scrollTo({top:y,behavior:'instant'});
-      const hud=$('.st-hud'), ret=$('#hudRet'), hCh=$('#hudCh'), hSt=$('#hudSt'); let softT=0;
-      function label(i){ hCh.textContent = i>=1&&i<=ST.N ? 'Ch '+String(i).padStart(2,'0')+' / '+String(ST.N).padStart(2,'0') : (i===0?'Survey':'Complete'); }
-      let target=-1, raf=0, flying=false, leaving=false, lastY=scrollY, entered=0;
-      function landed(i){ flying=false; vp=null; jump(yOf(steps[i])); lastY=scrollY; scene(scrollY);
-        if(fx&&fx.land) fx.land(i); clearTimeout(softT); ret.classList.remove('soft'); ret.classList.add('lock');
-        if(i>=1&&i<=ST.N){ hud.classList.add('scan'); hSt.textContent='Scanning'; softT=setTimeout(()=>{ ret.classList.add('soft'); hud.classList.remove('scan'); hSt.textContent='Mapped'; },1700); }
-        else { hSt.textContent='Live'; softT=setTimeout(()=>ret.classList.add('soft'),900); } }
-      function fly(i){ const moving=flying, from=vp!==null?vp:curP, to=steps[i], dist=Math.abs(to-from), dur=Math.min(1900,Math.max(750,(moving?1300:1800)*Math.min(1,dist/.2))), t0=performance.now();
+      function landed(i){ flying=false; if(fx&&fx.land) fx.land(i); clearTimeout(softT); ret.classList.remove('soft'); ret.classList.add('lock');
+        hud.classList.add('scan'); hSt.textContent='Scanning'; softT=setTimeout(()=>{ ret.classList.add('soft'); hud.classList.remove('scan'); hSt.textContent='Mapped'; },1700); }
+      function fly(i){ const was=flying, from=vp, to=i; let dur=DUR[Math.max(0,Math.max(Math.ceil(from),Math.ceil(to)))]*Math.min(1.3,Math.max(.5,Math.abs(to-from))); if(was) dur*=.8;
         target=i; flying=true; cancelAnimationFrame(raf); label(i); ret.classList.remove('lock','soft'); hud.classList.remove('scan'); hSt.textContent='Moving'; if(fx&&fx.land) fx.land(-1);
-        const ease=moving?(u=>1-Math.pow(1-u,3)):(u=>-(Math.cos(Math.PI*u)-1)/2);
-        (function f(t){ const u=Math.min(1,(t-t0)/dur); vp=from+(to-from)*ease(u); scene(scrollY); if(u<1) raf=requestAnimationFrame(f); else landed(i); })(t0); }
-      function leave(toY){ cancelAnimationFrame(raf); flying=false; vp=null; target=-1; leaving=true; const fromY=scrollY, t0=performance.now();
-        (function f(t){ const u=Math.min(1,(t-t0)/800), e=u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2; jump(fromY+(toY-fromY)*e); if(u<1) requestAnimationFrame(f); else { leaving=false; lastY=scrollY; } })(t0); }
-      function step(dir){ if(leaving) return; const base=target>=0?target:near(scrollY), i=base+dir;
-        if(i<0) return leave(T.td-VH*.6); if(i>=steps.length) return leave(T.td+span()+VH*.55); fly(i); }
-      // wheel / trackpad: a gesture is a burst of events; act once per burst, on the first meaningful movement
+        const ease=was?(u=>1-Math.pow(1-u,3)):(u=>-(Math.cos(Math.PI*u)-1)/2), t0=performance.now();
+        (function f(t){ const u=Math.min(1,(t-t0)/dur); vp=from+(to-from)*ease(u); scene(); if(u<1) raf=requestAnimationFrame(f); else landed(i); })(t0); }
+      function glideScroll(toY,dur,done){ const fromY=scrollY, t0=performance.now();
+        (function f(t){ const u=Math.min(1,(t-t0)/dur), e=u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2; jump(fromY+(toY-fromY)*e); if(u<1) requestAnimationFrame(f); else { lastY=scrollY; done&&done(); } })(t0); }
+      function enter(fromAbove){ locked=true; entering=true; lockedAt=performance.now(); clearTimeout(autoT); cancelAnimationFrame(raf); flying=false;
+        if(fromAbove){ vp=-1; target=-1; label(-1); hSt.textContent='Live'; ret.classList.remove('lock','soft'); }
+        else { vp=NC-1; target=NC-1; label(NC-1); }
+        scene(); glideScroll(T.td, Math.min(520,Math.abs(scrollY-T.td)*1.1+140), ()=>{ entering=false; if(fromAbove) autoT=setTimeout(()=>{ if(locked&&target<0) fly(0); },700); else landed(NC-1); }); }
+      function exit(dir){ locked=false; exiting=true; clearTimeout(autoT); cancelAnimationFrame(raf); flying=false;
+        glideScroll(dir>0?T.td+T.tdH:Math.max(0,T.td-VH*.75),750,()=>{ exiting=false; }); }
+      function step(dir){ if(!locked||entering||exiting) return; clearTimeout(autoT); const i=target+dir;
+        if(i>NC-1) return exit(1); if(i<0) return exit(-1); fly(i); }
+      // input while the story is on screen: one gesture = one move; a gesture mid-flight retargets
       let lastW=0, acc=0, fired=false;
-      addEventListener('wheel',e=>{ if(!inPin(scrollY)) return; e.preventDefault(); const now=performance.now(); if(now-lastW>200){ acc=0; fired=false; } lastW=now;
+      addEventListener('wheel',e=>{ if(!locked) return; e.preventDefault(); const now=performance.now(); if(now-lastW>200){ acc=0; fired=false; } lastW=now;
         if(fired) return; acc+=e.deltaY; if(Math.abs(acc)>10){ fired=true; step(acc>0?1:-1); } },{passive:false});
       let ty=null, tx=null; addEventListener('touchstart',e=>{ ty=e.touches[0].clientY; tx=e.touches[0].clientX; },{passive:true});
-      addEventListener('touchmove',e=>{ if(inPin(scrollY)) e.preventDefault(); },{passive:false});
-      addEventListener('touchend',e=>{ if(ty===null) return; const t=e.changedTouches[0]; const dy=ty-t.clientY, dx=tx-t.clientX; ty=null; if(performance.now()-entered<700) return; if(inPin(scrollY)&&Math.abs(dy)>14&&Math.abs(dy)>Math.abs(dx)*.8) step(dy>0?1:-1); },{passive:true});
-      addEventListener('keydown',e=>{ if(!inPin(scrollY)) return; const k=e.key; if(k==='ArrowDown'||k==='PageDown'||k===' '){ e.preventDefault(); step(1); } else if(k==='ArrowUp'||k==='PageUp'){ e.preventDefault(); step(-1); } });
-      // arriving by normal scrolling: stop the momentum and fly to the first (from above) or last (from below) chapter
-      addEventListener('scroll',()=>{ const y=scrollY; if(flying||leaving){ lastY=y; return; }
-        if(inPin(y)){ const i=near(y); if(Math.abs(y-yOf(steps[i]))>3){ const wasOut=!inPin(lastY); if(wasOut) entered=performance.now(); jump(y); fly(wasOut?(lastY<T.td?0:steps.length-1):i); } }
-        else target=-1;
-        if(inPin(y)&&!flying&&target<0) label(near(y));
+      addEventListener('touchmove',e=>{ if(locked) e.preventDefault(); },{passive:false});
+      addEventListener('touchend',e=>{ if(ty===null) return; const t=e.changedTouches[0], dy=ty-t.clientY, dx=tx-t.clientX; ty=null;
+        if(locked&&performance.now()-lockedAt>650&&Math.abs(dy)>14&&Math.abs(dy)>Math.abs(dx)*.8) step(dy>0?1:-1); },{passive:true});
+      addEventListener('keydown',e=>{ if(!locked) return; const k=e.key; if(k==='ArrowDown'||k==='PageDown'||k===' '){ e.preventDefault(); step(1); } else if(k==='ArrowUp'||k==='PageUp'){ e.preventDefault(); step(-1); } });
+      stage.addEventListener('click',e=>{ if(e.target.closest('a')){ locked=false; clearTimeout(autoT); } });
+      // lock when the story reaches the screen; release when the visitor leaves it
+      addEventListener('scroll',()=>{ const y=scrollY, dir=y>lastY?1:y<lastY?-1:0; if(!motionOn()){ lastY=y; return; }
+        if(locked){ if(!entering&&!exiting){ const off=y-T.td; if(Math.abs(off)>VH*.5) locked=false; else if(Math.abs(off)>1) jump(T.td); } lastY=scrollY; return; }
+        if(!exiting){ const rt=T.td-y; if(dir>0&&rt<VH*.45&&rt>-VH*.25) enter(true); else if(dir<0&&rt>-VH*.45&&rt<VH*.25) enter(false); }
         lastY=y; },{passive:true});
     }
     function update(){
