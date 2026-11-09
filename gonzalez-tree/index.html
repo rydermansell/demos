@@ -1,18 +1,21 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Gonzalez Tree Service · Maryville, TN</title>
+<title>Tree Removal in Maryville, TN | Gonzalez Tree Service</title>
 <meta name="description" content="Tree removal, trimming, storm cleanup, stump grinding and land clearing around Maryville, TN. Available 24/7. Get a price in about a minute.">
 <meta name="theme-color" content="#0d1610">
+<script>document.documentElement.classList.add('js')</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "HomeAndConstructionBusiness", "name": "Gonzalez Tree Service", "telephone": "+1-865-367-4667", "areaServed": "Maryville, TN and surrounding area", "openingHours": "Mo-Su 00:00-23:59", "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "56"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Gonzalez Tree Service. Night-forest + chipper yellow (matches the yellow chipper in their own photos).
-   Signature: growth rings — the logo, the spinning 24/7 seal, and the ring field behind the numbers. */
+   Signature: growth rings (logo, 24/7 seal, ring field behind the numbers), drawn in once. Style: pricewink-site-style, subtle motion. */
 :root{
   --night:#0d1610; --forest:#13241a; --forest2:#1b3324; --moss:#3d6b45; --leaf:#8fbf6f;
   --cream:#f3eee2; --cream2:#e8e0cc; --paper:#fffcf4; --ink:#121a14; --muted:#5d6459; --line:#d8cfb9;
   --hv:#f5b70f; --hv-d:#b48405; --bark:#6b4e37;
-  --cond:'Archivo',system-ui,sans-serif; --sans:'Public Sans',system-ui,-apple-system,sans-serif;
+  --cond:'Archivo',system-ui,sans-serif;
+  --ease-out:cubic-bezier(.23,1,.32,1); --ease-io:cubic-bezier(.65,0,.35,1); --sans:'Public Sans',system-ui,-apple-system,sans-serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -20,12 +23,13 @@ html,body{overflow-x:hidden}@supports(overflow:clip){html,body{overflow-x:clip}}
 body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 a{color:inherit}
+:focus-visible{outline:2px solid var(--hv);outline-offset:3px;border-radius:4px}
 button{font:inherit;color:inherit}
 .wrap{max-width:1140px;margin:0 auto;padding:0 20px}
 .cond{font-family:var(--cond);font-stretch:68%;font-weight:900;text-transform:uppercase;letter-spacing:-.005em}
 
 /* ---------- header ---------- */
-header.top{position:fixed;inset:0 0 auto 0;z-index:30;transition:background .35s,box-shadow .35s}
+header.top{position:fixed;inset:0 0 auto 0;z-index:30;transition:background .35s var(--ease-out),box-shadow .35s var(--ease-out)}
 header.top.solid{background:rgba(13,22,16,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 1px 0 rgba(255,255,255,.06)}
 .pv{background:var(--hv);color:#1a1203;text-align:center;font-size:12.5px;font-weight:700;padding:7px 12px;line-height:1.3}
 .pv a{color:inherit}
@@ -35,8 +39,8 @@ header.top.solid{background:rgba(13,22,16,.92);backdrop-filter:blur(10px);-webki
 .brand svg{flex:none;width:40px;height:40px}
 .brand b{font-family:var(--cond);font-stretch:70%;font-weight:900;font-size:24px;letter-spacing:.02em;line-height:.9;display:block;text-transform:uppercase}
 .brand small{display:block;font-size:10.5px;letter-spacing:.24em;color:var(--leaf);font-weight:700;margin-top:3px;white-space:nowrap}
-.callbtn{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--hv);color:#1a1203;text-decoration:none;padding:10px 15px;border-radius:999px;font-weight:800;font-size:14px;transition:transform .2s}
-.callbtn:hover{transform:scale(1.04)}
+.callbtn{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--hv);color:#1a1203;text-decoration:none;padding:10px 15px;border-radius:999px;font-weight:800;font-size:14px;transition:transform .16s var(--ease-out),background-color .24s var(--ease-out)}
+.callbtn:hover{background:#ffc838}.callbtn:active{transform:scale(.97)}
 .cl-short{display:none}@media(max-width:480px){.cl-long{display:none}.cl-short{display:inline}}
 
 /* ---------- hero ---------- */
@@ -51,27 +55,28 @@ header.top.solid{background:rgba(13,22,16,.92);backdrop-filter:blur(10px);-webki
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hero .wrap{width:100%;padding-top:150px;padding-bottom:56px;position:relative}
 .live{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);margin-bottom:18px}
-.live i{width:9px;height:9px;border-radius:50%;background:#62d26f;box-shadow:0 0 0 0 rgba(98,210,111,.6);animation:ping 2s infinite}
+.live i{width:9px;height:9px;border-radius:50%;background:#62d26f;box-shadow:0 0 0 0 rgba(98,210,111,.6);animation:ping 2s 3 1.2s}
 @keyframes ping{70%{box-shadow:0 0 0 10px rgba(98,210,111,0)}100%{box-shadow:0 0 0 0 rgba(98,210,111,0)}}
 .hero h1{font-family:var(--cond);font-stretch:62%;font-weight:900;text-transform:uppercase;font-size:clamp(56px,min(15.5vw,15vh),132px);line-height:.9;letter-spacing:-.01em;margin:0 0 22px}
 .hero h1 .ln{display:block;overflow:hidden;padding-bottom:.02em}
-.hero h1 .ln>span{display:block;transform:translateY(105%);animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards}
-.hero h1 .ln:nth-child(2)>span{animation-delay:.12s}
-.hero h1 .ln:nth-child(3)>span{animation-delay:.24s}
+.hero h1 .ln>span{display:block}
+.js .hero h1 .ln>span{transform:translateY(105%);animation:rise .85s var(--ease-out) .1s forwards}
+.js .hero h1 .ln:nth-child(2)>span{animation-delay:.2s}
+.js .hero h1 .ln:nth-child(3)>span{animation-delay:.3s}
 @keyframes rise{to{transform:none}}
-.hero h1 .out{color:transparent;-webkit-text-stroke:2px var(--cream)}
-.hero h1 .hv{color:var(--hv)}
-.lede{font-size:clamp(17px,2.2vw,20px);color:#d3dccf;max-width:34ch;margin:0 0 28px;opacity:0;animation:fade .8s .5s forwards}
-@keyframes fade{to{opacity:1}}
+.hero h1 .out{color:#c3cfbd}
+.hero h1 .hv{color:var(--cream)}
+.lede{font-size:clamp(17px,2.2vw,20px);color:#d3dccf;max-width:34ch;margin:0 0 28px}
+.js .lede{opacity:0;transform:translateY(10px);animation:fade .7s var(--ease-out) .55s forwards}
+@keyframes fade{to{opacity:1;transform:none}}
 .ctas{display:flex;flex-wrap:wrap;gap:12px}
-.hero .ctas,.hero .rating{opacity:0;animation:fade .8s .65s forwards}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;text-decoration:none;font-family:var(--cond);font-stretch:80%;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:16px 26px;font-size:18px;transition:transform .2s,background .2s,box-shadow .2s,color .2s}
-.btn svg{transition:transform .25s}
-.btn:hover svg{transform:translateX(4px)}
-.btn.hv{background:var(--hv);color:#1a1203;box-shadow:0 10px 30px -10px rgba(245,183,15,.7)}
-.btn.hv:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(245,183,15,.8)}
-.btn.hv:active{transform:translateY(1px)}
-.btn.ghost{background:rgba(255,255,255,.06);color:var(--cream);border:1.5px solid rgba(243,238,226,.35);backdrop-filter:blur(6px)}
+.js .hero .ctas,.js .hero .rating{opacity:0;transform:translateY(10px);animation:fade .7s var(--ease-out) .68s forwards}
+.js .hero .rating{animation-delay:.8s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;text-decoration:none;font-family:var(--cond);font-stretch:80%;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:16px 26px;font-size:18px;transition:transform .16s var(--ease-out),background-color .24s var(--ease-out),box-shadow .24s var(--ease-out),color .24s var(--ease-out),border-color .24s var(--ease-out)}
+.btn:active{transform:scale(.97)!important}
+.btn.hv{background:var(--hv);color:#1a1203;box-shadow:0 8px 22px -12px rgba(245,183,15,.7)}
+@media(hover:hover){.btn.hv:hover{transform:translateY(-1px);background:#ffc838;box-shadow:0 12px 26px -12px rgba(245,183,15,.8)}}
+.btn.ghost{background:transparent;color:var(--cream);border:1.5px solid rgba(243,238,226,.35)}
 .btn.ghost:hover{border-color:var(--cream);background:rgba(255,255,255,.12)}
 .btn.dk{background:var(--forest);color:var(--cream)}
 .btn.dk:hover{background:var(--forest2)}
@@ -81,26 +86,15 @@ header.top.solid{background:rgba(13,22,16,.92);backdrop-filter:blur(10px);-webki
 .st{color:var(--hv);letter-spacing:2px}
 
 /* spinning 24/7 seal */
-.seal{position:absolute;right:14px;bottom:126px;width:104px;height:104px;opacity:0;animation:fade 1s .9s forwards}
-.seal .spin{animation:spin 18s linear infinite;transform-origin:50% 50%}
-@keyframes spin{to{transform:rotate(360deg)}}
+.seal{position:absolute;right:14px;bottom:126px;width:104px;height:104px}
+.js .seal{opacity:0;animation:fade .9s var(--ease-out) 1s forwards}
+.js .seal .rg path{stroke-dasharray:240;stroke-dashoffset:240;animation:sdraw 1.6s var(--ease-io) 1.2s forwards}
+.js .seal .rg path:nth-child(2){animation-delay:1.35s}.js .seal .rg path:nth-child(3){animation-delay:1.5s}
+@keyframes sdraw{to{stroke-dashoffset:0}}
 .seal text{font-family:var(--cond);font-stretch:75%;font-weight:800;font-size:13px;letter-spacing:.12em;fill:var(--cream)}
 @media(min-width:860px){.seal{width:190px;height:190px;top:auto;bottom:70px;right:40px}}
 @media(max-width:380px){.seal{width:88px;height:88px;bottom:132px}}
 
-.scrollcue{position:absolute;left:50%;bottom:16px;width:2px;height:34px;background:rgba(255,255,255,.18);overflow:hidden;display:none}
-.scrollcue::after{content:"";position:absolute;left:0;top:-40%;width:100%;height:40%;background:var(--hv);animation:cue 1.8s ease-in-out infinite}
-@keyframes cue{to{top:110%}}
-@media(min-width:860px){.scrollcue{display:block}}
-
-/* ---------- marquee / hazard tape ---------- */
-.tape{background:var(--hv);color:#1a1203;overflow:hidden;position:relative;transform:rotate(-1.6deg);margin:-14px -12px 0;width:calc(100% + 24px);z-index:2;box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
-.tape::before,.tape::after{content:"";position:absolute;left:0;right:0;height:7px;background:repeating-linear-gradient(-45deg,#1a1203 0 10px,transparent 10px 20px)}
-.tape::before{top:0}.tape::after{bottom:0}
-.track{display:flex;width:max-content;animation:marq 26s linear infinite;padding:17px 0}
-.track span{font-family:var(--cond);font-stretch:68%;font-weight:900;text-transform:uppercase;font-size:28px;letter-spacing:.02em;white-space:nowrap;padding:0 18px;display:flex;align-items:center;gap:36px}
-.track span::after{content:"";width:12px;height:12px;border-radius:50%;border:3px solid #1a1203}
-@keyframes marq{to{transform:translateX(-50%)}}
 
 /* ---------- storm strip ---------- */
 .storm{background:var(--night);color:var(--cream);padding:44px 0 34px}
@@ -112,7 +106,7 @@ header.top.solid{background:rgba(13,22,16,.92);backdrop-filter:blur(10px);-webki
 /* ---------- numbers + rings ---------- */
 .nums{background:var(--night);color:var(--cream);position:relative;overflow:hidden;padding:20px 0 84px}
 .rings{position:absolute;right:-180px;top:50%;width:620px;height:620px;transform:translateY(-50%);opacity:.5;pointer-events:none}
-.rings path{fill:none;stroke:var(--leaf);stroke-opacity:.35;stroke-width:1.4;stroke-dasharray:2000;stroke-dashoffset:2000;transition:stroke-dashoffset 2.6s cubic-bezier(.3,.6,.2,1)}
+.rings path{fill:none;stroke:var(--leaf);stroke-opacity:.35;stroke-width:1.4;stroke-dasharray:2000;stroke-dashoffset:2000;transition:stroke-dashoffset 2.4s var(--ease-io)}
 .nums.in .rings path{stroke-dashoffset:0}
 .ngrid{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;border-top:1px solid rgba(255,255,255,.12)}
 .ngrid div{padding:26px 0 0;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:22px}
@@ -125,39 +119,33 @@ header.top.solid{background:rgba(13,22,16,.92);backdrop-filter:blur(10px);-webki
 
 /* ---------- sections ---------- */
 section.s{padding:90px 0}
-.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.2em;font-size:12px;color:var(--hv-d);margin:0 0 14px}
-.kicker::before{content:"";width:26px;height:2px;background:currentColor}
-h2{font-family:var(--cond);font-stretch:64%;font-weight:900;text-transform:uppercase;font-size:clamp(50px,12vw,96px);line-height:.86;margin:0 0 18px;letter-spacing:-.005em}
-h2 .hv{color:var(--hv-d)}
+h2{font-family:var(--cond);font-stretch:74%;font-weight:800;font-size:clamp(40px,8.6vw,70px);line-height:.98;margin:0 0 18px;letter-spacing:-.012em;text-wrap:balance}
+h2 .hv{color:inherit}
 .intro{color:var(--muted);max-width:50ch;margin:0 0 40px;font-size:17.5px}
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
-.reveal.in{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .65s var(--ease-out),transform .65s var(--ease-out);transition-delay:calc(var(--i,0) * 70ms)}
+.js .reveal.in{opacity:1;transform:none}
 .sample{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.06em;background:#f7dcc6;color:#7a3207;padding:3px 9px;border-radius:4px;margin-left:4px;vertical-align:middle}
 
 /* services: editorial rows */
 .svc{border-top:2px solid var(--ink)}
-.row{display:grid;grid-template-columns:44px 1fr;gap:4px 14px;align-items:baseline;padding:22px 4px;border-bottom:1px solid var(--line);text-decoration:none;position:relative;isolation:isolate}
-.row::before{content:"";position:absolute;inset:0;background:var(--hv);z-index:-1;transform:scaleY(0);transform-origin:bottom;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
-.row:hover::before{transform:scaleY(1)}
-.row .n{font-family:var(--cond);font-stretch:70%;font-weight:800;font-size:16px;color:var(--hv-d);transition:color .3s}
-.row:hover .n{color:#1a1203}
-.row h3{font-family:var(--cond);font-stretch:64%;font-weight:900;text-transform:uppercase;font-size:clamp(36px,8.5vw,56px);line-height:.9;margin:0}
-.row p{grid-column:2;margin:6px 0 0;color:var(--muted);font-size:15.5px;max-width:46ch;transition:color .3s}
-.row:hover p{color:#3b2c06}
-.row .price{grid-column:2;margin-top:8px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
-.row .price svg{transition:transform .3s}
-.row:hover .price svg{transform:translateX(5px)}
+.row{display:grid;grid-template-columns:1fr;gap:4px 14px;align-items:baseline;padding:22px 4px;border-bottom:1px solid var(--line);text-decoration:none;position:relative;isolation:isolate}
+.row::before{content:"";position:absolute;inset:0 -12px;border-radius:10px;background:var(--cream2);z-index:-1;opacity:0;transition:opacity .3s var(--ease-out)}
+@media(hover:hover){.row:hover::before{opacity:1}}
+.row h3{font-family:var(--cond);font-stretch:76%;font-weight:800;font-size:clamp(28px,6vw,38px);line-height:1;letter-spacing:-.01em;margin:0}
+.row p{grid-column:1;margin:6px 0 0;color:var(--muted);font-size:15.5px;max-width:46ch}
+.row .price{grid-column:1;margin-top:8px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
+.row .price svg{transition:transform .3s var(--ease-out);color:var(--hv-d)}
+@media(hover:hover){.row:hover .price svg{transform:translateX(4px)}}
 @media(min-width:860px){
-  .row{grid-template-columns:64px 1.1fr 1.2fr 190px;align-items:center;padding:26px 8px}
+  .row{grid-template-columns:1.05fr 1.3fr 190px;align-items:center;padding:26px 8px}
   .row p,.row .price{grid-column:auto;margin:0}
   .row .price{justify-content:flex-end}
 }
 
 /* ---------- quote tool ---------- */
 .qt-sec{background:var(--forest);color:var(--cream);position:relative;overflow:hidden}@supports(overflow:clip){.qt-sec{overflow:clip}}
-.qt-sec::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 90% 0%,rgba(143,191,106,.16),transparent 70%),radial-gradient(50% 40% at 0% 100%,rgba(245,183,15,.08),transparent 70%);pointer-events:none}
-.qt-sec .kicker{color:var(--hv)}
-.qt-sec h2 .hv{color:var(--hv)}
+.qt-sec::before{content:"";position:absolute;inset:0;opacity:.14;mix-blend-mode:overlay;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.qt-sec h2 .hv{color:inherit}
 .qt-sec .intro{color:#b7c4b3}
 .qlay{display:grid;gap:10px;position:relative}
 @media(min-width:960px){.qlay{grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}.qlay .qside{position:sticky;top:130px}}
@@ -171,14 +159,14 @@ h2 .hv{color:var(--hv-d)}
 .dots i{width:26px;height:5px;border-radius:3px;background:var(--line);transition:background .4s}
 .dots i.on{background:var(--hv)}
 .step{padding:26px 22px 4px;display:none}
-.step.active{display:block;animation:stepIn .45s ease}
-@keyframes stepIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
-.step h3{font-family:var(--cond);font-stretch:66%;font-weight:900;text-transform:uppercase;font-size:38px;margin:0 0 6px;line-height:.95}
+.step.active{display:block;animation:stepIn .26s var(--ease-out)}
+@keyframes stepIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.step h3{font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:30px;letter-spacing:-.01em;margin:0 0 6px;line-height:1.05}
 .help{color:var(--muted);font-size:15px;margin:0 0 18px}
 .opts{display:grid;gap:10px}
-.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:15px 16px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s,box-shadow .2s}
-.opt:hover{border-color:#b9ad92}
-.opt:active{transform:scale(.99)}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:15px 16px;cursor:pointer;transition:border-color .2s var(--ease-out),background-color .2s var(--ease-out),transform .14s var(--ease-out),box-shadow .2s var(--ease-out)}
+@media(hover:hover){.opt:hover{border-color:#b9ad92}}
+.opt:active{transform:scale(.985)}
 .opt[aria-pressed=true]{border-color:var(--ink);background:#fff8e2;box-shadow:inset 0 0 0 1px var(--ink)}
 .opt .tick{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid #b9ad92;display:grid;place-items:center;transition:background .2s}
 .opt.box .tick{border-radius:6px}
@@ -193,7 +181,7 @@ h2 .hv{color:var(--hv-d)}
 .chips button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:10px 16px;cursor:pointer;font-weight:700;font-size:14px}
 .chips button[aria-pressed=true]{border-color:var(--ink);background:var(--hv);color:#1a1203}
 .pane{display:none}
-.pane.active{display:block;animation:stepIn .35s ease}
+.pane.active{display:block;animation:stepIn .22s var(--ease-out)}
 .big{font-family:var(--cond);font-stretch:64%;font-weight:900;font-size:64px;line-height:1;margin:4px 0 2px}
 .big small{font-family:var(--sans);font-weight:500;font-size:16px;color:var(--muted)}
 input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
@@ -212,7 +200,7 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .lbl{font-weight:700;font-size:14px;margin:18px 0 8px}
 .pricebox{background:var(--night);color:var(--cream);border-radius:14px;padding:22px;margin-bottom:24px;position:relative;overflow:hidden}
 .pricebox::after{content:"";position:absolute;right:-70px;top:-70px;width:200px;height:200px;border-radius:50%;box-shadow:0 0 0 14px rgba(143,191,106,.07),0 0 0 30px rgba(143,191,106,.05),0 0 0 48px rgba(143,191,106,.04);pointer-events:none}
-.pricebox .k{font-weight:800;letter-spacing:.2em;font-size:11.5px;color:var(--hv)}
+.pricebox .k{font-weight:700;font-size:13.5px;color:var(--hv)}
 .pricebox .amt{font-family:var(--cond);font-stretch:62%;font-weight:900;font-size:clamp(50px,13vw,72px);line-height:1;margin:6px 0 8px}
 .pricebox p{font-size:13.5px;color:#a9b6a5;margin:0}
 .lines{list-style:none;padding:0;margin:14px 0 0;font-size:14px;color:#d6e0d1;border-top:1px solid rgba(255,255,255,.14)}
@@ -227,13 +215,10 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .back[hidden]{visibility:hidden;display:block}
 .done{text-align:center;padding:6px 0 22px}
 .done svg{width:120px;height:120px;margin:0 auto 6px;display:block}
-.done .ring{stroke-dasharray:330;stroke-dashoffset:330;animation:draw 1s ease forwards}
-.done .chk{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .5s .8s ease forwards}
+.done .ring{stroke-dasharray:330;stroke-dashoffset:330;animation:draw .9s var(--ease-io) forwards}
+.done .chk{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .45s var(--ease-out) .7s forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
-.leafs{position:relative;height:0}
-.leafs i{position:absolute;left:50%;top:-90px;width:10px;height:14px;border-radius:0 70% 0 70%;background:var(--leaf);opacity:0;animation:leaf 1.8s ease-out forwards}
-@keyframes leaf{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r))}}
-.preview{display:inline-block;margin-top:14px;font-size:12.5px;font-weight:800;letter-spacing:.05em;color:#7a3207;background:#f7dcc6;padding:6px 12px;border-radius:6px}
+.preview{display:inline-block;margin-top:14px;font-size:13px;font-weight:700;color:#7a3207;background:#f7dcc6;padding:6px 12px;border-radius:6px}
 .summary{text-align:left;background:#f1ecdf;border-radius:12px;padding:14px 16px;font-size:15px;margin-top:16px}
 .summary div{display:flex;justify-content:space-between;gap:14px;padding:3px 0}
 .summary span{color:var(--muted)}
@@ -262,17 +247,16 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 @media(max-width:480px){.prog{padding:12px 16px 0}.prog li{font-size:10.5px}.est{margin:12px 16px 0}.step{padding:22px 16px 4px}.nav{padding:22px 16px 18px}.nav .btn{padding:15px 20px}}
 /* ---------- work / gallery ---------- */
 .work{background:var(--night);color:var(--cream);overflow:hidden}
-.work .kicker{color:var(--hv)}
 .work .intro{color:#a9b6a5}
 .gal{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20px 18px;margin:0 -20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .gal::-webkit-scrollbar{display:none}
 .gal figure{margin:0;flex:none;width:78vw;max-width:340px;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:16px;background:#000;scroll-snap-align:center}
-.gal img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.8,.2,1),filter .6s;filter:saturate(.9)}
-.gal figure:hover img{transform:scale(1.06);filter:saturate(1.05)}
-.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:50px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
-.gal figcaption b{display:block;font-family:var(--cond);font-stretch:66%;font-weight:900;text-transform:uppercase;font-size:30px;line-height:.95}
+.gal img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);transition:transform .9s var(--ease-out);filter:saturate(.88) contrast(1.03)}
+.gal figure::after{content:"";position:absolute;inset:0;background:var(--forest);mix-blend-mode:multiply;opacity:.14;pointer-events:none}
+@media(hover:hover){.gal figure:hover img{transform:scale(1.08)}}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:50px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.gal figcaption b{display:block;font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:24px;line-height:1.05}
 .gal figcaption span{font-size:13px;color:#c9d3c5}
-.gal figure .tag{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;letter-spacing:.12em;background:rgba(13,22,16,.7);backdrop-filter:blur(6px);padding:5px 10px;border-radius:999px}
 .swipe{font-size:13px;color:#7f8d7b;margin:2px 0 0;display:flex;align-items:center;gap:8px}
 @media(min-width:860px){
   .gal{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:260px 260px;overflow:visible;margin:0;padding:6px 0 0}
@@ -284,9 +268,8 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 
 .revs{display:grid;gap:30px;margin-top:70px;border-top:1px solid rgba(255,255,255,.12);padding-top:50px}
 @media(min-width:860px){.revs{grid-template-columns:1fr 1fr;gap:56px}}
-.rev{position:relative;padding-top:34px}
-.rev::before{content:"“";position:absolute;top:-38px;left:-4px;font-family:Georgia,serif;font-weight:700;font-size:130px;line-height:1;color:var(--hv);opacity:.9}
-.rev blockquote{font-family:var(--cond);font-stretch:80%;font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:10px 0 14px;text-transform:none}
+.rev{position:relative;padding-left:20px;border-left:2px solid rgba(245,183,15,.55)}
+.rev blockquote{font-family:var(--cond);font-stretch:84%;font-weight:700;font-size:clamp(24px,4.6vw,32px);line-height:1.15;margin:10px 0 14px}
 .rev cite{font-style:normal;font-size:14px;color:#a9b6a5;display:flex;align-items:center;gap:10px}
 .g{width:18px;height:18px}
 .revsum{margin-top:44px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px}
@@ -311,26 +294,23 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 .how{display:grid;gap:0;margin-top:40px}
 .how div{display:grid;grid-template-columns:auto 1fr;gap:4px 20px;padding:24px 0;border-top:2px solid var(--ink)}
 .how .num{grid-row:span 2;min-width:54px;font-family:var(--cond);font-stretch:62%;font-weight:900;font-size:76px;line-height:.8;color:var(--hv-d)}
-.how h3{font-family:var(--cond);font-stretch:66%;font-weight:900;text-transform:uppercase;font-size:34px;line-height:.95;margin:0}
+.how h3{font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1.05;margin:0 0 4px}
 .how p{margin:0;color:var(--muted);font-size:15.5px}
 @media(min-width:860px){.how{grid-template-columns:repeat(3,1fr);gap:34px}}
 
 /* final */
-.final{background:var(--hv);color:#1a1203;text-align:center;position:relative;overflow:hidden}
-.final::before,.final::after{content:"";position:absolute;left:0;right:0;height:14px;background:repeating-linear-gradient(-45deg,#1a1203 0 14px,transparent 14px 28px)}
-.final::before{top:0}.final::after{bottom:0}
-.final h2{font-size:clamp(60px,16vw,140px);max-width:10ch;margin:0 auto 18px}
-.final p{margin:0 auto 30px;max-width:38ch;font-weight:600;font-size:17.5px}
+.final{background:var(--night);color:var(--cream);text-align:center;position:relative;margin-top:70px}
+.final .edge{position:absolute;left:0;right:0;bottom:calc(100% - 1px);width:100%;height:clamp(46px,6vw,90px);display:block}
+.final h2{font-size:clamp(44px,10vw,88px);max-width:12ch;margin:0 auto 18px}
+.final p{margin:0 auto 30px;max-width:38ch;font-size:17.5px;color:#c9d3c5}
 .final .ctas{justify-content:center}
-.final .btn.dk{background:#1a1203;color:var(--hv)}
-.final .btn.out{background:transparent;color:#1a1203;border:2px solid #1a1203}
-.final .btn.out:hover{background:#1a1203;color:var(--hv)}
 
 footer{background:var(--night);color:#93a28f;font-size:14px;padding:36px 0 44px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.fmeta{display:flex;flex-wrap:wrap;gap:6px 20px}
 .pw{font-size:12.5px;color:#6f7e6b}.pw a{color:var(--hv)}
 
-.sticky{position:fixed;left:12px;right:12px;bottom:12px;z-index:25;display:flex;gap:8px;padding:6px;border-radius:999px;background:rgba(13,22,16,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 40px rgba(0,0,0,.4);transform:translateY(160%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.sticky{position:fixed;left:12px;right:12px;bottom:12px;z-index:25;display:flex;gap:8px;padding:6px;border-radius:999px;background:rgba(13,22,16,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 40px rgba(0,0,0,.4);transform:translateY(160%);transition:transform .32s var(--ease-out)}
 .sticky.show{transform:none}
 .sticky .btn{flex:1;padding:13px 16px;font-size:16px}
 .sticky .btn.dk{flex:none;background:rgba(255,255,255,.1)}
@@ -339,10 +319,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .reveal{opacity:1;transform:none}
-  .hero h1 .ln>span{transform:none}.lede,.hero .ctas,.hero .rating,.seal{opacity:1}
-  .rings path{stroke-dashoffset:0}
-  .done .ring,.done .chk{stroke-dashoffset:0}
+  .js .reveal,.js .lede,.js .hero .ctas,.js .hero .rating,.js .seal{opacity:1;transform:none}
+  .js .hero h1 .ln>span{transform:none}
+  .rings path,.js .seal .rg path,.done .ring,.done .chk{stroke-dashoffset:0}
 }
 </style>
 </head><body>
@@ -354,7 +333,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 </svg>
 
 <header class="top" id="top">
-  <div class="pv">Preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> · <span class="pv-l">booking goes live when you sign up</span><span class="pv-s">not live yet</span></div>
+  <div class="pv">Preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a>. <span class="pv-l">Booking goes live when you sign up</span><span class="pv-s">Not live yet</span></div>
   <div class="wrap bar">
     <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
     <a class="callbtn" href="tel:+18653674667" target="_top"><svg width="15" height="15" aria-hidden="true"><use href="#ph"/></svg><span class="cl-long">(865) 367-4667</span><span class="cl-short">Call</span></a>
@@ -368,23 +347,17 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <span class="live"><i></i>Crews available 24/7</span>
     <h1><span class="ln"><span>Big trees.</span></span><span class="ln"><span class="out">Tight spots.</span></span><span class="ln"><span class="hv">No problem.</span></span></h1>
     <p class="lede">Tree removal, trimming, storm cleanup, stump grinding and land clearing around Maryville. Get a price in about a minute.</p>
-    <div class="ctas"><a class="btn hv" href="#quote">Get my price <svg width="20" height="20" aria-hidden="true"><use href="#arr"/></svg></a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>Call now</a></div>
+    <div class="ctas"><a class="btn hv" href="#quote">Get my price</a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>Call now</a></div>
     <div class="rating"><b>4.9</b><span class="st" aria-hidden="true">★★★★★</span><span>56 Google reviews</span></div>
   </div>
   <svg class="seal" viewBox="0 0 200 200" aria-hidden="true">
     <defs><path id="circ" d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0"/></defs>
     <circle cx="100" cy="100" r="98" fill="rgba(13,22,16,.55)" stroke="rgba(243,238,226,.25)"/>
-    <g class="spin"><text><textPath href="#circ" textLength="486" lengthAdjust="spacingAndGlyphs">AVAILABLE 24/7 • STORM EMERGENCIES • MARYVILLE TN •</textPath></text></g>
-    <g fill="none" stroke="#f5b70f" stroke-width="2.2"><path d="M100 64c20 0 35 16 35 36 0 21-16 36-36 36-19 0-34-16-34-36s15-36 35-36z"/><path d="M100.5 77c13 0 22.5 10 22.5 23s-10 23-23 23-22.5-10-22.5-23 10-23 23-23z" opacity=".75"/><path d="M99.5 89c6 0 11 5 11 11s-5 11-11 11-10.5-5-10.5-11 4.6-11 10.5-11z" opacity=".55"/></g>
+    <g><text><textPath href="#circ" textLength="486" lengthAdjust="spacingAndGlyphs">AVAILABLE 24/7 • STORM EMERGENCIES • MARYVILLE TN •</textPath></text></g>
+    <g class="rg" fill="none" stroke="#f5b70f" stroke-width="2.2"><path d="M100 64c20 0 35 16 35 36 0 21-16 36-36 36-19 0-34-16-34-36s15-36 35-36z"/><path d="M100.5 77c13 0 22.5 10 22.5 23s-10 23-23 23-22.5-10-22.5-23 10-23 23-23z" opacity=".75"/><path d="M99.5 89c6 0 11 5 11 11s-5 11-11 11-10.5-5-10.5-11 4.6-11 10.5-11z" opacity=".55"/></g>
     <circle cx="100" cy="100" r="3" fill="#f5b70f"/>
   </svg>
-  <div class="scrollcue" aria-hidden="true"></div>
 </section>
-
-<div class="tape" aria-hidden="true"><div class="track">
-  <span>Tree removal</span><span>Trimming &amp; pruning</span><span>Storm cleanup</span><span>Stump grinding</span><span>Land clearing</span><span>Haul away</span>
-  <span>Tree removal</span><span>Trimming &amp; pruning</span><span>Storm cleanup</span><span>Stump grinding</span><span>Land clearing</span><span>Haul away</span>
-</div></div>
 
 <div class="storm"><div class="wrap"><p><b>Tree down after a storm?</b> Day or night, Gonzalez picks up the phone.</p><a href="tel:+18653674667" target="_top"><svg width="26" height="26" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a></div></div>
 
@@ -410,16 +383,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
 <section class="s" id="services">
   <div class="wrap">
-    <p class="kicker reveal">What we do</p>
     <h2 class="reveal">One limb to <span class="hv">the whole lot.</span></h2>
     <p class="intro reveal">Every size of tree, from one limb to the whole lot. Tap any service to get a price. <span class="sample">SAMPLE PRICES</span></p>
     <div class="svc">
-      <a class="row reveal" href="#quote" data-svc="removal"><span class="n">01</span><h3>Tree removal</h3><p>Safe takedowns of dead, leaning and unsafe trees of every size.</p><span class="price"><span>From $<span class="cu" data-to="300">300</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="trim"><span class="n">02</span><h3>Trimming &amp; pruning</h3><p>Thinning and shaping to keep trees healthy and off the roof.</p><span class="price"><span>From $<span class="cu" data-to="150">150</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="storm"><span class="n">03</span><h3>Storm cleanup</h3><p>Downed trees and limbs cleared fast, any time of day or night.</p><span class="price"><span>From $<span class="cu" data-to="250">250</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="stump"><span class="n">04</span><h3>Stump grinding</h3><p>Ground below the surface so you can mow or plant right over them.</p><span class="price"><span>From $<span class="cu" data-to="100">100</span> / stump</span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="land"><span class="n">05</span><h3>Land clearing</h3><p>Brush, overgrowth and trees cleared for a build, a fence line or a usable yard.</p><span class="price"><span>From $<span class="cu" data-to="1500">1,500</span> / acre</span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
-      <a class="row reveal" href="#quote"><span class="n">06</span><h3>Haul away</h3><p>We load up the logs and debris and leave the yard clean.</p><span class="price"><span>Add-on to any job</span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="removal"><h3>Tree removal</h3><p>Safe takedowns of dead, leaning and unsafe trees of every size.</p><span class="price"><span>From $<span class="cu" data-to="300">300</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="trim"><h3>Trimming &amp; pruning</h3><p>Thinning and shaping to keep trees healthy and off the roof.</p><span class="price"><span>From $<span class="cu" data-to="150">150</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="storm"><h3>Storm cleanup</h3><p>Downed trees and limbs cleared fast, any time of day or night.</p><span class="price"><span>From $<span class="cu" data-to="250">250</span></span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="stump"><h3>Stump grinding</h3><p>Ground below the surface so you can mow or plant right over them.</p><span class="price"><span>From $<span class="cu" data-to="100">100</span> / stump</span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="land"><h3>Land clearing</h3><p>Brush, overgrowth and trees cleared for a build, a fence line or a usable yard.</p><span class="price"><span>From $<span class="cu" data-to="1500">1,500</span> / acre</span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
+      <a class="row reveal" href="#quote"><h3>Haul away</h3><p>We load up the logs and debris and leave the yard clean.</p><span class="price"><span>Add-on to any job</span><svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></span></a>
     </div>
   </div>
 </section>
@@ -427,7 +399,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <section class="s qt-sec" id="quote">
   <div class="wrap qlay">
     <div class="qside">
-      <p class="kicker reveal">Instant estimate</p>
       <h2 class="reveal">Your price in <span class="hv">60 seconds.</span></h2>
       <p class="intro reveal">Tell us what needs doing and roughly how big. Not sure on size? Just say so. Final price is set when we see it in person.</p>
       <ul class="perks reveal"><li>No phone tag, no waiting on a callback</li><li>Free on-site estimate to lock it in</li><li>Gonzalez reaches out to set a time</li></ul>
@@ -511,7 +482,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
       <div class="step" data-step="3">
         <div class="pricebox">
-          <div class="k">YOUR ESTIMATE · SAMPLE PRICES</div>
+          <div class="k">Your estimate (sample prices)</div>
           <div class="amt">$<span id="lo">0</span> to $<span id="hi">0</span></div>
           <p id="pNote">Sample pricing for this preview. Final price is set after we see the job.</p>
           <ul class="lines" id="lines"></ul>
@@ -539,12 +510,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
       <div class="step" data-step="5">
         <div class="done">
-          <div class="leafs" id="leafs" aria-hidden="true"></div>
           <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="#13241a" stroke-width="6"/><path class="chk" d="M38 62 L54 77 L84 45" fill="none" stroke="#f5b70f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <h3 id="doneTitle">Request received!</h3>
           <p class="help" style="margin:0">Gonzalez will reach out to set up a time.</p>
           <div class="summary" id="summary"></div>
-          <span class="preview">PREVIEW ONLY · NOTHING IS SENT</span>
+          <span class="preview">Preview only. Nothing is sent.</span>
           <div style="margin-top:16px"><button type="button" class="back" id="restart">Start over</button></div>
         </div>
       </div>
@@ -557,20 +527,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
 <section class="s work" id="work">
   <div class="wrap">
-    <p class="kicker reveal">From the job site</p>
-    <h2 class="reveal">Real crews. <span style="color:var(--hv)">Real work.</span></h2>
+    <h2 class="reveal">Real crews. Real work.</h2>
     <p class="intro reveal">A few recent jobs around East Tennessee.</p>
     <div class="gal">
-      <figure class="reveal"><img src="img/p2.jpg" alt="Gonzalez chipper parked beside a large tree" loading="lazy"><span class="tag">ON SITE</span><figcaption><b>Ready to work</b><span>Chipper set up before a big removal</span></figcaption></figure>
-      <figure class="reveal"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy"><span class="tag">CLEARING</span><figcaption><b>Lot clearing</b><span>Brush and trees cleared off a hillside</span></figcaption></figure>
-      <figure class="reveal"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" loading="lazy"><span class="tag">REMOVAL</span><figcaption><b>Dead tree down</b><span>Cut, stacked and ready to haul</span></figcaption></figure>
-      <figure class="reveal"><img src="img/p4.jpg" alt="Tall bare trees seen from below" loading="lazy"><span class="tag">TALL TREES</span><figcaption><b>No tree too tall</b><span>Big hardwoods, tight yards</span></figcaption></figure>
+      <figure class="reveal"><img src="img/p2.jpg" alt="Gonzalez chipper parked beside a large tree" loading="lazy"><figcaption><b>Ready to work</b><span>Chipper set up before a big removal</span></figcaption></figure>
+      <figure class="reveal"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy"><figcaption><b>Lot clearing</b><span>Brush and trees cleared off a hillside</span></figcaption></figure>
+      <figure class="reveal"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" loading="lazy"><figcaption><b>Dead tree down</b><span>Cut, stacked and ready to haul</span></figcaption></figure>
+      <figure class="reveal"><img src="img/p4.jpg" alt="Tall bare trees seen from below" loading="lazy"><figcaption><b>No tree too tall</b><span>Big hardwoods, tight yards</span></figcaption></figure>
     </div>
     <p class="swipe">Swipe for more <svg width="16" height="16" aria-hidden="true"><use href="#arr"/></svg></p>
 
     <div class="revs">
-      <div class="rev reveal"><div class="st" aria-label="5 stars">★★★★★</div><blockquote>They cleared out brush and small trees in less than a few hours.</blockquote><cite><svg class="g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.9C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Google review</cite></div>
-      <div class="rev reveal"><div class="st" aria-label="5 stars">★★★★★</div><blockquote>Gonzalez Tree Service did a great job, at a good price.</blockquote><cite><svg class="g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.9C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Google review</cite></div>
+      <div class="rev reveal"><div class="st" aria-label="5 stars">★★★★★</div><blockquote>“They cleared out brush and small trees in less than a few hours.”</blockquote><cite><svg class="g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.9C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Google review</cite></div>
+      <div class="rev reveal"><div class="st" aria-label="5 stars">★★★★★</div><blockquote>“Gonzalez Tree Service did a great job, at a good price.”</blockquote><cite><svg class="g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.9C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Google review</cite></div>
     </div>
     <div class="revsum reveal"><span class="score">4.9</span><div class="st" style="font-size:22px" aria-hidden="true">★★★★★</div><p><b>56 reviews on Google</b>Maryville and the surrounding area</p></div>
   </div>
@@ -579,10 +548,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <section class="s area" id="area">
   <div class="wrap agrid">
     <div>
-      <p class="kicker reveal">Hours &amp; service area</p>
       <h2 class="reveal">Open <span class="hv">24/7.</span></h2>
       <p class="intro reveal">Serving Maryville and the surrounding area. Storm damage doesn't wait for business hours, and neither does Gonzalez.</p>
-      <div class="ctas reveal"><a class="btn dk" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a><a class="btn line" href="https://www.google.com/maps/search/?api=1&amp;query=Gonzalez+Tree+Service+Maryville+TN" target="_blank" rel="noopener">Find us on Maps <svg width="18" height="18" aria-hidden="true"><use href="#arr"/></svg></a></div>
+      <div class="ctas reveal"><a class="btn dk" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a><a class="btn line" href="https://www.google.com/maps/search/?api=1&amp;query=Gonzalez+Tree+Service+Maryville+TN" target="_blank" rel="noopener">Find us on Maps</a></div>
     </div>
     <ul class="hours reveal">
       <li><span>Monday</span><b>Open 24 hours</b></li><li><span>Tuesday</span><b>Open 24 hours</b></li><li><span>Wednesday</span><b>Open 24 hours</b></li><li><span>Thursday</span><b>Open 24 hours</b></li><li><span>Friday</span><b>Open 24 hours</b></li><li><span>Saturday</span><b>Open 24 hours</b></li><li><span>Sunday</span><b>Open 24 hours</b></li>
@@ -592,7 +560,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
 <section class="s" id="how">
   <div class="wrap">
-    <p class="kicker reveal">How it works</p>
     <h2 class="reveal">Three steps. <span class="hv">Clean yard.</span></h2>
     <div class="how">
       <div class="reveal"><span class="num">1</span><h3>Get your price</h3><p>Use the estimate tool or call. It takes about a minute.</p></div>
@@ -603,17 +570,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 </section>
 
 <section class="s final">
+  <svg class="edge" viewBox="0 0 1600 90" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#0d1610" d="M0,90 L-20,90 L-14,59 L-9,58 L-11,39 L-6,37 L-2,17 L2,37 L7,39 L5,58 L10,59 L16,90 L6,90 L12,62 L17,61 L15,44 L20,42 L24,24 L28,42 L33,44 L31,61 L36,62 L42,90 L28,90 L35,69 L40,68 L38,55 L43,54 L48,40 L53,54 L58,55 L56,68 L61,69 L68,90 L48,90 L55,61 L59,60 L57,42 L62,41 L67,22 L72,41 L77,42 L75,60 L79,61 L86,90 L73,90 L78,72 L81,71 L79,59 L83,58 L86,46 L90,58 L94,59 L92,71 L95,72 L100,90 L89,90 L94,72 L97,71 L95,60 L99,59 L102,47 L105,59 L109,60 L107,71 L110,72 L115,90 L105,90 L109,58 L112,57 L111,37 L114,35 L116,14 L119,35 L122,37 L121,57 L124,58 L128,90 L123,90 L129,57 L134,55 L132,35 L137,33 L141,11 L145,33 L150,35 L148,55 L153,57 L159,90 L148,90 L153,58 L156,56 L154,36 L158,35 L162,13 L165,35 L169,36 L167,56 L170,58 L175,90 L160,90 L167,72 L171,72 L169,61 L174,60 L179,48 L184,60 L189,61 L187,72 L191,72 L198,90 L177,90 L182,68 L185,67 L184,53 L188,52 L191,37 L194,52 L198,53 L197,67 L200,68 L205,90 L195,90 L201,66 L206,64 L204,49 L209,48 L213,32 L217,48 L222,49 L220,64 L225,66 L231,90 L216,90 L221,60 L224,59 L223,40 L227,39 L230,19 L233,39 L237,40 L236,59 L239,60 L244,90 L230,90 L236,61 L239,60 L237,42 L242,40 L246,21 L249,40 L254,42 L252,60 L255,61 L261,90 L243,90 L247,62 L250,61 L249,43 L252,42 L255,23 L258,42 L261,43 L260,61 L263,62 L267,90 L259,90 L265,59 L270,58 L267,39 L272,37 L276,17 L281,37 L286,39 L284,58 L288,59 L294,90 L286,90 L290,67 L293,66 L292,52 L295,51 L298,36 L301,51 L304,52 L303,66 L306,67 L310,90 L299,90 L304,61 L308,59 L306,41 L310,40 L314,20 L317,40 L321,41 L319,59 L323,61 L328,90 L314,90 L318,59 L321,57 L320,38 L323,37 L326,16 L329,37 L332,38 L331,57 L334,59 L338,90 L331,90 L337,72 L341,71 L339,59 L344,58 L348,46 L352,58 L357,59 L355,71 L359,72 L365,90 L356,90 L362,72 L366,72 L364,61 L369,60 L373,48 L377,60 L382,61 L380,72 L384,72 L390,90 L382,90 L386,69 L389,68 L387,54 L390,53 L393,39 L396,53 L399,54 L397,68 L400,69 L404,90 L393,90 L397,61 L400,60 L399,42 L402,41 L404,22 L407,41 L410,42 L409,60 L412,61 L416,90 L406,90 L412,63 L416,62 L414,45 L419,44 L423,26 L427,44 L432,45 L430,62 L434,63 L440,90 L422,90 L427,56 L430,54 L429,33 L433,32 L436,9 L439,32 L443,33 L442,54 L445,56 L450,90 L437,90 L441,66 L444,65 L443,50 L446,49 L449,33 L452,49 L455,50 L454,65 L457,66 L461,90 L450,90 L456,71 L460,70 L458,58 L463,58 L468,45 L472,58 L477,58 L474,70 L479,71 L485,90 L467,90 L472,74 L474,73 L473,63 L476,63 L480,52 L482,63 L486,63 L484,73 L488,74 L492,90 L478,90 L485,69 L489,68 L487,56 L492,55 L496,41 L501,55 L506,56 L504,68 L508,69 L515,90 L503,90 L508,62 L511,61 L510,44 L514,42 L517,24 L520,42 L524,44 L523,61 L526,62 L531,90 L520,90 L525,63 L528,62 L526,45 L530,44 L533,26 L536,44 L540,45 L538,62 L541,63 L546,90 L537,90 L542,64 L544,62 L543,46 L546,45 L550,27 L552,45 L556,46 L554,62 L558,64 L562,90 L551,90 L556,74 L559,73 L558,63 L562,63 L565,52 L568,63 L572,63 L571,73 L574,74 L579,90 L566,90 L573,66 L578,65 L576,50 L581,49 L586,33 L591,49 L596,50 L594,65 L599,66 L606,90 L597,90 L601,69 L604,68 L602,54 L605,53 L608,39 L611,53 L614,54 L612,68 L615,69 L619,90 L608,90 L615,72 L620,71 L618,59 L623,58 L628,46 L633,58 L638,59 L636,71 L641,72 L648,90 L626,90 L631,69 L634,68 L632,54 L636,53 L639,39 L642,53 L646,54 L644,68 L647,69 L652,90 L641,90 L645,58 L648,56 L646,36 L649,35 L652,13 L655,35 L658,36 L656,56 L659,58 L663,90 L653,90 L659,64 L662,63 L660,47 L665,45 L668,28 L672,45 L677,47 L675,63 L678,64 L684,90 L667,90 L671,69 L674,68 L673,54 L676,53 L679,39 L682,53 L685,54 L684,68 L687,69 L691,90 L682,90 L687,74 L691,73 L689,63 L693,63 L696,52 L700,63 L704,63 L702,73 L706,74 L711,90 L701,90 L707,58 L711,56 L709,36 L714,35 L718,13 L721,35 L726,36 L724,56 L728,58 L734,90 L721,90 L728,61 L733,60 L731,42 L736,41 L741,22 L746,41 L751,42 L749,60 L754,61 L761,90 L750,90 L755,64 L758,63 L756,47 L760,45 L763,28 L766,45 L770,47 L768,63 L771,64 L776,90 L763,90 L768,66 L771,65 L769,50 L773,49 L776,33 L779,49 L783,50 L781,65 L784,66 L789,90 L782,90 L787,69 L791,68 L789,55 L793,54 L796,40 L800,54 L804,55 L802,68 L806,69 L811,90 L796,90 L803,69 L808,68 L805,55 L811,54 L816,40 L820,54 L826,55 L823,68 L828,69 L835,90 L822,90 L828,61 L832,60 L830,42 L835,41 L839,22 L843,41 L848,42 L846,60 L850,61 L856,90 L844,90 L850,73 L854,72 L852,61 L857,60 L862,49 L866,60 L871,61 L868,72 L873,73 L879,90 L861,90 L865,61 L868,59 L867,41 L870,40 L872,20 L875,40 L878,41 L877,59 L880,61 L884,90 L879,90 L884,64 L888,62 L886,46 L890,45 L894,27 L897,45 L901,46 L899,62 L903,64 L908,90 L894,90 L901,66 L905,65 L903,51 L908,50 L912,34 L917,50 L922,51 L920,65 L924,66 L931,90 L917,90 L921,71 L924,70 L923,58 L926,57 L929,44 L932,57 L935,58 L934,70 L937,71 L941,90 L929,90 L936,57 L941,55 L938,35 L944,33 L948,11 L953,33 L959,35 L956,55 L961,57 L968,90 L958,90 L962,67 L965,66 L964,52 L967,50 L970,35 L973,50 L976,52 L975,66 L978,67 L982,90 L970,90 L975,74 L978,73 L977,63 L981,62 L984,51 L987,62 L991,63 L990,73 L993,74 L998,90 L983,90 L989,62 L994,61 L991,44 L996,42 L1000,24 L1005,42 L1010,44 L1008,61 L1012,62 L1018,90 L1001,90 L1005,69 L1008,68 L1007,56 L1010,55 L1012,41 L1015,55 L1018,56 L1017,68 L1020,69 L1024,90 L1013,90 L1020,59 L1024,57 L1022,38 L1027,37 L1032,16 L1037,37 L1042,38 L1040,57 L1044,59 L1051,90 L1043,90 L1047,64 L1050,63 L1049,47 L1052,46 L1055,29 L1058,46 L1061,47 L1060,63 L1063,64 L1067,90 L1054,90 L1060,65 L1065,64 L1063,49 L1068,48 L1072,31 L1076,48 L1081,49 L1079,64 L1084,65 L1090,90 L1078,90 L1085,58 L1089,57 L1087,38 L1092,36 L1097,15 L1102,36 L1107,38 L1105,57 L1109,58 L1116,90 L1107,90 L1114,73 L1119,72 L1117,62 L1122,61 L1127,50 L1132,61 L1137,62 L1135,72 L1140,73 L1147,90 L1137,90 L1144,65 L1148,64 L1146,48 L1151,47 L1156,30 L1160,47 L1165,48 L1163,64 L1167,65 L1174,90 L1162,90 L1166,74 L1169,73 L1168,63 L1171,62 L1174,51 L1176,62 L1179,63 L1178,73 L1181,74 L1185,90 L1177,90 L1181,61 L1184,60 L1183,42 L1186,41 L1189,22 L1192,41 L1195,42 L1194,60 L1197,61 L1201,90 L1188,90 L1194,66 L1197,64 L1195,49 L1200,48 L1204,32 L1207,48 L1212,49 L1210,64 L1213,66 L1219,90 L1203,90 L1207,72 L1210,72 L1209,61 L1212,60 L1215,48 L1218,60 L1221,61 L1220,72 L1223,72 L1227,90 L1217,90 L1223,73 L1227,72 L1225,62 L1230,61 L1234,50 L1237,61 L1242,62 L1240,72 L1244,73 L1250,90 L1242,90 L1247,65 L1250,64 L1248,49 L1252,48 L1255,31 L1258,48 L1262,49 L1260,64 L1263,65 L1268,90 L1256,90 L1263,72 L1267,72 L1265,61 L1270,60 L1274,48 L1279,60 L1284,61 L1282,72 L1286,72 L1293,90 L1283,90 L1289,74 L1294,73 L1291,63 L1296,62 L1300,51 L1305,62 L1310,63 L1308,73 L1312,74 L1318,90 L1309,90 L1316,74 L1321,73 L1319,63 L1324,63 L1329,52 L1334,63 L1339,63 L1337,73 L1342,74 L1349,90 L1335,90 L1341,64 L1345,63 L1343,47 L1348,45 L1352,28 L1356,45 L1361,47 L1359,63 L1363,64 L1369,90 L1357,90 L1361,72 L1364,71 L1363,60 L1366,59 L1369,47 L1372,59 L1375,60 L1374,71 L1377,72 L1381,90 L1368,90 L1372,67 L1376,66 L1374,52 L1378,51 L1380,36 L1384,51 L1387,52 L1386,66 L1388,67 L1393,90 L1386,90 L1392,64 L1396,63 L1394,47 L1398,45 L1402,28 L1406,45 L1410,47 L1408,63 L1412,64 L1418,90 L1410,90 L1417,62 L1422,61 L1420,43 L1425,42 L1430,23 L1435,42 L1440,43 L1438,61 L1443,62 L1450,90 L1434,90 L1441,72 L1446,71 L1443,60 L1449,59 L1454,47 L1458,59 L1464,60 L1461,71 L1466,72 L1473,90 L1458,90 L1465,74 L1469,73 L1467,63 L1472,62 L1477,51 L1482,62 L1487,63 L1485,73 L1489,74 L1496,90 L1479,90 L1483,61 L1486,60 L1485,42 L1488,41 L1491,22 L1494,41 L1497,42 L1496,60 L1499,61 L1503,90 L1489,90 L1494,61 L1496,60 L1495,42 L1498,40 L1502,21 L1504,40 L1508,42 L1506,60 L1510,61 L1514,90 L1507,90 L1514,67 L1518,66 L1516,52 L1521,51 L1526,36 L1530,51 L1535,52 L1533,66 L1537,67 L1544,90 L1535,90 L1541,66 L1545,65 L1543,50 L1548,49 L1552,33 L1555,49 L1560,50 L1558,65 L1562,66 L1568,90 L1551,90 L1556,60 L1559,59 L1558,40 L1562,39 L1565,19 L1568,39 L1572,40 L1571,59 L1574,60 L1579,90 L1565,90 L1571,56 L1575,55 L1573,34 L1577,32 L1581,10 L1585,32 L1589,34 L1587,55 L1591,56 L1597,90 L1589,90 L1596,68 L1600,67 L1598,53 L1603,52 L1608,37 L1612,52 L1617,53 L1615,67 L1619,68 L1626,90 L1609,90 L1614,69 L1618,68 L1616,55 L1620,54 L1624,40 L1628,54 L1632,55 L1630,68 L1634,69 L1639,90 L1629,90 L1634,69 L1637,68 L1636,54 L1640,53 L1643,39 L1646,53 L1650,54 L1649,68 L1652,69 L1657,90 L1600,90Z"/></svg>
   <div class="wrap">
-    <h2 class="cond reveal">Got a tree that needs to go?</h2>
+    <h2 class="reveal">Got a tree that needs to go?</h2>
     <p class="reveal">Get your estimate now or call Gonzalez any time, day or night.</p>
-    <div class="ctas reveal"><a class="btn dk" href="#quote">Get my price <svg width="20" height="20" aria-hidden="true"><use href="#arr"/></svg></a><a class="btn out" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a></div>
+    <div class="ctas reveal"><a class="btn hv" href="#quote">Get my price</a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>(865) 367-4667</a></div>
   </div>
 </section>
 </main>
 
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
-  <div>(865) 367-4667 · Open 24/7 · Maryville, TN</div>
+  <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
   <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a></div>
 </div></footer>
 
@@ -631,10 +599,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
   function countUp(el){ const to=+el.dataset.to, dec=+(el.dataset.dec||0), out=v=>dec?v.toFixed(dec):fmt(Math.round(v)); if(RM){el.textContent=out(to);return;} const t0=performance.now(); (function f(t){ const p=Math.min(1,(t-t0)/1100), e=1-Math.pow(1-p,3); el.textContent=out(to*e); if(p<1) requestAnimationFrame(f); })(t0); }
   const io='IntersectionObserver' in window ? new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); e.target.querySelectorAll('.cu').forEach(countUp); io.unobserve(e.target);} }),{threshold:.12}) : null;
-  $$('.reveal').forEach(el=> io?io.observe(el):el.classList.add('in'));
+  $$('.reveal').forEach(el=>{ const sib=[...el.parentElement.children].filter(c=>c.classList.contains('reveal')); el.style.setProperty('--i',Math.min(sib.indexOf(el),4)); io?io.observe(el):el.classList.add('in'); });
 
   const nums=$('#nums'); if(io&&nums){ const io2=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ nums.classList.add('in'); io2.disconnect(); } }),{threshold:.2}); io2.observe(nums); } else if(nums) nums.classList.add('in');
-  const bg=$('#heroBg'); if(bg && !RM){ const ls=[...bg.querySelectorAll('.tl')]; let tk=false; addEventListener('scroll',()=>{ if(tk) return; tk=true; requestAnimationFrame(()=>{ const y=Math.min(scrollY,innerHeight); ls.forEach(l=>l.style.transform='translateY('+(y*(+l.dataset.depth))+'px)'); tk=false; }); },{passive:true}); }
+  const bg=$('#heroBg'); if(bg && !RM && matchMedia('(min-width:860px) and (hover:hover)').matches){ const ls=[...bg.querySelectorAll('.tl')]; let tk=false; addEventListener('scroll',()=>{ if(tk) return; tk=true; requestAnimationFrame(()=>{ const y=Math.min(scrollY,innerHeight); ls.forEach(l=>l.style.transform='translateY('+(y*(+l.dataset.depth))+'px)'); tk=false; }); },{passive:true}); }
 
   /* ---------- quote tool ---------- */
   /* =====================================================================
@@ -783,8 +751,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     sendBooking({business:'Gonzalez Tree Service', submittedAt:new Date().toISOString(), job:names[S.svc], estimateLow:lo, estimateHigh:hi,
       when:S.when, name:$('#fName').value.trim(), phone:$('#fPhone').value.trim(), address:$('#fAddr').value.trim(), notes:note,
       details:price().L.map(([n,a,b])=>n+': $'+fmt(r25(a))+'–$'+fmt(r25(b))).join('; ')});
-    if(RM) return; const lf=$('#leafs'); lf.innerHTML='';
-    for(let i=0;i<16;i++){ const l=document.createElement('i'); const a=Math.random()*Math.PI*2, r=60+Math.random()*90; l.style.setProperty('--dx',Math.cos(a)*r+'px'); l.style.setProperty('--dy',Math.sin(a)*r+60+'px'); l.style.setProperty('--r',(Math.random()*540-270)+'deg'); l.style.animationDelay=(.5+Math.random()*.3)+'s'; if(i%3===0) l.style.background='#e8681a'; lf.appendChild(l); }
   }
   $$('.row[data-svc]').forEach(r=>r.addEventListener('click',()=>{ if(step!==1) go(1); const b=$('#svcPick [data-v="'+r.dataset.svc+'"]'); if(b) b.click(); }));
   go(1);
