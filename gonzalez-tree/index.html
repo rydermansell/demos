@@ -118,25 +118,48 @@ html.motion:not(.seen){--intro:1.55s}
 @keyframes nameIn{from{opacity:0;transform:translateY(8px)}to{opacity:.85;transform:none}}
 @keyframes nameOut{to{opacity:0}}
 
-/* ---------- takedown: scroll story ---------- */
-.td{position:relative;background:linear-gradient(180deg,var(--night),#13241a 70%,#132418)}
-.td-stage{position:relative;display:grid;justify-items:center;padding:70px 20px 0;overflow:hidden;isolation:isolate}
-.td-sky{position:absolute;inset:0;z-index:-1;opacity:0;background:linear-gradient(180deg,#2d5266 0%,#7d7a72 45%,#d9915a 78%,#f5c46b 100%)}
-.td-art{width:min(100%,520px);height:auto;display:block}
-.td-caps{width:100%;max-width:1140px;padding:0 0 10px}
-.td-cap{position:relative;font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:clamp(30px,6vw,58px);line-height:1.05;letter-spacing:-.015em;color:var(--cream);margin:0 0 10px;text-align:center;text-wrap:balance}
-.td-end{color:var(--hv)}
-.td-end .btn{display:flex;width:max-content;margin:18px auto 0;font-size:17px;padding:14px 24px}
-.td-bar{display:none}
-/* motion version: pinned stage, captions crossfade */
-.motion .td{height:420vh}
-.motion .td-stage{position:sticky;top:0;height:100vh;height:100svh;padding:0;grid-template-rows:auto 1fr;align-items:end}
-.motion .td-caps{position:relative;height:clamp(150px,26vh,230px);padding:clamp(86px,13vh,120px) 20px 0}
-.motion .td-cap{position:absolute;left:20px;right:20px;opacity:0;transform:translate3d(0,24px,0);will-change:opacity,transform}
-.motion .td-art{max-height:calc(100svh - clamp(150px,26vh,230px));width:auto;max-width:100%;justify-self:center}
-.motion .td-bar{display:block;position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.08)}
-.td-bar i{display:block;height:100%;background:var(--hv);transform-origin:0 50%;transform:scaleX(0)}
-#tdTree .pc,#tdStump{will-change:transform}
+/* ---------- story: photo-led scroll sequence ---------- */
+.story{background:var(--night);color:var(--cream);padding:90px 0 70px}
+.st-stage{max-width:1140px;margin:0 auto;padding:0 20px}
+.st-head h2,.st-end h2{font-size:clamp(40px,9vw,84px);line-height:1;margin:0 0 26px}
+.st-media{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 30px}
+.st-media img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px}
+.st-shade,.st-rail{display:none}
+.st-ch{padding:18px 0;border-top:1px solid rgba(255,255,255,.12)}
+.st-lbl{margin:0 0 6px;font-size:14px;font-weight:700;color:var(--hv)}
+.st-t{font-family:var(--cond);font-stretch:76%;font-weight:800;font-size:clamp(28px,6vw,44px);line-height:1.02;letter-spacing:-.015em;margin:0 0 8px}
+.st-t span{display:block}
+.st-d{margin:0;color:#c9d3c5;max-width:40ch;font-size:16.5px}
+.st-end{padding-top:30px}
+
+/* motion: pinned stage, the photo grows from a card to full screen, chapters play over it */
+.motion .story{height:520vh;padding:0}
+.motion .st-stage{position:sticky;top:0;height:100vh;height:100svh;max-width:none;padding:0;overflow:hidden;isolation:isolate}
+.motion .st-head,.motion .st-end{position:absolute;left:20px;right:20px;top:clamp(110px,15vh,150px);text-align:center;will-change:opacity,transform}
+.motion .st-head h2,.motion .st-end h2{font-size:clamp(38px,8.4vw,80px);text-wrap:balance}
+.motion .st-end{opacity:0;display:grid;justify-items:center}
+.motion .st-media{display:block;position:absolute;inset:0;margin:0;background:#0a120d;clip-path:inset(50% 50% 50% 50%);will-change:clip-path}
+.motion .st-media img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;border-radius:0;opacity:0;transform:scale(1.16);will-change:transform,opacity;filter:saturate(.9) contrast(1.06)}
+.motion .st-media img:first-child{opacity:1}
+.motion .st-shade{display:block;position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(9,15,11,.55) 0%,rgba(9,15,11,0) 26%,rgba(9,15,11,0) 42%,rgba(9,15,11,.88) 82%,rgba(9,15,11,.96) 100%),radial-gradient(120% 80% at 50% 50%,transparent 55%,rgba(0,0,0,.35));opacity:0}
+.motion .st-shade::after{content:"";position:absolute;inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.motion .st-rail{display:flex;gap:6px;position:absolute;left:22px;right:22px;top:calc(104px + env(safe-area-inset-top,0px));opacity:0}
+.st-rail i{flex:1;height:3px;border-radius:2px;background:rgba(243,238,226,.22);overflow:hidden}
+.st-rail b{display:block;height:100%;background:var(--cream);transform-origin:0 50%;transform:scaleX(0)}
+.motion .st-chs{position:absolute;left:0;right:0;bottom:0;padding:0 22px calc(44px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.motion .st-ch{position:absolute;left:22px;right:22px;bottom:calc(44px + env(safe-area-inset-bottom,0px));padding:0;border:0}
+.motion .st-lbl,.motion .st-d{opacity:0;will-change:opacity,transform}
+.motion .st-t{overflow:hidden;padding-bottom:.06em;font-size:clamp(36px,9.6vw,64px);max-width:13ch}
+.motion .st-t span{transform:translate3d(0,110%,0);will-change:transform}
+.motion .st-d{font-size:17px;color:#dfe6dc}
+@media(min-width:860px){
+  .motion .st-rail{left:max(40px,calc((100vw - 1140px)/2 + 20px));right:auto;width:min(40vw,440px);top:calc(50% - 170px)}
+  .motion .st-chs{top:0;padding:0}
+  .motion .st-ch{left:max(40px,calc((100vw - 1140px)/2 + 20px));right:auto;width:min(40vw,440px);bottom:auto;top:calc(50% - 130px)}
+  .motion .st-t{font-size:clamp(44px,4.6vw,66px)}
+  .motion .st-shade{background:radial-gradient(120% 80% at 50% 50%,transparent 60%,rgba(0,0,0,.3))}
+}
 
 /* ---------- numbers + rings ---------- */
 .nums{background:var(--night);color:var(--cream);position:relative;overflow:hidden;padding:20px 0 84px}
@@ -289,25 +312,8 @@ input[type=range]{width:100%;accent-color:var(--hv-d);height:32px;margin:6px 0}
 /* ---------- work / gallery ---------- */
 .work{background:var(--night);color:var(--cream);overflow:hidden}
 .work .intro{color:#a9b6a5}
-.gal{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20px 18px;margin:0 -20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.gal::-webkit-scrollbar{display:none}
-.gal figure{margin:0;flex:none;width:78vw;max-width:340px;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:16px;background:#000;scroll-snap-align:center}
-.gal img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);will-change:transform;transition:transform .9s var(--ease-out);filter:saturate(.88) contrast(1.03)}
-.gal figure::after{content:"";position:absolute;inset:0;background:var(--forest);opacity:.1;pointer-events:none}
 
-.gal figcaption{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:50px 18px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
-.gal figcaption b{display:block;font-family:var(--cond);font-stretch:78%;font-weight:800;font-size:24px;line-height:1.05}
-.gal figcaption span{font-size:13px;color:#c9d3c5}
-.swipe{font-size:13px;color:#7f8d7b;margin:2px 0 0;display:flex;align-items:center;gap:8px}
-@media(min-width:860px){
-  .gal{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:260px 260px;overflow:visible;margin:0;padding:6px 0 0}
-  .gal figure{width:auto;max-width:none;aspect-ratio:auto}
-  .gal figure:first-child{grid-row:span 2}
-  .gal figure:last-child{grid-column:span 2}
-  .swipe{display:none}
-}
-
-.revs{display:grid;gap:30px;margin-top:70px;border-top:1px solid rgba(255,255,255,.12);padding-top:50px}
+.revs{display:grid;gap:30px;margin-top:34px}
 @media(min-width:860px){.revs{grid-template-columns:1fr 1fr;gap:56px}}
 .rev{position:relative;padding-left:20px;border-left:2px solid rgba(245,183,15,.55)}
 .rev blockquote{font-family:var(--cond);font-stretch:84%;font-weight:700;font-size:clamp(24px,4.6vw,32px);line-height:1.15;margin:10px 0 14px}
@@ -393,35 +399,21 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     <div class="ctas"><a class="btn hv" href="#quote">Get my price</a><a class="btn ghost" href="tel:+18653674667" target="_top"><svg width="17" height="17" aria-hidden="true"><use href="#ph"/></svg>Call now</a></div>
     <div class="rating"><b>4.9</b><span class="st" aria-hidden="true">★★★★★</span><span>56 Google reviews</span></div>
   </div>
-  <a class="cue" id="cue" href="#takedown"><span>Scroll to watch us take one down<i aria-hidden="true"></i></span></a>
+  <a class="cue" id="cue" href="#takedown"><span>Scroll to see the work<i aria-hidden="true"></i></span></a>
 </section>
 
-<section class="td" id="takedown" aria-label="How Gonzalez takes down a tree">
-  <div class="td-stage">
-    <div class="td-sky" id="tdDawn" aria-hidden="true"></div>
-    <div class="td-caps">
-      <p class="td-cap">Big oak leaning over the house?</p>
-      <p class="td-cap">We take it down piece by piece.</p>
-      <p class="td-cap">Top to bottom, one section at a time.</p>
-      <p class="td-cap">Stump ground below the surface.</p>
-      <p class="td-cap td-end">Clean yard. <a class="btn hv" href="#quote">Get my price</a></p>
+<section class="story" id="takedown" aria-label="What Gonzalez does">
+  <div class="st-stage" id="stStage">
+    <div class="st-head" id="stHead"><h2>Every tree job.<br>Start to finish.</h2></div>
+    <div class="st-media" id="stMedia"><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" decoding="async"><img src="img/p4.jpg" alt="Tall hardwoods seen from below" loading="lazy" decoding="async"><img src="img/p2.jpg" alt="Gonzalez chipper beside a large tree" loading="lazy" decoding="async"><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy" decoding="async"><span class="st-shade" aria-hidden="true"></span></div>
+    <div class="st-rail" id="stRail" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+    <div class="st-chs">
+      <div class="st-ch"><p class="st-lbl">Tree removal</p><h3 class="st-t"><span>Down safely, even in tight spots.</span></h3><p class="st-d">Dead, leaning or too close to the house. We can grind the stump while we’re there.</p></div>
+      <div class="st-ch"><p class="st-lbl">Trimming & pruning</p><h3 class="st-t"><span>Off the roof. Off the lines.</span></h3><p class="st-d">Thinning and shaping that keeps big trees healthy and away from the house.</p></div>
+      <div class="st-ch"><p class="st-lbl">Storm cleanup & haul away</p><h3 class="st-t"><span>Day or night, we pick up.</span></h3><p class="st-d">Downed trees and limbs cleared, chipped and hauled off. Yard left clean.</p></div>
+      <div class="st-ch"><p class="st-lbl">Land clearing</p><h3 class="st-t"><span>From overgrown to usable.</span></h3><p class="st-d">Brush and trees cleared for a build, a fence line or a yard you can use.</p></div>
     </div>
-    <svg class="td-art" viewBox="10 110 380 410" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-  <defs><linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d5266"/><stop offset=".62" stop-color="#d9915a"/><stop offset="1" stop-color="#f5c46b"/></linearGradient></defs>
-  
-  <g id="tdStars"><circle cx="241" cy="206" r="1.1" fill="#f3eee2" opacity="0.77"/><circle cx="358" cy="116" r="0.7" fill="#f3eee2" opacity="0.72"/><circle cx="53" cy="145" r="0.8" fill="#f3eee2" opacity="0.76"/><circle cx="26" cy="29" r="1.4" fill="#f3eee2" opacity="0.84"/><circle cx="123" cy="93" r="0.7" fill="#f3eee2" opacity="0.88"/><circle cx="182" cy="59" r="1.5" fill="#f3eee2" opacity="0.53"/><circle cx="298" cy="215" r="1.0" fill="#f3eee2" opacity="0.35"/><circle cx="358" cy="202" r="0.9" fill="#f3eee2" opacity="0.90"/><circle cx="168" cy="181" r="1.0" fill="#f3eee2" opacity="0.68"/><circle cx="367" cy="163" r="1.4" fill="#f3eee2" opacity="0.59"/><circle cx="55" cy="144" r="0.9" fill="#f3eee2" opacity="0.40"/><circle cx="279" cy="88" r="1.4" fill="#f3eee2" opacity="0.46"/><circle cx="380" cy="11" r="0.8" fill="#f3eee2" opacity="0.69"/><circle cx="56" cy="37" r="1.3" fill="#f3eee2" opacity="0.66"/><circle cx="210" cy="135" r="1.0" fill="#f3eee2" opacity="0.48"/><circle cx="97" cy="53" r="1.4" fill="#f3eee2" opacity="0.30"/><circle cx="30" cy="228" r="1.1" fill="#f3eee2" opacity="0.85"/><circle cx="307" cy="146" r="1.4" fill="#f3eee2" opacity="0.60"/><circle cx="177" cy="158" r="1.0" fill="#f3eee2" opacity="0.45"/><circle cx="237" cy="247" r="0.9" fill="#f3eee2" opacity="0.56"/><circle cx="240" cy="172" r="1.2" fill="#f3eee2" opacity="0.47"/><circle cx="367" cy="57" r="1.3" fill="#f3eee2" opacity="0.70"/><circle cx="346" cy="28" r="1.2" fill="#f3eee2" opacity="0.84"/><circle cx="135" cy="99" r="0.8" fill="#f3eee2" opacity="0.83"/><circle cx="239" cy="136" r="1.3" fill="#f3eee2" opacity="0.35"/><circle cx="146" cy="205" r="0.7" fill="#f3eee2" opacity="0.41"/><circle cx="385" cy="169" r="1.5" fill="#f3eee2" opacity="0.35"/><circle cx="362" cy="247" r="0.8" fill="#f3eee2" opacity="0.59"/><circle cx="347" cy="63" r="1.3" fill="#f3eee2" opacity="0.70"/><circle cx="334" cy="175" r="1.4" fill="#f3eee2" opacity="0.44"/><circle cx="196" cy="63" r="0.9" fill="#f3eee2" opacity="0.75"/><circle cx="214" cy="137" r="1.0" fill="#f3eee2" opacity="0.78"/><circle cx="202" cy="243" r="0.9" fill="#f3eee2" opacity="0.56"/><circle cx="233" cy="70" r="1.4" fill="#f3eee2" opacity="0.58"/></g>
-  <circle id="tdMoon" cx="350" cy="150" r="16" fill="#f3eee2" opacity=".9"/>
-  <circle id="tdSun" cx="330" cy="520" r="34" fill="#ffd77a" opacity="0"/>
-  <g fill="#1a2f21"><rect x="22" y="374" width="152" height="96"/><rect x="138" y="330" width="16" height="34"/></g>
-  <polygon points="12,378 98,314 184,378" fill="#15281b"/>
-  <rect x="86" y="420" width="24" height="50" fill="#0e1a12"/>
-  <g id="tdWin" fill="#f5b70f"><rect x="44" y="398" width="26" height="22" rx="1"/><rect x="126" y="398" width="26" height="22" rx="1"/></g>
-  <g id="tdTree"><g id="tdStump"><polygon points="271.0,470 270.5,446 310.4,446 313.0,470" fill="#4a3626"/><path d="M299.4,470 L297.4,446" stroke="#5d4632" stroke-width="2.5" opacity=".7"/><ellipse id="tdCut" opacity="0" cx="290.4" cy="446" rx="20.0" ry="3.5" fill="#c9a26a"/></g><g class="pc" data-ox="283.9" data-oy="345.0"><path d="M283.9,345 Q226.3,339.2 155.9,287.0" stroke="#4a3626" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="156.1" cy="288.6" r="19.8" fill="#24472c"/><circle cx="156.2" cy="287.2" r="21.1" fill="#2f5a37"/><circle cx="160.6" cy="275.5" r="18.2" fill="#3d6b45"/><circle cx="146.0" cy="296.5" r="23.6" fill="#2f5a37"/><circle cx="159.9" cy="301.3" r="23.7" fill="#2f5a37"/><circle cx="157.1" cy="284.1" r="19.0" fill="#3d6b45"/><circle cx="168.7" cy="275.7" r="23.8" fill="#2f5a37"/><circle cx="150.5" cy="276.2" r="13.7" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="282.9" data-oy="330.0"><path d="M282.9,330 Q320.7,324.8 366.9,278.0" stroke="#4a3626" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="375.2" cy="282.0" r="17.9" fill="#3d6b45"/><circle cx="366.9" cy="281.2" r="15.1" fill="#3d6b45"/><circle cx="367.0" cy="277.9" r="15.2" fill="#3d6b45"/><circle cx="376.9" cy="270.7" r="16.7" fill="#2f5a37"/><circle cx="362.8" cy="279.7" r="16.3" fill="#24472c"/><circle cx="362.5" cy="287.8" r="13.4" fill="#24472c"/><circle cx="351.4" cy="281.0" r="16.8" fill="#3d6b45"/><circle cx="362.5" cy="269.3" r="11.0" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="280.4" data-oy="292.0"><path d="M280.4,292 Q241.7,286.4 194.4,236.0" stroke="#4a3626" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="188.7" cy="236.8" r="21.7" fill="#24472c"/><circle cx="208.7" cy="241.1" r="18.9" fill="#2f5a37"/><circle cx="193.4" cy="240.8" r="19.7" fill="#2f5a37"/><circle cx="192.2" cy="234.0" r="16.5" fill="#24472c"/><circle cx="193.2" cy="232.3" r="18.5" fill="#24472c"/><circle cx="205.9" cy="244.9" r="16.2" fill="#24472c"/><circle cx="205.9" cy="238.5" r="20.9" fill="#2f5a37"/><circle cx="189.8" cy="226.7" r="11.8" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="279.4" data-oy="276.0"><path d="M279.4,276 Q314.5,269.8 357.4,214.0" stroke="#4a3626" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="355.9" cy="201.4" r="13.6" fill="#2f5a37"/><circle cx="356.3" cy="215.8" r="18.4" fill="#3d6b45"/><circle cx="356.8" cy="213.1" r="18.1" fill="#2f5a37"/><circle cx="356.3" cy="217.2" r="18.0" fill="#24472c"/><circle cx="357.3" cy="214.1" r="13.8" fill="#24472c"/><circle cx="348.6" cy="222.0" r="21.0" fill="#3d6b45"/><circle cx="370.7" cy="221.4" r="16.7" fill="#24472c"/><circle cx="352.9" cy="205.0" r="11.4" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="277.1" data-oy="240.0"><path d="M277.1,240 Q248.2,235.0 213.1,190.0" stroke="#4a3626" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="213.7" cy="190.5" r="16.5" fill="#3d6b45"/><circle cx="212.1" cy="188.5" r="12.0" fill="#2f5a37"/><circle cx="209.1" cy="188.2" r="11.9" fill="#3d6b45"/><circle cx="209.3" cy="201.0" r="15.9" fill="#24472c"/><circle cx="209.6" cy="190.4" r="14.4" fill="#24472c"/><circle cx="214.3" cy="195.0" r="15.9" fill="#2f5a37"/><circle cx="216.5" cy="185.0" r="11.9" fill="#2f5a37"/><circle cx="209.2" cy="182.2" r="9.9" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="276.3" data-oy="228.0"><path d="M276.3,228 Q304.2,222.4 338.3,172.0" stroke="#4a3626" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="338.1" cy="178.0" r="16.7" fill="#2f5a37"/><circle cx="339.7" cy="170.8" r="12.0" fill="#2f5a37"/><circle cx="325.3" cy="167.5" r="14.3" fill="#3d6b45"/><circle cx="331.9" cy="164.6" r="16.5" fill="#2f5a37"/><circle cx="333.6" cy="175.2" r="17.7" fill="#3d6b45"/><circle cx="349.0" cy="165.8" r="13.9" fill="#3d6b45"/><circle cx="325.6" cy="173.9" r="13.7" fill="#2f5a37"/><circle cx="334.4" cy="164.2" r="9.9" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="276.4" data-oy="230"><polygon points="265.6,230 264.2,168 280.5,168 287.2,230" fill="#4a3626"/><path d="M280.2,230 L275.2,168" stroke="#5d4632" stroke-width="2.5" opacity=".7"/><circle cx="254.9" cy="143.7" r="28.6" fill="#2f5a37"/><circle cx="266.0" cy="152.7" r="26.4" fill="#2f5a37"/><circle cx="287.6" cy="142.8" r="21.2" fill="#3d6b45"/><circle cx="288.2" cy="160.1" r="28.4" fill="#24472c"/><circle cx="283.1" cy="135.9" r="26.0" fill="#2f5a37"/><circle cx="270.7" cy="127.2" r="23.2" fill="#24472c"/><circle cx="272.2" cy="149.1" r="27.7" fill="#2f5a37"/><circle cx="286.5" cy="156.9" r="29.7" fill="#24472c"/><circle cx="250.1" cy="140.4" r="23.0" fill="#3d6b45"/><circle cx="264.3" cy="132.2" r="17.5" fill="#4b7d4f" opacity=".55"/></g><g class="pc" data-ox="280.9" data-oy="300"><polygon points="267.2,300 265.6,230 287.2,230 294.7,300" fill="#4a3626"/><path d="M285.8,300 L280.2,230" stroke="#5d4632" stroke-width="2.5" opacity=".7"/></g><g class="pc" data-ox="286.1" data-oy="380"><polygon points="269.0,380 267.2,300 294.7,300 303.3,380" fill="#4a3626"/><path d="M292.2,380 L285.8,300" stroke="#5d4632" stroke-width="2.5" opacity=".7"/></g><g class="pc" data-ox="290.4" data-oy="446"><polygon points="270.5,446 269.0,380 303.3,380 310.4,446" fill="#4a3626"/><path d="M297.4,446 L292.2,380" stroke="#5d4632" stroke-width="2.5" opacity=".7"/></g></g>
-  <rect x="-400" y="468" width="1200" height="60" fill="#132418"/>
-  <rect id="tdGrass" x="-400" y="466" width="1200" height="6" fill="#4b7d4f" opacity="0"/>
-  <g id="tdDust"></g>
-</svg>
-    <div class="td-bar" aria-hidden="true"><i id="tdBar"></i></div>
+    <div class="st-end" id="stEnd"><h2>Free estimate on every job.</h2><a class="btn hv" href="#quote">Get my price</a></div>
   </div>
 </section>
 
@@ -593,15 +585,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 
 <section class="s work" id="work">
   <div class="wrap">
-    <h2 class="reveal">Real crews. Real work.</h2>
-    <p class="intro reveal">A few recent jobs around East Tennessee.</p>
-    <div class="gal">
-      <figure><img src="img/p2.jpg" alt="Gonzalez chipper parked beside a large tree" loading="lazy"><figcaption><b>Ready to work</b><span>Chipper set up before a big removal</span></figcaption></figure>
-      <figure><img src="img/p1.jpg" alt="Crew clearing a hillside lot with a chipper and grapple" loading="lazy"><figcaption><b>Lot clearing</b><span>Brush and trees cleared off a hillside</span></figcaption></figure>
-      <figure><img src="img/p3.jpg" alt="Logs cut and stacked after a dead tree removal" loading="lazy"><figcaption><b>Dead tree down</b><span>Cut, stacked and ready to haul</span></figcaption></figure>
-      <figure><img src="img/p4.jpg" alt="Tall bare trees seen from below" loading="lazy"><figcaption><b>No tree too tall</b><span>Big hardwoods, tight yards</span></figcaption></figure>
-    </div>
-    <p class="swipe">Swipe for more <svg width="16" height="16" aria-hidden="true"><use href="#arr"/></svg></p>
+    <h2 class="reveal">What customers say.</h2>
 
     <div class="revs">
       <div class="rev reveal"><div class="st" aria-label="5 stars">★★★★★</div><blockquote>“They cleared out brush and small trees in less than a few hours.”</blockquote><cite><svg class="g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.9C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Google review</cite></div>
@@ -675,42 +659,44 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
      positions are measured once (and on resize), and work is batched into one rAF. */
   if(!RM){
     const cl=v=>v<0?0:v>1?1:v, eo=t=>1-Math.pow(1-t,3);
-    const cue=$('#cue'), hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qt'), figs=$$('.gal figure'), rings=$('.rings');
+    const cue=$('#cue'), hw=$('.hero .wrap'), layers=$$('#heroBg .tl'), qt=$('#qt'), figs=[], rings=$('.rings');
     let VH=innerHeight, HH=hero.offsetHeight, T={};
     const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
     function measure(){ VH=innerHeight; HH=hero.offsetHeight; heroH=HH;
-      T.td=td?top(td):0; T.tdH=td?td.offsetHeight:0; T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
-    /* takedown scene */
-    const td=$('#takedown'), caps=$$('.td-cap'), pcs=$$('#tdTree .pc'), stump=$('#tdStump'), dust=$('#tdDust'), bar=$('#tdBar');
-    const LIMB_DIR=[-1,1,-1,1,-1,1], NL=LIMB_DIR.length, NS=pcs.length-NL;
-    // piece timeline: limbs 0.10-0.50, trunk sections 0.52-0.78, grind 0.80-0.90, dawn 0.88-1
-    const win=pcs.map((g,i)=> i<NL ? [0.10+i*0.066, 0.10+i*0.066+0.12] : [0.52+(i-NL)*0.066, 0.52+(i-NL)*0.066+0.11]);
-    const SVGNS='http://www.w3.org/2000/svg', parts=[];
-    function spray(x,y,t0,t1,n,up){ for(let k=0;k<n;k++){ const c=document.createElementNS(SVGNS,'circle'); c.setAttribute('r',(Math.random()*1.6+.8).toFixed(1)); c.setAttribute('fill',k%3?'#e2c08a':'#f5b70f'); c.setAttribute('opacity','0'); dust.appendChild(c);
-      const off=up?Math.random()*0.7:0, life=up?0.28:1; parts.push({c,x,y,t0:t0+(t1-t0)*off*(1-life),t1:t0+(t1-t0)*(off*(1-life)+life),vx:(Math.random()-.5)*(up?70:90),vy:-(Math.random()*(up?95:60)+20)}); } }
-    if(td){ pcs.forEach((g,i)=>{ const w=win[i]; spray(+g.dataset.ox,+g.dataset.oy,w[0],w[0]+(w[1]-w[0])*.55,9,false); });
-      const sx=+pcs[pcs.length-1].dataset.ox; spray(sx,452,0.80,0.90,30,true); }
-    const glints=pcs.map(g=>{ const l=document.createElementNS(SVGNS,'line'); const x=+g.dataset.ox, y=+g.dataset.oy; l.setAttribute('x1',x-9); l.setAttribute('x2',x+9); l.setAttribute('y1',y+2); l.setAttribute('y2',y-2); l.setAttribute('stroke','#ffe08a'); l.setAttribute('stroke-width','2.4'); l.setAttribute('stroke-linecap','round'); l.setAttribute('opacity','0'); dust.appendChild(l); return l; });
-    const dawn=$('#tdDawn'), stars=$('#tdStars'), moon=$('#tdMoon'), sun=$('#tdSun'), winEl=$('#tdWin'), grass=$('#tdGrass');
-    let lastTd=-1;
-    function scene(y){ if(!td) return; const p=cl((y-T.td)/(T.tdH-VH)); if(Math.abs(p-lastTd)<0.0004) return; lastTd=p;
-      pcs.forEach((g,i)=>{ const [a,b]=win[i], t=cl((p-a)/(b-a)), ox=+g.dataset.ox, oy=+g.dataset.oy;
-        if(t<=0){ g.removeAttribute('transform'); g.style.opacity=''; glints[i].setAttribute('opacity','0'); return; }
-        const wob=t<.14?Math.sin(t/.14*Math.PI*2)*2.2:0, f=cl((t-.14)/.86), dir=i<NL?LIMB_DIR[i]:(i%2?1:-1);
-        const rot=wob+dir*(i<NL?72:24)*f*f, dy=(i<NL?360:300)*f*f, dx=dir*(i<NL?26:10)*f;
-        g.setAttribute('transform','translate('+dx.toFixed(1)+' '+dy.toFixed(1)+') rotate('+rot.toFixed(2)+' '+ox+' '+oy+')');
-        g.style.opacity=(1-cl((f-.55)/.45)).toFixed(3);
-        glints[i].setAttribute('opacity',(t<.16?Math.sin(t/.16*Math.PI):0).toFixed(2)); });
-      $('#tdCut').setAttribute('opacity', p>win[pcs.length-1][0]+.01?'1':'0');
-      const gr=cl((p-.80)/.10), sy=1-gr*.97; stump.setAttribute('transform','translate(0 '+(470*(1-sy)).toFixed(2)+') scale(1 '+sy.toFixed(4)+')');
-      parts.forEach(q=>{ const t=(p-q.t0)/(q.t1-q.t0); if(t<=0||t>=1){ q.c.setAttribute('opacity','0'); return; }
-        q.c.setAttribute('cx',(q.x+q.vx*t).toFixed(1)); q.c.setAttribute('cy',(q.y+q.vy*t+150*t*t).toFixed(1)); q.c.setAttribute('opacity',(1-t).toFixed(2)); });
-      const dn=eo(cl((p-.86)/.14)); dawn.style.opacity=(dn*.95).toFixed(3); stars.setAttribute('opacity',(1-dn).toFixed(3)); moon.setAttribute('opacity',(.9*(1-dn)).toFixed(3));
-      sun.setAttribute('opacity',dn.toFixed(3)); sun.setAttribute('cy',(520-dn*190).toFixed(1)); winEl.setAttribute('opacity',(1-dn*.85).toFixed(3)); grass.setAttribute('opacity',(dn*.9).toFixed(3));
-      const marks=[0,.11,.50,.79,.89,1.01];
-      caps.forEach((c,i)=>{ const a=marks[i], b=marks[i+1], fi=cl((p-a)/.035), fo=i===caps.length-1?1:1-cl((p-(b-.035))/.035), v=Math.min(i===0&&p<.035?1:fi,fo);
-        c.style.opacity=v.toFixed(3); c.style.transform='translate3d(0,'+((1-v)*(p<a+.04?24:-24)).toFixed(1)+'px,0)'; c.style.pointerEvents=v>.5?'auto':'none'; });
-      bar.style.transform='scaleX('+p.toFixed(4)+')'; }
+      T.td=td?top(td):0; T.tdH=td?td.offsetHeight:0; rects(); T.qt=qt?top(qt):0; T.figs=figs.map(top); T.rings=rings?top(rings.parentElement):0; update(); }
+    /* story: photo-led scroll sequence */
+    const td=$('#takedown'), stage=$('#stStage'), media=$('#stMedia'), simgs=$$('#stMedia img'), shade=$('.st-shade'), chs=$$('.st-ch'), rail=$('#stRail'), bars=$$('#stRail b'), shead=$('#stHead'), send=$('#stEnd');
+    const NC=chs.length, A0=.03, A1=.17, B0=.19, BL=(.86-.19)/NC, C0=.88, C1=.98;
+    const lerp=(a,b,t)=>a+(b-a)*t, io3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+    let R=null, lastTd=-1;
+    function rects(){ if(!td) return; const vw=stage.clientWidth, vh=stage.clientHeight, desk=vw>=860;
+      const ht=shead.offsetTop+shead.offsetHeight+22, room=vh-ht-34;
+      let cw=desk?Math.min(320,vw*.24):Math.min(330,Math.max(180,vw*.64)), ch=cw*1.25; if(ch>room){ ch=room; cw=ch/1.25; }
+      const t0=ht+Math.max(0,(room-ch)*.38);
+      const S={t:t0,l:(vw-cw)/2,w:cw,h:ch,r:22};
+      let F={t:0,l:0,w:vw,h:vh,r:0};
+      if(desk){ const hd=$('#top').offsetHeight, W=Math.min(540,vw*.42), H=Math.min(vh-hd-80,W*1.28), rg=Math.max(40,(vw-1140)/2+20); F={t:hd+(vh-hd-H)/2,l:vw-rg-W,w:W,h:H,r:26}; }
+      R={S,F,vw,vh,desk}; lastTd=-1; }
+    function clip(a,b,t){ const r={t:lerp(a.t,b.t,t),l:lerp(a.l,b.l,t),w:lerp(a.w,b.w,t),h:lerp(a.h,b.h,t),r:lerp(a.r,b.r,t)};
+      media.style.clipPath='inset('+r.t.toFixed(1)+'px '+(R.vw-r.l-r.w).toFixed(1)+'px '+(R.vh-r.t-r.h).toFixed(1)+'px '+r.l.toFixed(1)+'px round '+r.r.toFixed(1)+'px)'; }
+    function scene(y){ if(!td||!R) return; const p=cl((y-T.td)/(T.tdH-VH)); if(Math.abs(p-lastTd)<0.0002) return; lastTd=p;
+      const e1=io3(cl((p-A0)/(A1-A0))), e3=io3(cl((p-C0)/(C1-C0)));
+      if(e3>0) clip(R.F,R.S,e3); else clip(R.S,R.F,e1);
+      const full=e1*(1-e3);
+      shead.style.opacity=(1-cl((p-A0)/.07)).toFixed(3); shead.style.transform='translate3d(0,'+(-36*cl((p-A0)/.1)).toFixed(1)+'px,0) scale('+(1-.04*cl((p-A0)/.1)).toFixed(4)+')';
+      const en=eo(cl((p-(C0+.04))/.07)); send.style.opacity=en.toFixed(3); send.style.transform='translate3d(0,'+((1-en)*30).toFixed(1)+'px,0)'; send.style.pointerEvents=en>.5?'auto':'none';
+      shade.style.opacity=full.toFixed(3); rail.style.opacity=cl((full-.6)/.4).toFixed(3);
+      const c=Math.min(NC-.0001,Math.max(0,(p-B0)/BL));
+      simgs.forEach((im,i)=>{ const o=i?cl((c-(i-.14))/.28):1, k=cl((c-(i-.35))/1.5);
+        im.style.opacity=o.toFixed(3); im.style.transform='translate3d(0,'+(lerp(14,-14,k)).toFixed(1)+'px,0) scale('+(lerp(1.17,1.06,k)*(1+.05*(1-e1))).toFixed(4)+')'; });
+      bars.forEach((b,i)=>{ b.style.transform='scaleX('+cl(c-i).toFixed(4)+')'; });
+      chs.forEach((el,k)=>{ const u=c-k, inn=eo(cl((u+.16)/.26))*cl((full-.75)/.25), out=cl((u-.8)/.18)+(k===NC-1?0:0), vis=inn*(1-out);
+        const [lb,tt,dd]=el.children, sp=tt.firstElementChild;
+        sp.style.transform='translate3d(0,'+((1-inn)*110-out*40).toFixed(1)+'%,0)'; tt.style.opacity=(1-out).toFixed(3);
+        const late=eo(cl((u+.08)/.26))*cl((full-.75)/.25)*(1-out);
+        lb.style.opacity=vis.toFixed(3); lb.style.transform='translate3d(0,'+((1-inn)*12).toFixed(1)+'px,0)';
+        dd.style.opacity=late.toFixed(3); dd.style.transform='translate3d(0,'+((1-late)*16).toFixed(1)+'px,0)'; });
+    }
     function update(){
       const y=scrollY;
       if(y<HH*1.3){ const p=cl(y/HH);
