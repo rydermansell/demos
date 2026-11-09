@@ -697,7 +697,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
 <footer><div class="wrap">
   <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Gonzalez</b><small>TREE SERVICE</small></span></a>
   <div class="fmeta"><span>(865) 367-4667</span><span>Open 24/7</span><span>Maryville, TN</span></div>
-  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 18)</span></div>
+  <div class="pw">Preview built by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a> <span style="opacity:.6">(build 19)</span></div>
 </div></footer>
 
 <div class="sticky" id="sticky"><a class="btn hv" href="#quote">Get my price</a><a class="btn dk" href="tel:+18653674667" target="_top" aria-label="Call"><svg width="18" height="18" aria-hidden="true"><use href="#ph"/></svg>Call</a></div>
@@ -791,9 +791,16 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
   pick('#thick','data-v',v=>{ S.thick=v; PICKED['#thick']=true; auto(3); });
   /* ---------- real booking: open times from the backend (or realistic sample times in preview) ---------- */
   let SL=null, selDay=0, slotsErr=false;
-  function previewSlots(){ const out=[], now=new Date(), earliest=new Date(now.getTime()+12*3600e3), DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  /* Preview mode mirrors the demo inbox: times blocked or booked there disappear here (same origin, same localStorage). */
+  function demoBusy(){ const now=new Date(), at=(d,h)=>new Date(now.getFullYear(),now.getMonth(),now.getDate()+d,h).getTime(), k='pw_demo_blocks_'+CLIENT_ID; let mine=[], gone=[], bk=[];
+    try{ mine=JSON.parse(localStorage.getItem(k)||'[]'); gone=JSON.parse(localStorage.getItem(k+'_removed')||'[]'); bk=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]'); }catch(e){}
+    const out=[[at(2,13),at(2,15),'SB-1'],[at(6,0),at(7,0),'SB-2']].filter(x=>gone.indexOf(x[2])<0);
+    mine.forEach(b=>out.push([new Date(b.start).getTime(),new Date(b.end).getTime()]));
+    bk.forEach(b=>{ if(b.client===CLIENT_ID&&b.slotStart&&b.status!=='Canceled'){ const t=new Date(b.slotStart).getTime(); out.push([t,t+3600e3]); } });
+    return out; }
+  function previewSlots(){ const busy=demoBusy(), out=[], now=new Date(), earliest=new Date(now.getTime()+12*3600e3), DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     for(let i=0;i<=14&&out.length<12;i++){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i); if(d.getDay()===0) continue; const times=[];
-      for(let h=8;h<=17;h++){ const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),h); const r=Math.sin(d.getDate()*12.9898+h*78.233+d.getMonth()*3.1)*43758.5453, seed=r-Math.floor(r); if(t<earliest||seed<.38) continue;
+      for(let h=8;h<=17;h++){ const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),h); const r=Math.sin(d.getDate()*12.9898+h*78.233+d.getMonth()*3.1)*43758.5453, seed=r-Math.floor(r); if(t<earliest||seed<.38||busy.some(x=>t.getTime()<x[1]&&t.getTime()+3600e3>x[0])) continue;
         times.push({start:t.toISOString(),label:(h%12||12)+':00 '+(h<12?'AM':'PM')}); }
       if(times.length) out.push({date:d.toDateString(),label:DW[d.getDay()]+' '+MO[d.getMonth()]+' '+d.getDate(),times}); }
     return out; }

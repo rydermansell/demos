@@ -6,6 +6,12 @@
  *   GET  ?action=inbox&c=<client>&key=<key>  that client's bookings (owner inbox)
  *   POST {action:"book", client, slotStart, ...}       books a time (re-checks it is still free)
  *   POST {action:"status", client, key, id, status}    owner updates a booking from the inbox
+ *   POST {action:"block", client, key, start, end, label}  owner blocks time (phone job, day off)
+ *   POST {action:"unblock", client, key, eventId}       owner removes a block
+ *
+ * Open times automatically skip anything on the owner's own calendars: Google calendars shared with this
+ * account (free/busy is enough) and private calendar links (iPhone/iCloud, Outlook). See README.md.
+ * sendDigests() emails each owner tomorrow's schedule every evening (run installTriggers() once).
  *
  * Bookings land on the "Bookings" tab, on the client's Google Calendar (which the owner sees on
  * their phone), and in the owner's email. The customer gets a confirmation email if they gave one.
@@ -14,7 +20,9 @@
 
 const TZ = 'America/New_York';
 const DAYS_AHEAD = 14;
-const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site'];
+const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest'];
+const BLOCK_PREFIX = 'Blocked: ';
+const INBOX_BASE = 'https://rydermansell.github.io/demos/inbox/';
 const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -42,6 +50,9 @@ function addClient() {
     name: 'Gonzalez Tree Service',
     ownerEmail: 'owner@example.com',        // where new-booking emails go
     ownerSms: '',                           // optional: carrier email-to-text address, e.g. 8655551234@vtext.com
+    busyCalendars: '',                      // owner's Google calendar(s) shared with this account, comma-separated (usually their Gmail address)
+    busyIcs: '',                            // owner's private calendar link(s) from iPhone/iCloud or Outlook, comma-separated
+    digest: true,                           // email tomorrow's schedule every evening
     days: 'Mon,Tue,Wed,Thu,Fri,Sat',        // days that take estimate visits
     start: '08:00', end: '17:00',           // first and last start times
     slotMinutes: 60,                        // one visit per hour
@@ -58,7 +69,7 @@ function addClient() {
   ss.getSheetByName('Clients').appendRow(CLIENT_COLS.map(k => c[k] === undefined ? '' : c[k]));
   Logger.log('Added ' + c.name + '.\nCalendar: ' + c.calendarId +
     '\nShare that calendar with ' + c.ownerEmail + ' in Google Calendar (Settings > ' + c.name + ' bookings > Share with specific people).' +
-    '\nOwner inbox link: https://rydermansell.github.io/demos/inbox/?c=' + c.id + '#' + c.inboxKey);
+    '\nOwner inbox link: ' + INBOX_BASE + '?c=' + c.id + '#' + c.inboxKey);
 }
 
 /* ------------------------------------------------------------------ web endpoints */
@@ -71,7 +82,7 @@ function doGet(e) {
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
     if (p.action === 'inbox') {
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id) });
+      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client) });
     }
     return json_({ ok: false, error: 'unknown_action' });
   } catch (err) { return json_({ ok: false, error: 'server', detail: String(err) }); }
@@ -86,6 +97,8 @@ function doPost(e) {
     const client = findClient_(d.client);
     if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
     if (d.action === 'status') return json_(setStatus_(client, d));
+    if (d.action === 'block') return json_(block_(client, d));
+    if (d.action === 'unblock') return json_(unblock_(client, d));
     return json_(book_(client, d));
   } catch (err) {
     return json_({ ok: false, error: 'server', detail: String(err) });
@@ -131,7 +144,7 @@ function book_(client, d) {
 }
 
 function notifyOwner_(client, b, range) {
-  const inbox = 'https://rydermansell.github.io/demos/inbox/?c=' + client.id + '#' + client.inboxKey;
+  const inbox = INBOX_BASE + '?c=' + client.id + '#' + client.inboxKey;
   const subject = (b.urgent ? 'EMERGENCY request: ' : 'New booking: ') + b.service + ' - ' + b.slotLabel;
   const rows = [['When', b.slotLabel], ['Job', b.service], ['Estimate', range], ['Details', b.details], ['Name', b.name], ['Phone', b.phone], ['Email', b.email], ['Address', b.address], ['Notes', b.notes]].filter(r => r[1]);
   const html = '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14">' +
@@ -193,7 +206,7 @@ function slotIsOpen_(client, start) {
   const now = new Date();
   if (start.getTime() < now.getTime() + Number(client.leadHours || 12) * 3600000) return false;
   if (!candidates_(client, now).some(s => s.getTime() === start.getTime())) return false;
-  return !overlaps_(start, client, busy_(client, new Date(start.getTime() - 86400000), new Date(start.getTime() + 86400000)));
+  return !overlaps_(start, client, busy_(client, new Date(start.getTime() - 86400000), new Date(start.getTime() + 86400000), true));
 }
 
 function candidates_(client, now) {
@@ -208,12 +221,154 @@ function candidates_(client, now) {
   return out;
 }
 
-function busy_(client, from, to) {
+function busy_(client, from, to, fresh) {
   const list = [];
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
   if (cal) cal.getEvents(from, to).forEach(ev => list.push([ev.getStartTime().getTime(), ev.getEndTime().getTime()]));
-  return list;
+  // the owner's own calendars: cached for 5 minutes when listing times, always fresh when booking
+  const key = 'ext_' + client.id + '_' + Math.floor(from.getTime() / 3600000) + '_' + Math.floor(to.getTime() / 3600000);
+  const cache = CacheService.getScriptCache(); let ext = !fresh && cache.get(key);
+  if (ext) ext = JSON.parse(ext);
+  else { ext = googleBusy_(client, from, to).concat(icsBusy_(client, from, to)); try { cache.put(key, JSON.stringify(ext), 300); } catch (e) {} }
+  return list.concat(ext);
 }
+
+/** Free/busy from the owner's Google calendars that are shared with this account ("See only free/busy" is enough). */
+function googleBusy_(client, from, to) {
+  const ids = String(client.busyCalendars || '').split(',').map(x => x.trim()).filter(String), out = [];
+  if (!ids.length) return out;
+  try {   // Advanced Calendar service (enabled in appsscript.json): works with free/busy-only sharing
+    const r = Calendar.Freebusy.query({ timeMin: from.toISOString(), timeMax: to.toISOString(), items: ids.map(id => ({ id: id })) });
+    Object.keys(r.calendars || {}).forEach(id => (r.calendars[id].busy || []).forEach(b => out.push([new Date(b.start).getTime(), new Date(b.end).getTime()])));
+    return out;
+  } catch (err) {   // fallback: calendars shared with full details
+    ids.forEach(id => { const c = CalendarApp.getCalendarById(id); if (c) c.getEvents(from, to).forEach(ev => out.push([ev.getStartTime().getTime(), ev.getEndTime().getTime()])); });
+    return out;
+  }
+}
+
+/** Busy times from private calendar links (iPhone/iCloud "Public Calendar", Outlook "Publish calendar" .ics). */
+function icsBusy_(client, from, to) {
+  const urls = String(client.busyIcs || '').split(/[\s,]+/).filter(String), out = [];
+  urls.forEach(u => {
+    try {
+      const res = UrlFetchApp.fetch(u.replace(/^webcal:/i, 'https:'), { muteHttpExceptions: true, followRedirects: true });
+      if (res.getResponseCode() >= 300) return;
+      parseIcs_(res.getContentText(), from.getTime(), to.getTime()).forEach(x => out.push(x));
+    } catch (err) {}
+  });
+  return out;
+}
+
+function parseIcs_(text, a, b) {
+  const lines = String(text).replace(/\r?\n[ \t]/g, '').split(/\r?\n/), out = [];
+  let ev = null;
+  lines.forEach(line => {
+    if (line === 'BEGIN:VEVENT') { ev = { ex: [] }; return; }
+    if (line === 'END:VEVENT') { if (ev) expand_(ev, a, b).forEach(x => out.push(x)); ev = null; return; }
+    if (!ev) return;
+    const m = line.match(/^([A-Z-]+)((?:;[^:]*)?):(.*)$/); if (!m) return;
+    const name = m[1], params = m[2], val = m[3];
+    if (name === 'DTSTART') ev.start = icsDate_(val, params);
+    else if (name === 'DTEND') ev.end = icsDate_(val, params);
+    else if (name === 'DURATION') ev.dur = icsDur_(val);
+    else if (name === 'RRULE') ev.rrule = val;
+    else if (name === 'EXDATE') val.split(',').forEach(v => ev.ex.push(icsDate_(v, params).t));
+    else if (name === 'STATUS') ev.cancelled = /CANCELLED/i.test(val);
+    else if (name === 'TRANSP') ev.free = /TRANSPARENT/i.test(val);
+  });
+  return out;
+}
+function icsDate_(val, params) {
+  const allDay = /VALUE=DATE(?!-)/.test(params) || /^\d{8}$/.test(val);
+  const m = val.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?/); if (!m) return { t: NaN };
+  const ymd = m[1] + '-' + m[2] + '-' + m[3];
+  if (allDay) return { t: zoned_(ymd, 0).getTime(), allDay: true };
+  if (m[7]) return { t: Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]) };
+  const tz = (params.match(/TZID=([^;:]+)/) || [])[1];
+  return { t: zonedIn_(ymd, +m[4] * 60 + +m[5], tz || TZ).getTime() };   // floating times are read as the business's time zone
+}
+function icsDur_(v) { const m = v.match(/P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/) || []; return ((+m[1] || 0) * 604800 + (+m[2] || 0) * 86400 + (+m[3] || 0) * 3600 + (+m[4] || 0) * 60 + (+m[5] || 0)) * 1000; }
+function expand_(ev, a, b) {
+  if (!ev.start || isNaN(ev.start.t) || ev.cancelled || ev.free) return [];
+  const len = ev.end && !isNaN(ev.end.t) ? ev.end.t - ev.start.t : (ev.dur || (ev.start.allDay ? 86400000 : 3600000));
+  const hit = t => (t < b && t + len > a && ev.ex.indexOf(t) < 0) ? [[t, t + len]] : [];
+  if (!ev.rrule) return hit(ev.start.t);
+  const r = {}; ev.rrule.split(';').forEach(kv => { const p = kv.split('='); r[p[0]] = p[1]; });
+  const step = { DAILY: 86400000, WEEKLY: 604800000 }[r.FREQ]; if (!step) return hit(ev.start.t);   // monthly/yearly: first occurrence only
+  const interval = (+r.INTERVAL || 1) * step, until = r.UNTIL ? icsDate_(r.UNTIL, '').t : Infinity, count = +r.COUNT || Infinity;
+  const days = r.FREQ === 'WEEKLY' && r.BYDAY ? r.BYDAY.split(',').map(d => ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'].indexOf(d.slice(-2))) : null;
+  const out = []; let n = 0;
+  for (let base = ev.start.t; base <= Math.min(b, until) && n < count; base += interval) {
+    const starts = days ? days.map(dw => base + ((dw - dayOf_(base) + 7) % 7) * 86400000).sort() : [base];
+    for (const t of starts) { if (t < ev.start.t || t > until || n >= count) continue; n++; hit(t).forEach(x => out.push(x)); }
+  }
+  return out;
+}
+function dayOf_(t) { return DOW.indexOf(Utilities.formatDate(new Date(t), TZ, 'EEE')); }
+function zonedIn_(ymd, minutes, tz) {
+  const hh = ('0' + Math.floor(minutes / 60)).slice(-2), mm = ('0' + minutes % 60).slice(-2);
+  let t = new Date(ymd + 'T' + hh + ':' + mm + ':00Z');
+  for (let k = 0; k < 2; k++) { const shown = Utilities.formatDate(t, tz, "yyyy-MM-dd'T'HH:mm"); t = new Date(t.getTime() - (new Date(shown + ':00Z').getTime() - new Date(ymd + 'T' + hh + ':' + mm + ':00Z').getTime())); }
+  return t;
+}
+function syncedSources_(client) {
+  return { google: String(client.busyCalendars || '').split(',').filter(x => x.trim()).length, links: String(client.busyIcs || '').split(/[\s,]+/).filter(String).length };
+}
+
+/* ------------------------------------------------------------------ owner blocks (phone jobs, days off) */
+
+function block_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  const start = new Date(d.start), end = new Date(d.end);
+  if (isNaN(start) || isNaN(end) || end <= start || end - start > 14 * 86400000) return { ok: false, error: 'bad_time' };
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId); if (!cal) return { ok: false, error: 'no_calendar' };
+  const ev = cal.createEvent(BLOCK_PREFIX + (clean_(d.label, 80) || 'Busy'), start, end, { description: 'Blocked from the PriceWink inbox' });
+  return { ok: true, id: ev.getId() };
+}
+function unblock_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId), ev = cal && cal.getEventById(String(d.eventId || ''));
+  if (!ev || ev.getTitle().indexOf(BLOCK_PREFIX) !== 0) return { ok: false, error: 'not_found' };
+  ev.deleteEvent(); return { ok: true };
+}
+function blocksFor_(client) {
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId); if (!cal) return [];
+  const now = new Date();
+  return cal.getEvents(new Date(now.getTime() - 86400000), new Date(now.getTime() + (DAYS_AHEAD + 1) * 86400000))
+    .filter(ev => ev.getTitle().indexOf(BLOCK_PREFIX) === 0)
+    .map(ev => ({ id: ev.getId(), label: ev.getTitle().slice(BLOCK_PREFIX.length), start: ev.getStartTime().toISOString(), end: ev.getEndTime().toISOString() }));
+}
+
+/* ------------------------------------------------------------------ evening digest */
+
+/** Run once from the editor: emails every owner tomorrow's schedule at 7pm Eastern. */
+function installTriggers() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'sendDigests').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('sendDigests').timeBased().atHour(19).everyDays(1).inTimezone(TZ).create();
+}
+function sendDigests() {
+  const rows = sheet_().getSheetByName('Clients').getDataRange().getValues(), H = rows[0];
+  for (let r = 1; r < rows.length; r++) { const c = {}; H.forEach((h, i) => c[h] = rows[r][i]); if (isOn_(c.active) && c.ownerEmail && c.digest !== false && !/^(FALSE|NO|OFF)$/i.test(String(c.digest).trim())) digest_(c); }
+}
+function digest_(client) {
+  const now = new Date(), tomorrow = Utilities.formatDate(new Date(now.getTime() + 86400000), TZ, 'yyyy-MM-dd');
+  const dayStart = zoned_(tomorrow, 0), dayEnd = new Date(dayStart.getTime() + 86400000);
+  const booked = bookingsFor_(client.id).filter(b => b.status !== 'Canceled' && b.slotStart && new Date(b.slotStart) >= dayStart && new Date(b.slotStart) < dayEnd)
+    .sort((x, y) => new Date(x.slotStart) - new Date(y.slotStart));
+  const blocks = blocksFor_(client).filter(b => new Date(b.start) < dayEnd && new Date(b.end) > dayStart);
+  const open = (openSlots_(client).filter(d => d.date === tomorrow)[0] || { times: [] }).times.map(t => t.label);
+  const label = Utilities.formatDate(dayStart, TZ, 'EEEE, MMM d'), inbox = INBOX_BASE + '?c=' + client.id + '#' + client.inboxKey;
+  const li = (t, x) => '<li style="margin:4px 0"><b>' + esc_(t) + '</b> ' + esc_(x) + '</li>';
+  const html = '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><h2 style="margin:0 0 6px">Tomorrow: ' + esc_(label) + '</h2>' +
+    (booked.length ? '<p style="margin:12px 0 4px"><b>Booked estimates</b></p><ul style="padding-left:18px;margin:0">' + booked.map(b => li(Utilities.formatDate(new Date(b.slotStart), TZ, 'h:mm a'), b.name + ', ' + b.service + ', ' + b.address)).join('') + '</ul>' : '<p>No estimates booked yet.</p>') +
+    (blocks.length ? '<p style="margin:12px 0 4px"><b>Blocked</b></p><ul style="padding-left:18px;margin:0">' + blocks.map(b => li(Utilities.formatDate(new Date(b.start), TZ, 'h:mm a'), b.label)).join('') + '</ul>' : '') +
+    '<p style="margin:12px 0 4px"><b>Still open to customers</b></p><p style="margin:0">' + (open.length ? esc_(open.join(', ')) : 'Nothing, the day is full.') + '</p>' +
+    '<p style="margin:16px 0"><a href="' + inbox + '" style="background:#f5b70f;color:#1a1203;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:700">Booked something by phone? Block it here</a></p>' +
+    '<p style="color:#8a8f86;font-size:12px">PriceWink sends this every evening. Anything on your calendar is already blocked automatically.</p></div>';
+  MailApp.sendEmail({ to: client.ownerEmail, subject: 'Tomorrow: ' + booked.length + ' booked, ' + open.length + ' open', htmlBody: html, name: 'PriceWink bookings' });
+}
+
 
 function overlaps_(s, client, busy) {
   const a = s.getTime(), b = a + Number(client.slotMinutes || 60) * 60000;
