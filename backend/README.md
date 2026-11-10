@@ -1,3 +1,5 @@
+**Start here:** upload `pricewink-bookings.xlsx` to Google Drive, open it with Google Sheets (File > Save as Google Sheets), then open **Extensions > Apps Script** from inside it and follow the setup below there. `setup` uses that spreadsheet (it only creates a new one if the script isn't attached to a sheet).
+
 # PriceWink booking backend
 
 One Google Apps Script web app runs bookings for **every** PriceWink client. It lives in your Google account (free) and:

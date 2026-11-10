@@ -32,8 +32,13 @@ const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 /** Creates the spreadsheet and its tabs. Run once. */
 function setup() {
   const props = PropertiesService.getScriptProperties();
-  let ss = props.getProperty('SHEET_ID') ? SpreadsheetApp.openById(props.getProperty('SHEET_ID')) : null;
-  if (!ss) { ss = SpreadsheetApp.create('PriceWink bookings'); props.setProperty('SHEET_ID', ss.getId()); }
+  // Uses the spreadsheet this script is attached to (Extensions > Apps Script from inside the
+  // "PriceWink bookings" sheet), otherwise the one it set up before, otherwise makes a new one.
+  let ss = null;
+  try { ss = SpreadsheetApp.getActiveSpreadsheet(); } catch (err) {}
+  if (!ss && props.getProperty('SHEET_ID')) ss = SpreadsheetApp.openById(props.getProperty('SHEET_ID'));
+  if (!ss) ss = SpreadsheetApp.create('PriceWink bookings');
+  props.setProperty('SHEET_ID', ss.getId());
   ensureSheet_(ss, 'Clients', CLIENT_COLS);
   ensureSheet_(ss, 'Bookings', BOOKING_COLS);
   const first = ss.getSheetByName('Sheet1'); if (first && ss.getSheets().length > 1) ss.deleteSheet(first);
@@ -516,7 +521,9 @@ function sheet_() {
 }
 function ensureSheet_(ss, name, cols) {
   const sh = ss.getSheetByName(name) || ss.insertSheet(name);
-  if (sh.getLastRow() === 0) { sh.appendRow(cols); sh.setFrozenRows(1); sh.getRange(1, 1, 1, cols.length).setFontWeight('bold'); }
+  if (sh.getLastRow() === 0) { sh.appendRow(cols); sh.setFrozenRows(1); sh.getRange(1, 1, 1, cols.length).setFontWeight('bold'); return sh; }
+  const H = sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn())).getValues()[0];   // an existing sheet: add any missing columns at the end
+  cols.filter(c => H.indexOf(c) < 0).forEach(c => sh.getRange(1, sh.getLastColumn() + 1).setValue(c).setFontWeight('bold'));
   return sh;
 }
 function findClient_(id) {
@@ -543,7 +550,9 @@ function zoned_(ymd, minutes) {
   }
   return t;
 }
-function hm_(s) { const m = String(s).match(/(\d{1,2}):(\d{2})/); return m ? Number(m[1]) * 60 + Number(m[2]) : 480; }
+function hm_(s) {
+  if (s instanceof Date) return Number(Utilities.formatDate(s, TZ, 'H')) * 60 + Number(Utilities.formatDate(s, TZ, 'm'));   // a cell Sheets turned into a time
+  const m = String(s).match(/(\d{1,2}):(\d{2})/); return m ? Number(m[1]) * 60 + Number(m[2]) : 480; }
 function label_(d) { return Utilities.formatDate(d, TZ, "EEE, MMM d 'at' h:mm a"); }
 function isOn_(v) { return v === true || String(v).toUpperCase() === 'TRUE' || v === 1; }
 function clean_(v, n) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n); }
