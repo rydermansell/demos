@@ -6,7 +6,7 @@
 <script>(function(d){d.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('rm');return}d.classList.add('motion');try{if(sessionStorage.getItem('hooksIntro'))d.classList.add('seen');else sessionStorage.setItem('hooksIntro','1')}catch(e){d.classList.add('seen')}})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Hooks Lawn And More. Reading this as: a Clinton lawn crew's site for homeowners on their phones,
    feeling clean and sturdy, led by their real job photos.
@@ -16,7 +16,7 @@
   --deep:#10251a; --deep2:#183424; --grass:#2f6b3a; --leaf:#9ccc7a;
   --paper:#f6f4ec; --card:#fffdf7; --ink:#15211a; --muted:#5a6457; --line:#dcd8c6;
   --cta:#e8641c; --cta-h:#f27631; --cta-ink:#1d0c02; --mulch:#a9352a;
-  --d:'Bricolage Grotesque',system-ui,sans-serif; --b:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  --d:'Barlow Condensed','Arial Narrow',system-ui,sans-serif; --b:'Barlow',system-ui,-apple-system,sans-serif;
   --ease-out:cubic-bezier(0.23,1,0.32,1); --ease-in-out:cubic-bezier(0.77,0,0.175,1); --ease-drawer:cubic-bezier(0.32,0.72,0,1);
   --fast:140ms; --base:220ms; --slow:650ms; --r1:8px; --r2:14px;
 }
@@ -36,7 +36,7 @@ button,[role=button],.btn,.chip,.opt,.day,.time{user-select:none;-webkit-user-se
 .wrap{max-width:1140px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .tn{font-variant-numeric:tabular-nums}
 h1,h2,h3{font-family:var(--d);text-wrap:balance;margin:0}
-h2{font-size:clamp(34px,6.4vw,56px);line-height:1.04;letter-spacing:-.03em;font-weight:800;margin-bottom:14px}
+h2{font-size:clamp(42px,8.6vw,76px);line-height:.95;letter-spacing:-.005em;font-weight:800;text-transform:uppercase;margin-bottom:16px}
 .intro{color:var(--muted);max-width:52ch;margin:0 0 36px;font-size:18px}
 section.s{padding:clamp(64px,10vw,120px) 0}
 
@@ -45,15 +45,15 @@ html{--intro:0s}
 html.motion:not(.seen){--intro:1.5s}
 header.top{position:fixed;inset:0 0 auto 0;z-index:30;color:var(--paper);transition:background-color 350ms var(--ease-out),box-shadow 350ms var(--ease-out)}
 header.top.solid{background:rgba(16,37,26,.97);box-shadow:0 1px 0 rgba(255,255,255,.06)}
-.pv{display:flex;justify-content:center;align-items:center;gap:6px 14px;flex-wrap:wrap;background:#f3d9b4;color:#3a1c04;text-align:center;font-size:13px;font-weight:700;padding:6px 14px;line-height:1.3}
+.pv{display:flex;justify-content:center;align-items:center;gap:6px 12px;flex-wrap:nowrap;white-space:nowrap;background:#f3d9b4;color:#3a1c04;text-align:center;font-size:13px;font-weight:700;padding:6px 14px;line-height:1.3}
 .pv a.ib{display:inline-flex;align-items:center;gap:6px;background:#3a1c04;color:#fbe9d2;text-decoration:none;padding:5px 11px;border-radius:999px;font-weight:800;transition:transform var(--fast) var(--ease-out)}
 .pv a.ib:active{transform:scale(.96)}
 .pv-l{display:inline}@media(max-width:520px){.pv-l{display:none}}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
 .brand svg{flex:none}
-.brand b{display:block;font-family:var(--d);font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.05;white-space:nowrap}
-.brand small{display:block;font-size:12px;color:var(--leaf);font-weight:700;letter-spacing:.02em}
+.brand b{display:block;font-family:var(--d);font-weight:800;font-size:27px;letter-spacing:.02em;line-height:.85;text-transform:uppercase;white-space:nowrap}
+.brand small{display:block;font-size:10.5px;color:var(--leaf);font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin-top:4px;white-space:nowrap}
 .callbtn{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--cta);color:var(--cta-ink);text-decoration:none;font-weight:800;font-size:15px;padding:10px 16px;border-radius:999px;transition:transform var(--fast) var(--ease-out),background-color var(--base) var(--ease-out)}
 .callbtn:active{transform:scale(.97)}
 @media(hover:hover) and (pointer:fine){.callbtn:hover{background:var(--cta-h)}}
@@ -66,33 +66,34 @@ header.top.solid{background:rgba(16,37,26,.97);box-shadow:0 1px 0 rgba(255,255,2
 .opener i:nth-child(even){background:#3d8243;transform-origin:100% 50%}
 @keyframes pass{to{transform:scaleX(1)}}
 .opener .mark{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px;color:var(--paper);opacity:0;animation:markIn 500ms var(--ease-out) 520ms forwards}
-.opener .mark b{font-family:var(--d);font-weight:800;font-size:clamp(26px,5vw,40px);letter-spacing:-.03em}
+.opener .mark b{font-family:var(--d);font-weight:800;font-size:clamp(30px,6vw,48px);letter-spacing:.02em;text-transform:uppercase}
 @keyframes markIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes openOut{to{transform:translateY(-100%)}}
 
 /* ---------- hero: sky, two ridges and a striped lawn, all at different depths ---------- */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;color:var(--paper);overflow:hidden;isolation:isolate;background:var(--deep)}
 @supports(min-height:100svh){.hero{min-height:100svh}}
-.scene{position:absolute;inset:0;z-index:-1;overflow:hidden;background:radial-gradient(45% 38% at 78% 58%,rgba(242,140,60,.30),transparent 70%),radial-gradient(28% 22% at 78% 58%,rgba(255,196,120,.32),transparent 70%),linear-gradient(180deg,#0b1d13 0%,#122c1c 42%,#1d4228 72%,#24502e 100%)}
+.scene{position:absolute;inset:0;z-index:-1;overflow:hidden;background:radial-gradient(55% 40% at 72% 66%,rgba(232,100,28,.34),transparent 70%),radial-gradient(30% 22% at 72% 64%,rgba(255,190,110,.38),transparent 70%),linear-gradient(180deg,#0b1d13 0%,#122c1c 42%,#1d4228 72%,#24502e 100%)}
 .ridge{position:absolute;left:50%;width:max(112vw,1200px);margin-left:calc(max(112vw,1200px) / -2);height:auto;will-change:transform}
-.ridge.far{bottom:30%;opacity:.95}.ridge.mid{bottom:24%}
-.lawn{position:absolute;left:0;right:0;bottom:0;height:34%;overflow:hidden;will-change:transform}
+.ridge.far{bottom:31%;opacity:.95}.ridge.mid{bottom:27%}.ridge.trees{bottom:22%}
+.grass{position:absolute;left:50%;bottom:-2px;width:max(100vw,1300px);margin-left:calc(max(100vw,1300px) / -2);height:auto;will-change:transform}
+.lawn{position:absolute;left:0;right:0;bottom:0;height:23%;overflow:hidden;will-change:transform}
 .lawn-svg{position:absolute;left:50%;top:0;width:max(100vw,1300px);height:100%;margin-left:calc(max(100vw,1300px) / -2)}
-.lawn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#24502e 0%,rgba(36,80,46,0) 30%,rgba(11,29,19,0) 60%,rgba(11,29,19,.55) 100%)}
+.lawn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,48,31,.95) 0%,rgba(22,48,31,0) 35%,rgba(11,29,19,0) 60%,rgba(11,29,19,.55) 100%)}
 .js .lawn-svg{clip-path:inset(0 100% 0 0);animation:mow 1300ms var(--ease-in-out) calc(var(--intro) + 50ms) forwards}
 @keyframes mow{to{clip-path:inset(0 0 0 0)}}
-.scene::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,29,19,.7) 0%,rgba(11,29,19,.25) 45%,transparent 70%);pointer-events:none}
-.hero .wrap{position:relative;width:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding-top:120px;padding-bottom:40px}
-@media(min-width:960px){.hero .wrap{grid-template-columns:minmax(0,1fr) 520px;gap:40px;align-items:center;padding-top:150px;padding-bottom:110px}}
-.live{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:#d9e6d4;margin:0 0 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:6px 12px 6px 10px;border-radius:999px}
+.scene::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,29,19,.55) 0%,transparent 40%);pointer-events:none}
+.hero .wrap{position:relative;width:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding-top:150px;padding-bottom:110px}
+@media(min-width:960px){.hero .wrap{padding-top:150px;padding-bottom:150px}}
+.live{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#e3ecdf;margin:0 0 20px}
 .live i{width:9px;height:9px;border-radius:50%;background:#7ee08a;box-shadow:0 0 0 0 rgba(126,224,138,.6);animation:ping 2s 3 calc(var(--intro) + 1.2s)}
 @keyframes ping{70%{box-shadow:0 0 0 10px rgba(126,224,138,0)}100%{box-shadow:0 0 0 0 rgba(126,224,138,0)}}
-.hero h1{font-size:clamp(50px,13vw,104px);line-height:.95;letter-spacing:-.045em;font-weight:800;margin:0 0 18px}
+.hero h1{font-size:clamp(64px,min(17vw,16vh),150px);line-height:.86;letter-spacing:-.005em;font-weight:800;text-transform:uppercase;margin:0 0 22px}
 .hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
 .hero h1 .ln>span{display:block}
 .js .hero h1 .ln>span{transform:translateY(105%);filter:blur(10px);animation:rise 1000ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d,100ms))}
 @keyframes rise{to{transform:none;filter:blur(0)}}
-.hero h1 em{font-style:normal;color:var(--leaf)}
+.hero h1 .sg{color:#bcd3b4}.hero h1 em{font-style:normal;color:var(--cta)}
 .lede{font-size:clamp(17px,2.2vw,20px);color:#cfdccb;max-width:36ch;margin:0 0 24px}
 .js .hero .fade{opacity:0;transform:translateY(10px);animation:fade 700ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d,500ms))}
 @keyframes fade{to{opacity:1;transform:none}}
@@ -156,7 +157,7 @@ header.top.solid{background:rgba(16,37,26,.97);box-shadow:0 1px 0 rgba(255,255,2
 .row::before{content:"";position:absolute;inset:0 -12px;border-radius:10px;background:#ece8da;z-index:-1;opacity:0;transition:opacity 300ms var(--ease-out)}
 @media(hover:hover) and (pointer:fine){.row:hover::before{opacity:1}.row:hover .go svg{transform:translateX(4px)}}
 .row:active::before{opacity:1}
-.row h3{font-size:clamp(25px,5vw,32px);line-height:1.05;letter-spacing:-.025em;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row h3{font-size:clamp(30px,6vw,40px);line-height:1;letter-spacing:0;text-transform:uppercase;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tag{font-family:var(--b);font-size:12px;font-weight:800;letter-spacing:.02em;padding:3px 9px;border-radius:999px;background:#f8e1cf;color:#7a2e06}
 .row p{margin:4px 0 0;color:var(--muted);font-size:16px;max-width:48ch}
 .go{margin-top:8px;font-weight:800;font-size:15.5px;display:flex;align-items:center;gap:8px}
@@ -201,7 +202,7 @@ header.top.solid{background:rgba(16,37,26,.97);box-shadow:0 1px 0 rgba(255,255,2
 .qt.back .step.active{animation-name:stepBack}
 @keyframes stepIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 @keyframes stepBack{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
-.step h3{font-size:28px;letter-spacing:-.025em;line-height:1.08;font-weight:800;margin:0 0 4px}
+.step h3{font-size:32px;letter-spacing:0;text-transform:uppercase;line-height:1;font-weight:800;margin:0 0 4px}
 .help{color:var(--muted);font-size:15px;margin:0 0 16px}
 .pane{display:none}.pane.active{display:block}
 .opts{display:grid;gap:9px}
@@ -362,11 +363,11 @@ footer b{color:var(--paper)}
   <div class="mark"><svg width="64" height="64" viewBox="0 0 40 40"><rect width="40" height="40" rx="11" fill="#10251a"/><path d="M9 31c3-6 4-12 3-19M16 31c1-5 1-10-1-15M23 31c0-5 1-9 4-13M30 31c-1-4 0-8 3-11" fill="none" stroke="#9ccc7a" stroke-width="2.4" stroke-linecap="round"/><path d="M6 31.5h28" stroke="#f6f4ec" stroke-width="2.4" stroke-linecap="round"/></svg><b>Hooks Lawn And More</b></div>
 </div>
 <header class="top" id="hdr">
-  <div class="pv"><span>Preview built for Hooks by PriceWink<span class="pv-l">. Prices are samples</span>.</span><a class="ib" href="../inbox/?c=hooks&amp;demo" target="_blank" rel="noopener">See your inbox <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+  <div class="pv"><span>Hooks preview by PriceWink<span class="pv-l">. Prices are samples</span></span><a class="ib" href="../inbox/?c=hooks&amp;demo" target="_blank" rel="noopener">See your inbox <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="Hooks Lawn And More, home">
       <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#2f6b3a"/><path d="M9 31c3-6 4-12 3-19M16 31c1-5 1-10-1-15M23 31c0-5 1-9 4-13M30 31c-1-4 0-8 3-11" fill="none" stroke="#9ccc7a" stroke-width="2.4" stroke-linecap="round"/><path d="M6 31.5h28" stroke="#f6f4ec" stroke-width="2.4" stroke-linecap="round"/></svg>
-      <span><b>Hooks Lawn And More</b><small>Clinton, TN</small></span>
+      <span><b>Hooks</b><small>Lawn and more</small></span>
     </a>
     <a class="callbtn" href="tel:+18656406077"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" fill="currentColor"/></svg><span class="cl-l">(865) 640-6077</span><span class="cl-s">Call</span></a>
   </div>
@@ -374,12 +375,12 @@ footer b{color:var(--paper)}
 
 <main id="top">
 <section class="hero" aria-label="Intro">
-  <div class="scene" id="scene" aria-hidden="true"><svg class="ridge far" data-depth="0.42" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#1e3e29" d="M0,600L0,267L16,268L32,274L48,276L64,285L80,290L96,292L112,302L128,305L144,311L160,314L176,319L192,323L208,325L224,331L240,329L256,335L272,331L288,333L304,331L320,332L336,329L352,326L368,329L384,323L400,321L416,317L432,315L448,313L464,311L480,313L496,311L512,314L528,312L544,314L560,316L576,321L592,327L608,328L624,335L640,337L656,344L672,350L688,355L704,362L720,366L736,375L752,375L768,381L784,383L800,385L816,388L832,387L848,392L864,390L880,389L896,383L912,381L928,377L944,371L960,369L976,357L992,356L1008,346L1024,341L1040,330L1056,321L1072,319L1088,308L1104,308L1120,298L1136,295L1152,287L1168,283L1184,285L1200,279L1216,284L1232,277L1248,282L1264,279L1280,281L1296,285L1312,285L1328,294L1344,295L1360,300L1376,302L1392,306L1408,308L1424,309L1440,315L1456,315L1472,318L1488,316L1504,316L1520,314L1536,315L1552,314L1568,310L1584,311L1600,304L1600,600Z"/></svg><svg class="ridge mid" data-depth="0.28" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#234a2f" d="M0,600L0,394L16,401L32,399L48,402L64,400L80,400L96,401L112,392L128,398L144,392L160,392L176,390L192,383L208,387L224,388L240,393L256,385L272,395L288,395L304,403L320,410L336,408L352,423L368,418L384,428L400,426L416,427L432,428L448,422L464,428L480,418L496,423L512,409L528,408L544,401L560,389L576,385L592,374L608,380L624,366L640,366L656,357L672,356L688,351L704,349L720,355L736,351L752,355L768,353L784,365L800,367L816,364L832,377L848,370L864,385L880,383L896,383L912,382L928,385L944,390L960,381L976,384L992,374L1008,380L1024,374L1040,373L1056,374L1072,363L1088,377L1104,365L1120,373L1136,372L1152,373L1168,383L1184,381L1200,398L1216,394L1232,409L1248,408L1264,412L1280,418L1296,424L1312,429L1328,431L1344,440L1360,428L1376,432L1392,432L1408,422L1424,426L1440,416L1456,418L1472,404L1488,403L1504,394L1520,389L1536,383L1552,377L1568,379L1584,370L1600,374L1600,600Z"/></svg><div class="lawn" data-depth="0.12"><svg class="lawn-svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><path fill="#32703a" d="M420,0L468,0L-688,420L-900,420Z"/><path fill="#3a7b3e" d="M468,0L515,0L-475,420L-688,420Z"/><path fill="#32703a" d="M515,0L562,0L-262,420L-475,420Z"/><path fill="#3a7b3e" d="M562,0L610,0L-50,420L-262,420Z"/><path fill="#32703a" d="M610,0L658,0L162,420L-50,420Z"/><path fill="#3a7b3e" d="M658,0L705,0L375,420L162,420Z"/><path fill="#32703a" d="M705,0L752,0L588,420L375,420Z"/><path fill="#3a7b3e" d="M752,0L800,0L800,420L588,420Z"/><path fill="#32703a" d="M800,0L848,0L1012,420L800,420Z"/><path fill="#3a7b3e" d="M848,0L895,0L1225,420L1012,420Z"/><path fill="#32703a" d="M895,0L942,0L1438,420L1225,420Z"/><path fill="#3a7b3e" d="M942,0L990,0L1650,420L1438,420Z"/><path fill="#32703a" d="M990,0L1038,0L1862,420L1650,420Z"/><path fill="#3a7b3e" d="M1038,0L1085,0L2075,420L1862,420Z"/><path fill="#32703a" d="M1085,0L1132,0L2288,420L2075,420Z"/><path fill="#3a7b3e" d="M1132,0L1180,0L2500,420L2288,420Z"/></svg></div></div>
+  <div class="scene" id="scene" aria-hidden="true"><svg class="ridge far" data-depth="0.42" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#1e3e29" d="M0,600L0,267L16,268L32,274L48,276L64,285L80,290L96,292L112,302L128,305L144,311L160,314L176,319L192,323L208,325L224,331L240,329L256,335L272,331L288,333L304,331L320,332L336,329L352,326L368,329L384,323L400,321L416,317L432,315L448,313L464,311L480,313L496,311L512,314L528,312L544,314L560,316L576,321L592,327L608,328L624,335L640,337L656,344L672,350L688,355L704,362L720,366L736,375L752,375L768,381L784,383L800,385L816,388L832,387L848,392L864,390L880,389L896,383L912,381L928,377L944,371L960,369L976,357L992,356L1008,346L1024,341L1040,330L1056,321L1072,319L1088,308L1104,308L1120,298L1136,295L1152,287L1168,283L1184,285L1200,279L1216,284L1232,277L1248,282L1264,279L1280,281L1296,285L1312,285L1328,294L1344,295L1360,300L1376,302L1392,306L1408,308L1424,309L1440,315L1456,315L1472,318L1488,316L1504,316L1520,314L1536,315L1552,314L1568,310L1584,311L1600,304L1600,600Z"/></svg><svg class="ridge mid" data-depth="0.28" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#234a2f" d="M0,600L0,394L16,401L32,399L48,402L64,400L80,400L96,401L112,392L128,398L144,392L160,392L176,390L192,383L208,387L224,388L240,393L256,385L272,395L288,395L304,403L320,410L336,408L352,423L368,418L384,428L400,426L416,427L432,428L448,422L464,428L480,418L496,423L512,409L528,408L544,401L560,389L576,385L592,374L608,380L624,366L640,366L656,357L672,356L688,351L704,349L720,355L736,351L752,355L768,353L784,365L800,367L816,364L832,377L848,370L864,385L880,383L896,383L912,382L928,385L944,390L960,381L976,384L992,374L1008,380L1024,374L1040,373L1056,374L1072,363L1088,377L1104,365L1120,373L1136,372L1152,373L1168,383L1184,381L1200,398L1216,394L1232,409L1248,408L1264,412L1280,418L1296,424L1312,429L1328,431L1344,440L1360,428L1376,432L1392,432L1408,422L1424,426L1440,416L1456,418L1472,404L1488,403L1504,394L1520,389L1536,383L1552,377L1568,379L1584,370L1600,374L1600,600Z"/></svg><svg class="ridge trees" data-depth="0.22" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#16301f" d="M0,600L0,330L0,322A35,35 0 0 1 71,322L64,327A44,44 0 0 1 152,327L146,323A19,19 0 0 1 184,323L182,316A36,36 0 0 1 254,316L234,339A31,31 0 0 1 296,339L286,350A34,34 0 0 1 354,350L338,309A26,26 0 0 1 389,309L384,312A22,22 0 0 1 429,312L417,346A35,35 0 0 1 487,346L466,347A42,42 0 0 1 551,347L530,322A46,46 0 0 1 621,322L600,335A45,45 0 0 1 690,335L678,307A24,24 0 0 1 726,307L720,321A45,45 0 0 1 810,321L790,340A28,28 0 0 1 846,340L831,330A20,20 0 0 1 871,330L865,314A18,18 0 0 1 901,314L893,313A27,27 0 0 1 947,313L937,327A27,27 0 0 1 991,327L984,303A20,20 0 0 1 1023,303L1012,320A39,39 0 0 1 1090,320L1067,339A40,40 0 0 1 1147,339L1134,339A18,18 0 0 1 1171,339L1162,349A45,45 0 0 1 1251,349L1241,319A44,44 0 0 1 1329,319L1310,326A28,28 0 0 1 1366,326L1360,313A21,21 0 0 1 1402,313L1398,354A42,42 0 0 1 1482,354L1477,329A21,21 0 0 1 1518,329L1512,343A44,44 0 0 1 1599,343L1593,337A33,33 0 0 1 1660,337L1600,600Z"/></svg><div class="lawn" data-depth="0.12"><svg class="lawn-svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><path fill="#24502b" d="M420,0L468,0L-688,420L-900,420Z"/><path fill="#2a5a31" d="M468,0L515,0L-475,420L-688,420Z"/><path fill="#24502b" d="M515,0L562,0L-262,420L-475,420Z"/><path fill="#2a5a31" d="M562,0L610,0L-50,420L-262,420Z"/><path fill="#24502b" d="M610,0L658,0L162,420L-50,420Z"/><path fill="#2a5a31" d="M658,0L705,0L375,420L162,420Z"/><path fill="#24502b" d="M705,0L752,0L588,420L375,420Z"/><path fill="#2a5a31" d="M752,0L800,0L800,420L588,420Z"/><path fill="#24502b" d="M800,0L848,0L1012,420L800,420Z"/><path fill="#2a5a31" d="M848,0L895,0L1225,420L1012,420Z"/><path fill="#24502b" d="M895,0L942,0L1438,420L1225,420Z"/><path fill="#2a5a31" d="M942,0L990,0L1650,420L1438,420Z"/><path fill="#24502b" d="M990,0L1038,0L1862,420L1650,420Z"/><path fill="#2a5a31" d="M1038,0L1085,0L2075,420L1862,420Z"/><path fill="#24502b" d="M1085,0L1132,0L2288,420L2075,420Z"/><path fill="#2a5a31" d="M1132,0L1180,0L2500,420L2288,420Z"/></svg></div><svg class="grass" data-depth="0.04" viewBox="0 0 1600 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#0c1d13" d="M0,200L0,120L0,120L-3,66L8,120L7,120L17,57L12,120L10,120L5,50L18,120L15,120L24,61L24,120L21,120L24,83L27,120L26,120L28,40L35,120L33,120L40,71L39,120L38,120L37,84L45,120L43,120L40,37L49,120L48,120L51,86L59,120L56,120L66,62L61,120L59,120L65,82L67,120L66,120L61,89L72,120L71,120L73,84L76,120L75,120L82,64L83,120L80,120L86,79L88,120L87,120L92,54L92,120L90,120L104,25L97,120L94,120L94,28L103,120L101,120L107,66L107,120L105,120L107,84L115,120L113,120L116,61L122,120L121,120L131,89L130,120L127,120L129,76L134,120L132,120L127,49L137,120L136,120L145,39L141,120L140,120L149,74L149,120L147,120L148,27L153,120L151,120L159,66L161,120L157,120L153,73L167,120L166,120L179,28L172,120L171,120L167,86L176,120L174,120L176,27L183,120L179,120L175,81L188,120L186,120L189,86L195,120L193,120L205,65L202,120L199,120L211,40L208,120L205,120L209,87L211,120L209,120L219,85L218,120L214,120L216,79L219,120L218,120L221,79L225,120L225,120L219,29L233,120L232,120L238,55L242,120L240,120L248,86L250,120L247,120L255,43L254,120L251,120L256,61L260,120L258,120L259,51L264,120L263,120L271,36L269,120L268,120L275,88L278,120L276,120L272,64L285,120L281,120L277,78L290,120L287,120L282,55L295,120L294,120L287,39L301,120L300,120L314,27L308,120L307,120L304,67L313,120L312,120L307,76L318,120L315,120L318,27L326,120L324,120L325,56L332,120L330,120L333,73L336,120L334,120L328,29L341,120L338,120L338,86L348,120L347,120L342,76L355,120L352,120L365,38L359,120L358,120L371,30L368,120L367,120L369,84L378,120L374,120L375,58L382,120L381,120L380,76L388,120L386,120L389,53L395,120L392,120L389,69L399,120L397,120L403,44L403,120L401,120L404,68L410,120L407,120L417,33L417,120L413,120L408,68L422,120L420,120L420,34L427,120L426,120L435,84L434,120L431,120L426,85L440,120L439,120L434,80L444,120L442,120L450,25L452,120L448,120L446,57L459,120L457,120L457,72L464,120L462,120L472,50L468,120L466,120L459,46L471,120L470,120L483,46L480,120L478,120L480,81L485,120L483,120L491,68L490,120L488,120L500,55L496,120L492,120L499,39L498,120L496,120L500,76L502,120L501,120L508,77L507,120L505,120L519,25L515,120L513,120L524,86L521,120L519,120L532,49L527,120L525,120L522,27L535,120L532,120L546,40L542,120L538,120L543,29L546,120L545,120L541,79L555,120L554,120L565,77L562,120L559,120L553,71L565,120L563,120L577,60L573,120L569,120L573,81L575,120L573,120L579,56L582,120L580,120L578,30L590,120L587,120L588,64L598,120L595,120L600,35L601,120L598,120L599,56L609,120L606,120L602,67L617,120L613,120L612,56L618,120L617,120L620,89L624,120L621,120L618,75L628,120L626,120L635,66L637,120L634,120L629,54L644,120L642,120L636,87L648,120L647,120L653,67L657,120L655,120L662,44L660,120L659,120L662,53L665,120L664,120L676,47L671,120L669,120L664,32L677,120L676,120L675,60L683,120L682,120L678,41L690,120L689,120L688,46L699,120L695,120L708,86L703,120L700,120L709,78L711,120L709,120L704,62L718,120L716,120L729,29L723,120L722,120L718,79L733,120L729,120L733,82L734,120L732,120L732,65L741,120L740,120L744,33L746,120L745,120L756,42L751,120L748,120L752,48L756,120L755,120L763,70L764,120L762,120L769,52L770,120L768,120L776,64L773,120L772,120L777,59L778,120L776,120L783,48L782,120L780,120L776,52L791,120L787,120L801,85L797,120L795,120L790,79L804,120L803,120L807,61L811,120L810,120L806,40L817,120L816,120L820,69L825,120L824,120L836,45L831,120L830,120L835,38L837,120L835,120L837,63L841,120L840,120L838,87L848,120L846,120L843,53L857,120L855,120L860,71L865,120L862,120L857,42L867,120L865,120L875,84L875,120L873,120L871,66L880,120L879,120L884,42L889,120L887,120L886,44L894,120L891,120L906,73L900,120L899,120L904,89L905,120L902,120L913,51L910,120L908,120L905,37L916,120L913,120L927,67L923,120L919,120L921,66L925,120L923,120L934,61L929,120L928,120L934,73L937,120L934,120L932,38L939,120L937,120L937,82L947,120L943,120L942,46L953,120L949,120L958,82L959,120L957,120L960,59L966,120L963,120L967,80L972,120L968,120L973,32L976,120L974,120L984,90L983,120L982,120L993,56L991,120L990,120L990,79L997,120L994,120L987,85L1000,120L998,120L1008,59L1003,120L1002,120L998,43L1007,120L1006,120L1010,55L1015,120L1014,120L1012,32L1021,120L1018,120L1028,88L1024,120L1022,120L1023,72L1030,120L1029,120L1038,73L1037,120L1034,120L1043,45L1039,120L1038,120L1051,30L1047,120L1045,120L1047,52L1051,120L1050,120L1047,85L1057,120L1054,120L1059,45L1063,120L1060,120L1065,61L1070,120L1066,120L1071,61L1077,120L1073,120L1075,59L1081,120L1079,120L1086,50L1086,120L1083,120L1083,85L1093,120L1092,120L1093,72L1097,120L1097,120L1105,76L1108,120L1106,120L1103,70L1114,120L1110,120L1118,87L1116,120L1114,120L1127,29L1120,120L1118,120L1125,33L1125,120L1124,120L1126,43L1130,120L1128,120L1125,73L1133,120L1131,120L1130,64L1141,120L1137,120L1138,64L1142,120L1140,120L1135,68L1148,120L1146,120L1154,78L1152,120L1150,120L1158,54L1157,120L1156,120L1158,43L1166,120L1165,120L1160,78L1170,120L1169,120L1175,65L1176,120L1173,120L1186,46L1181,120L1180,120L1194,65L1188,120L1186,120L1187,83L1197,120L1194,120L1206,60L1200,120L1198,120L1204,69L1206,120L1204,120L1212,86L1210,120L1209,120L1205,77L1216,120L1215,120L1223,29L1223,120L1221,120L1234,31L1230,120L1226,120L1219,82L1232,120L1231,120L1242,57L1242,120L1240,120L1253,64L1249,120L1245,120L1254,87L1251,120L1250,120L1250,38L1260,120L1257,120L1250,34L1264,120L1261,120L1256,49L1270,120L1267,120L1270,76L1273,120L1270,120L1278,60L1280,120L1277,120L1289,83L1287,120L1283,120L1291,53L1291,120L1289,120L1294,87L1298,120L1296,120L1304,83L1305,120L1301,120L1313,87L1306,120L1304,120L1311,86L1313,120L1310,120L1318,42L1318,120L1316,120L1312,90L1325,120L1322,120L1316,40L1330,120L1327,120L1323,69L1335,120L1332,120L1342,89L1337,120L1336,120L1345,74L1345,120L1344,120L1354,51L1349,120L1348,120L1356,43L1353,120L1351,120L1350,49L1360,120L1359,120L1363,85L1369,120L1366,120L1378,56L1371,120L1370,120L1381,29L1378,120L1377,120L1376,25L1382,120L1380,120L1385,38L1387,120L1385,120L1390,57L1393,120L1390,120L1385,73L1399,120L1398,120L1406,38L1403,120L1402,120L1400,74L1410,120L1409,120L1413,40L1419,120L1415,120L1416,28L1424,120L1422,120L1429,27L1428,120L1425,120L1429,46L1435,120L1432,120L1437,46L1443,120L1442,120L1447,40L1451,120L1449,120L1453,58L1459,120L1455,120L1458,43L1464,120L1460,120L1468,48L1469,120L1466,120L1477,43L1476,120L1472,120L1465,55L1478,120L1478,120L1487,80L1484,120L1481,120L1480,48L1490,120L1486,120L1497,33L1496,120L1492,120L1486,61L1499,120L1498,120L1511,27L1508,120L1506,120L1517,48L1513,120L1510,120L1504,26L1515,120L1515,120L1516,74L1522,120L1521,120L1532,82L1530,120L1527,120L1539,57L1537,120L1534,120L1547,26L1541,120L1539,120L1547,51L1548,120L1545,120L1560,63L1555,120L1553,120L1553,30L1563,120L1559,120L1560,53L1567,120L1564,120L1567,84L1571,120L1569,120L1572,35L1577,120L1575,120L1579,57L1585,120L1581,120L1595,34L1590,120L1589,120L1593,52L1600,120L1599,120L1610,85L1608,120L1600,120L1600,200Z"/></svg></div>
   <div class="wrap" id="hwrap">
     <div>
-      <p class="live fade" style="--d:0ms"><i></i>Booking leaf cleanups this week</p>
-      <h1><span class="ln"><span style="--d:120ms">Clinton’s</span></span><span class="ln"><span style="--d:220ms">yard <em>crew.</em></span></span></h1>
-      <p class="lede fade" style="--d:480ms">Mowing, leaf cleanup, mulch beds, bushes and dirt work. See your price in a minute and pick a time.</p>
+      <p class="live fade" style="--d:0ms"><i></i><span class="pv-l">Clinton, TN · </span>Booking leaf cleanups now</p>
+      <h1><span class="ln"><span style="--d:120ms">Fresh cut.</span></span><span class="ln"><span class="sg" style="--d:210ms">Clean beds.</span></span><span class="ln"><span style="--d:300ms">And <em>more.</em></span></span></h1>
+      <p class="lede fade" style="--d:480ms">Lawn and yard work around Clinton. See your price and book a time in about a minute.</p>
       <p class="qs-l fade" style="--d:560ms">Get a price for</p>
       <div class="qs fade" style="--d:600ms" id="quick">
         <a class="chip" href="#quote" data-svc="leaves">Leaf cleanup</a>
@@ -387,13 +388,6 @@ footer b{color:var(--paper)}
         <a class="chip" href="#quote" data-svc="mulch">Mulch beds</a>
         <a class="chip" href="#quote" data-svc="bush">Bush trimming</a>
       </div>
-    </div>
-    <div class="stage" id="stage">
-      <figure class="c c1"><div class="p" style="--d:300ms;--r:-4deg;width:100%;height:100%"><img src="img/dig.jpg" alt="Hooks Lawn And More's orange mini excavator" width="728" height="919" fetchpriority="high"></div></figure>
-      <figure class="c c2"><div class="p" style="--d:420ms;--r:5deg;width:100%;height:100%"><img src="img/mulch.jpg" alt="Fresh red mulch bed edged with stone" width="426" height="426"></div></figure>
-      <figure class="c c3"><div class="p" style="--d:520ms;--r:-3deg;width:100%;height:100%"><img src="img/mower.jpg" alt="Remote-control slope mower on a lawn" width="426" height="426"></div></figure>
-      <a class="qcard p" href="#quote" data-svc="leaves" id="qcard" style="--d:760ms"><span class="k"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="currentColor"/></svg>Instant price</span><span class="w">Leaf cleanup · Medium yard</span><div class="a tn">$<span id="hLo">200</span> – $<span id="hHi">350</span></div><span class="r"><span>Next open: Wed 9:00 AM</span><b>Book</b></span></a>
-      <div class="badge p" style="--d:900ms"><span class="stars" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg></span><span>4.5 · 24 Google reviews</span></div>
     </div>
   </div>
   <a class="cue" id="cue" href="#services" aria-label="Scroll to services"><i></i></a>
@@ -737,9 +731,6 @@ footer b{color:var(--paper)}
     (function f(t){ const p=Math.min(1,(t-t0)/1100), e=1-Math.pow(1-p,3); el.textContent=out(to*e); if(p<1) requestAnimationFrame(f); })(t0); }
   if('IntersectionObserver' in window){ const cio=new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; e.target.querySelectorAll('.cu').forEach(countUp); cio.unobserve(e.target); }),{rootMargin:'0px 0px -10% 0px'});
     $$('.ngrid, .svc').forEach(el=>cio.observe(el)); }
-  /* hero price card counts up once the intro is done */
-  { const intro=document.documentElement.matches('.motion:not(.seen)')?1500:0; setTimeout(()=>{ ['#hLo','#hHi'].forEach(sel=>{ const el=$(sel), to=+el.textContent; el.textContent='0'; animNum(el,to); }); }, intro+900); }
-
   /* header goes solid after the hero starts scrolling */
   const hdr=$('#hdr'); const solid=()=>hdr.classList.toggle('solid',scrollY>40); solid();
 
