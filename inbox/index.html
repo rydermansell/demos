@@ -238,7 +238,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   let B=[], BL=[], SRC=[], FEED='', tab='up';
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
-  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'}};
+  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'}};
   const SAMPLE_SETS={
     tree:[
       {urgent:1, mins:-14, status:'New', service:'Storm cleanup', details:'One downed tree: On a structure', lo:600, hi:1950, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Maryville', notes:'Big oak limb on the garage roof. Nobody hurt.'},
@@ -256,6 +256,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       {day:5, hour:10, status:'New', service:'Dirt work', details:'Drainage or a ditch', lo:400, hi:900, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Clinton', notes:'Water pools by the driveway every time it rains.'},
       {day:-2, hour:10, status:'Done', service:'Mowing', details:'Mowing, large (per visit): Steep areas', lo:80, hi:125, name:'Carol Jennings', addr:'301 Willow Bend Dr, Clinton'},
       {day:-1, hour:15, status:'Canceled', service:'Mowing', details:'Mowing, small: Just once', lo:55, hi:75, name:'Kevin Ortiz', addr:'64 Birch Ct, Rocky Top'}],
+    junk:[
+      {urgent:1, mins:-18, status:'New', service:'Junk removal', details:'Junk removal, half a trailer: Heavy items', lo:315, hi:515, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Knoxville', notes:'Closing on the house Friday. Need the garage empty before then.'},
+      {day:1, hour:9, status:'New', service:'Cleanout', details:'Cleanout, a garage or basement: Sweep it clean', lo:500, hi:850, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Powell', notes:'Gate code 4512. Garage door code is the same.'},
+      {day:2, hour:11, status:'Confirmed', service:'Demo & teardown', details:'Demo & teardown, a shed or playset', lo:350, hi:800, name:'Brian Keller', addr:'2210 Laurel Bluff Dr, Oak Ridge', notes:'Old metal shed in the back corner.'},
+      {day:3, hour:14, status:'Confirmed', service:'Junk removal', details:'Junk removal, a few items: Mattress or box spring', lo:120, hi:220, name:'Linda Sharpe', addr:'88 Cedar Knoll Rd, Seymour'},
+      {day:5, hour:10, status:'New', service:'Yard debris', details:'Yard debris, a big pile: Needs cutting up first', lo:300, hi:550, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Clinton', notes:'Storm limbs stacked by the road.'},
+      {day:-2, hour:10, status:'Done', service:'Cleanout', details:'Cleanout, a whole house', lo:1200, hi:2200, name:'Carol Jennings', addr:'301 Willow Bend Dr, Farragut'},
+      {day:-1, hour:15, status:'Canceled', service:'Junk removal', details:'Junk removal, a few items', lo:95, hi:175, name:'Kevin Ortiz', addr:'64 Birch Ct, Maryville'}],
     generic:[
       {urgent:1, mins:-14, status:'New', service:'Emergency repair', details:'Needs help today', lo:150, hi:400, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd'},
       {day:1, hour:9, status:'New', service:'Estimate visit', details:'Standard job', lo:250, hi:600, name:'Maria Lopez', addr:'507 Ridgecrest Ln', notes:'Gate code 4512.'},
