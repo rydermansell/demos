@@ -3,7 +3,7 @@
 <meta name="description" content="Mowing, leaf cleanup, mulch beds, bush trimming and small dirt work around Clinton, TN. Get a price in about a minute and book a time.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#10251a">
-<script>document.documentElement.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm')</script>
+<script>(function(d){d.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('rm');return}d.classList.add('motion');try{if(sessionStorage.getItem('hooksIntro'))d.classList.add('seen');else sessionStorage.setItem('hooksIntro','1')}catch(e){d.classList.add('seen')}})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,8 +41,14 @@ h2{font-size:clamp(34px,6.4vw,56px);line-height:1.04;letter-spacing:-.03em;font-
 section.s{padding:clamp(64px,10vw,120px) 0}
 
 /* ---------- top ---------- */
-.pv{background:#f3d9b4;color:#3a1c04;text-align:center;font-size:13px;font-weight:700;padding:7px 14px;line-height:1.35}
-header.top{position:sticky;top:0;z-index:30;background:var(--deep);color:var(--paper)}
+html{--intro:0s}
+html.motion:not(.seen){--intro:1.5s}
+header.top{position:fixed;inset:0 0 auto 0;z-index:30;color:var(--paper);transition:background-color 350ms var(--ease-out),box-shadow 350ms var(--ease-out)}
+header.top.solid{background:rgba(16,37,26,.97);box-shadow:0 1px 0 rgba(255,255,255,.06)}
+.pv{display:flex;justify-content:center;align-items:center;gap:6px 14px;flex-wrap:wrap;background:#f3d9b4;color:#3a1c04;text-align:center;font-size:13px;font-weight:700;padding:6px 14px;line-height:1.3}
+.pv a.ib{display:inline-flex;align-items:center;gap:6px;background:#3a1c04;color:#fbe9d2;text-decoration:none;padding:5px 11px;border-radius:999px;font-weight:800;transition:transform var(--fast) var(--ease-out)}
+.pv a.ib:active{transform:scale(.96)}
+.pv-l{display:inline}@media(max-width:520px){.pv-l{display:none}}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
 .brand svg{flex:none}
@@ -53,51 +59,91 @@ header.top{position:sticky;top:0;z-index:30;background:var(--deep);color:var(--p
 @media(hover:hover) and (pointer:fine){.callbtn:hover{background:var(--cta-h)}}
 .cl-s{display:none}@media(max-width:460px){.cl-l{display:none}.cl-s{display:inline}}
 
-/* ---------- hero ---------- */
-.hero{position:relative;background:var(--deep);color:var(--paper);overflow:hidden;isolation:isolate}
-.stripes{position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(100deg,#163021 0 90px,#1c3a28 90px 180px)}
-.stripes::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,37,26,.2),rgba(16,37,26,.75) 85%,var(--deep))}
-.js .stripes{clip-path:inset(0 100% 0 0);animation:mow 1500ms var(--ease-in-out) 100ms forwards}
+/* ---------- opener: mower passes sweep the screen back and forth, then lift away ---------- */
+.opener{display:none}
+.motion:not(.seen) .opener{display:grid;position:fixed;inset:0;z-index:100;pointer-events:none;grid-template-rows:repeat(7,1fr);background:var(--deep);animation:openOut 650ms var(--ease-in-out) 1.2s forwards}
+.opener i{display:block;background:#2f6b37;transform:scaleX(0);transform-origin:0 50%;animation:pass 520ms var(--ease-in-out) forwards;animation-delay:calc(var(--k) * 85ms)}
+.opener i:nth-child(even){background:#3d8243;transform-origin:100% 50%}
+@keyframes pass{to{transform:scaleX(1)}}
+.opener .mark{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px;color:var(--paper);opacity:0;animation:markIn 500ms var(--ease-out) 520ms forwards}
+.opener .mark b{font-family:var(--d);font-weight:800;font-size:clamp(26px,5vw,40px);letter-spacing:-.03em}
+@keyframes markIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes openOut{to{transform:translateY(-100%)}}
+
+/* ---------- hero: sky, two ridges and a striped lawn, all at different depths ---------- */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;color:var(--paper);overflow:hidden;isolation:isolate;background:var(--deep)}
+@supports(min-height:100svh){.hero{min-height:100svh}}
+.scene{position:absolute;inset:0;z-index:-1;overflow:hidden;background:radial-gradient(45% 38% at 78% 58%,rgba(242,140,60,.30),transparent 70%),radial-gradient(28% 22% at 78% 58%,rgba(255,196,120,.32),transparent 70%),linear-gradient(180deg,#0b1d13 0%,#122c1c 42%,#1d4228 72%,#24502e 100%)}
+.ridge{position:absolute;left:50%;width:max(112vw,1200px);margin-left:calc(max(112vw,1200px) / -2);height:auto;will-change:transform}
+.ridge.far{bottom:30%;opacity:.95}.ridge.mid{bottom:24%}
+.lawn{position:absolute;left:0;right:0;bottom:0;height:34%;overflow:hidden;will-change:transform}
+.lawn-svg{position:absolute;left:50%;top:0;width:max(100vw,1300px);height:100%;margin-left:calc(max(100vw,1300px) / -2)}
+.lawn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#24502e 0%,rgba(36,80,46,0) 30%,rgba(11,29,19,0) 60%,rgba(11,29,19,.55) 100%)}
+.js .lawn-svg{clip-path:inset(0 100% 0 0);animation:mow 1300ms var(--ease-in-out) calc(var(--intro) + 50ms) forwards}
 @keyframes mow{to{clip-path:inset(0 0 0 0)}}
-.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:34px;padding-top:56px;padding-bottom:56px}
-@media(min-width:960px){.hero .wrap{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center;padding-top:84px;padding-bottom:96px;min-height:calc(100svh - 96px)}}
-.hero h1{font-size:clamp(44px,min(9.4vw,5.6vw + 20px),70px);line-height:1;letter-spacing:-.04em;font-weight:800;margin:0 0 18px}
-.hero h1 .ln{display:block}
-.js .hero h1 .ln{clip-path:inset(0 0 100% 0);transform:translateY(.35em);animation:line-in 800ms var(--ease-out) both;animation-delay:var(--d,150ms)}
-@keyframes line-in{to{clip-path:inset(0 0 -10% 0);transform:none}}
+.scene::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,29,19,.7) 0%,rgba(11,29,19,.25) 45%,transparent 70%);pointer-events:none}
+.hero .wrap{position:relative;width:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding-top:120px;padding-bottom:40px}
+@media(min-width:960px){.hero .wrap{grid-template-columns:minmax(0,1fr) 520px;gap:40px;align-items:center;padding-top:150px;padding-bottom:110px}}
+.live{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:#d9e6d4;margin:0 0 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:6px 12px 6px 10px;border-radius:999px}
+.live i{width:9px;height:9px;border-radius:50%;background:#7ee08a;box-shadow:0 0 0 0 rgba(126,224,138,.6);animation:ping 2s 3 calc(var(--intro) + 1.2s)}
+@keyframes ping{70%{box-shadow:0 0 0 10px rgba(126,224,138,0)}100%{box-shadow:0 0 0 0 rgba(126,224,138,0)}}
+.hero h1{font-size:clamp(50px,13vw,104px);line-height:.95;letter-spacing:-.045em;font-weight:800;margin:0 0 18px}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .ln>span{display:block}
+.js .hero h1 .ln>span{transform:translateY(105%);filter:blur(10px);animation:rise 1000ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d,100ms))}
+@keyframes rise{to{transform:none;filter:blur(0)}}
 .hero h1 em{font-style:normal;color:var(--leaf)}
-.lede{font-size:clamp(17px,2.2vw,20px);color:#cfdccb;max-width:38ch;margin:0 0 26px}
-.js .hero .fade{opacity:0;transform:translateY(10px);animation:fade 700ms var(--ease-out) forwards;animation-delay:var(--d,500ms)}
+.lede{font-size:clamp(17px,2.2vw,20px);color:#cfdccb;max-width:36ch;margin:0 0 24px}
+.js .hero .fade{opacity:0;transform:translateY(10px);animation:fade 700ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d,500ms))}
 @keyframes fade{to{opacity:1;transform:none}}
 .qs-l{margin:0 0 10px;font-size:14px;font-weight:700;color:#b9c9b4}
+@media(max-width:959px){.qs-l{display:none}}
 .qs{display:flex;flex-wrap:wrap;gap:8px;max-width:540px}
 .chip{display:inline-flex;align-items:center;min-height:48px;padding:0 18px;border-radius:999px;background:var(--cta);color:var(--cta-ink);text-decoration:none;font-weight:800;font-size:15.5px;border:0;cursor:pointer;box-shadow:0 8px 20px -12px rgba(232,100,28,.9);transition:transform var(--fast) var(--ease-out),background-color var(--base) var(--ease-out)}
 .chip:active{transform:scale(.96)}
 @media(hover:hover) and (pointer:fine){.chip:hover{background:var(--cta-h);transform:translateY(-1px)}}
-.rate{display:flex;align-items:center;gap:12px;margin-top:26px;color:#b9c9b4;font-size:15px}
-.rate b{font-family:var(--d);font-size:34px;font-weight:800;color:var(--paper);line-height:1;letter-spacing:-.02em}
 .stars{display:flex;gap:2px;color:#f5b83a}
-.pics{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:1fr 1fr;gap:12px;max-width:560px}
-.pics figure{margin:0;border-radius:var(--r2);overflow:hidden;position:relative;background:var(--deep2);box-shadow:0 24px 48px -24px rgba(0,0,0,.6)}
-.pics figure::after{content:"";position:absolute;inset:0;background:rgba(47,107,58,.12);mix-blend-mode:multiply;pointer-events:none}
-.pics img{width:100%;height:100%;object-fit:cover}
-.pics .p1{grid-row:1 / span 2;aspect-ratio:4/5}
-.pics .p2,.pics .p3{aspect-ratio:1}
-.js .pics figure{opacity:0;transform:translateY(16px) scale(.98);animation:fade 800ms var(--ease-out) forwards}
-.js .pics .p1{animation-delay:420ms}.js .pics .p2{animation-delay:560ms}.js .pics .p3{animation-delay:660ms}
-.js .pics .p1 img{transform:scale(1.05);animation:settle 1400ms var(--ease-out) 420ms forwards}
-@keyframes settle{to{transform:scale(1)}}
-@media(max-width:959px){.pics{grid-template-columns:1.3fr 1fr;max-width:none}.pics .p1{aspect-ratio:auto}}
+/* photo stage with floating price card + rating badge */
+.stage{position:relative;height:300px;max-width:520px;width:100%}
+@media(min-width:960px){.stage{height:560px}}
+.stage .c{position:absolute;margin:0;border-radius:var(--r2);overflow:hidden;background:var(--deep2);box-shadow:0 30px 60px -28px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.08);will-change:transform}
+.stage .c img{width:100%;height:100%;object-fit:cover}
+.stage .c::after{content:"";position:absolute;inset:0;background:rgba(47,107,58,.12);mix-blend-mode:multiply}
+.stage .c1{left:0;top:6%;width:52%;aspect-ratio:4/5;--r:-4deg}
+.stage .c2{right:0;top:0;width:40%;aspect-ratio:1;--r:5deg}
+.stage .c3{right:5%;bottom:6%;width:37%;aspect-ratio:1;--r:-3deg}
+.stage .p{transform:rotate(var(--r))}
+.js .stage .p{opacity:0;transform:translateY(40px) rotate(calc(var(--r) * 2.2)) scale(.92);animation:cardIn 900ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d))}
+@keyframes cardIn{to{opacity:1;transform:rotate(var(--r))}}
+.qcard{position:absolute;left:3%;bottom:0;width:min(66%,280px);background:rgba(255,253,247,.97);color:var(--ink);border-radius:18px;padding:14px 16px;box-shadow:0 30px 60px -24px rgba(0,0,0,.7);text-decoration:none;display:block;--r:1.5deg}
+.qcard .k{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--grass)}
+.qcard .w{font-size:13.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.qcard .a{font-family:var(--d);font-weight:800;font-size:clamp(28px,7vw,38px);letter-spacing:-.03em;line-height:1.1;margin:2px 0 8px}
+.qcard .r{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:9px;font-size:13.5px;font-weight:700}
+.qcard .r span{color:var(--muted);font-weight:600}
+.qcard .r b{background:var(--cta);color:var(--cta-ink);border-radius:999px;padding:6px 12px;font-size:13.5px}
+.badge{position:absolute;left:40%;top:-4px;display:flex;align-items:center;gap:8px;background:rgba(255,253,247,.97);color:var(--ink);border-radius:999px;padding:8px 13px;font-size:13.5px;font-weight:800;box-shadow:0 18px 40px -18px rgba(0,0,0,.7);--r:-2deg;white-space:nowrap}
+.badge .stars{color:#e0a020}
+@media(min-width:960px){.badge{left:30%;top:2%}.qcard{left:-6%;bottom:4%}}
+@media(max-width:959px){.stage .c1{width:50%;top:12%}.stage .c2{width:42%;top:4%}.stage .c3{width:36%;bottom:2%}.badge{left:auto;right:0;top:auto;bottom:-14px}}
+.cue{display:none}
+@media(min-width:960px){.motion .cue{display:flex;flex-direction:column;align-items:center;gap:8px;position:absolute;left:0;right:0;bottom:22px;text-decoration:none;color:#c9d6c4;font-size:13.5px;font-weight:700;opacity:0;animation:fade 800ms var(--ease-out) calc(var(--intro) + 1.4s) forwards}}
+.cue i{position:relative;width:2px;height:30px;border-radius:2px;background:rgba(246,244,236,.18);overflow:hidden}
+.cue i::after{content:"";position:absolute;left:0;right:0;top:0;height:12px;border-radius:2px;background:var(--cta);animation:cueRun 2.2s var(--ease-in-out) calc(var(--intro) + 2s) infinite}
+@keyframes cueRun{0%{transform:translateY(-14px)}70%,100%{transform:translateY(32px)}}
 
-/* ---------- proof strip ---------- */
-.proof{background:var(--deep);color:var(--paper);border-top:1px solid rgba(255,255,255,.08)}
-.proof .wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
-.proof div{padding:22px 16px 22px 0;border-bottom:1px solid rgba(255,255,255,.08)}
-.proof div:nth-child(odd){border-right:1px solid rgba(255,255,255,.08)}
-.proof div:nth-child(even){padding-left:18px}
-.proof b{display:block;font-family:var(--d);font-weight:800;font-size:clamp(22px,4vw,28px);letter-spacing:-.02em;line-height:1.1}
-.proof span{display:block;color:#a9baa4;font-size:14.5px;margin-top:4px}
-@media(min-width:860px){.proof .wrap{grid-template-columns:repeat(4,1fr)}.proof div{border-bottom:0;border-right:1px solid rgba(255,255,255,.08)!important;padding:30px 22px!important}.proof div:first-child{padding-left:0!important}.proof div:last-child{border-right:0!important}}
+/* ---------- numbers strip: count up, stripes slide with the scroll ---------- */
+.nums{background:var(--deep);color:var(--paper);position:relative;overflow:hidden;padding:8px 0 60px}
+.nums .fld{position:absolute;inset:-20% -40%;background:repeating-linear-gradient(100deg,rgba(156,204,122,.05) 0 70px,transparent 70px 140px);pointer-events:none;will-change:transform}
+.ngrid{display:grid;grid-template-columns:1fr 1fr;position:relative;border-top:1px solid rgba(255,255,255,.12)}
+.ngrid div{padding:24px 14px 20px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.ngrid div:nth-child(odd){border-right:1px solid rgba(255,255,255,.12)}
+.ngrid div:nth-child(even){padding-left:18px}
+.ngrid b{display:block;font-family:var(--d);font-weight:800;font-size:clamp(44px,11vw,76px);line-height:1;letter-spacing:-.04em}
+.ngrid b em{font-style:normal;color:var(--cta)}
+.ngrid div>span{display:block;font-size:14.5px;color:#a9baa4;margin-top:6px}
+@media(min-width:860px){.ngrid{grid-template-columns:repeat(4,1fr)}.ngrid div{border-bottom:0;border-right:1px solid rgba(255,255,255,.12)!important;padding:30px 22px 26px!important}.ngrid div:first-child{padding-left:0!important}.ngrid div:last-child{border-right:0!important}}
+.cu{font-variant-numeric:tabular-nums}
 
 /* ---------- reveals ---------- */
 .js .reveal{opacity:0;transform:translateY(14px);transition:opacity var(--slow) var(--ease-out),transform var(--slow) var(--ease-out)}
@@ -145,7 +191,7 @@ header.top{position:sticky;top:0;z-index:30;background:var(--deep);color:var(--p
 @media(max-width:959px){.island,.sb,.home{display:none}}
 
 /* quote tool */
-.qt{background:var(--card);color:var(--ink);border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);scroll-margin-top:84px}
+.qt{background:var(--card);color:var(--ink);border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);scroll-margin-top:112px}
 .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);font-size:13px;font-weight:800;color:var(--muted)}
 .dots{display:flex;gap:5px}
 .dots i{width:24px;height:5px;border-radius:3px;background:var(--line);transition:background-color 400ms var(--ease-out)}
@@ -176,6 +222,9 @@ header.top{position:sticky;top:0;z-index:30;background:var(--deep);color:var(--p
 .stepper output{min-width:36px;text-align:center;font-weight:800;font-size:20px}
 .price{background:var(--deep);color:var(--paper);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden}
 .price::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.03) 0 26px,transparent 26px 52px);pointer-events:none}
+.price::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(255,226,190,.16) 48%,rgba(255,255,255,.24) 50%,rgba(255,226,190,.16) 52%,transparent 70%);transform:translateX(-120%)}
+.price.shine::before{animation:shine 1.3s var(--ease-in-out) .35s}
+@keyframes shine{to{transform:translateX(120%)}}
 .price .k{font-size:13.5px;font-weight:700;color:var(--leaf)}
 .amt{font-family:var(--d);font-size:clamp(40px,10vw,50px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:2px 0 4px;display:inline-block;transform-origin:50% 0}
 .amt.swing{animation:swing 700ms cubic-bezier(.3,1.6,.5,1)}
@@ -242,6 +291,10 @@ header.top{position:sticky;top:0;z-index:30;background:var(--deep);color:var(--p
 .inbox-l{display:block;margin:0 0 10px;font-weight:800;color:#a3460f}
 .pvtag{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:#f3d9b4;color:#5a2c05;margin-bottom:10px}
 
+/* inbox shortcut inside the quote section */
+.inbox-cta{display:inline-flex;align-items:center;gap:8px;margin-top:22px;color:var(--paper);font-weight:800;text-decoration:none;border:1.5px solid rgba(246,244,236,.3);border-radius:999px;padding:11px 16px;transition:transform var(--fast) var(--ease-out),border-color var(--base) var(--ease-out)}
+.inbox-cta:active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.inbox-cta:hover{border-color:var(--paper)}}
 /* owner notification */
 .qn{position:absolute;z-index:40;left:50%;top:-6px;width:min(360px,calc(100vw - 24px));transform:translate(-50%,-140%);opacity:0;pointer-events:none;transition:transform 550ms cubic-bezier(.2,.9,.3,1.2),opacity 300ms var(--ease-out)}
 .qn.on{transform:translate(-50%,0);opacity:1}
@@ -259,7 +312,7 @@ body>.qn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px))}
 .work{display:grid;grid-template-columns:1fr;gap:14px}
 @media(min-width:860px){.work{grid-template-columns:1.2fr 1fr 1fr;align-items:end}}
 .work figure{margin:0}
-.work .ph{border-radius:var(--r2);overflow:hidden;position:relative;aspect-ratio:4/3}
+.work .ph{will-change:transform;border-radius:var(--r2);overflow:hidden;position:relative;aspect-ratio:4/3}
 .work .ph::after{content:"";position:absolute;inset:0;background:rgba(47,107,58,.1);mix-blend-mode:multiply}
 .work img{width:100%;height:100%;object-fit:cover}
 @media(hover:hover) and (pointer:fine){.work img{transition:transform 600ms var(--ease-out)}.work figure:hover img{transform:scale(1.03)}}
@@ -305,8 +358,11 @@ footer b{color:var(--paper)}
 </style>
 </head>
 <body>
-<div class="pv">Preview site built for Hooks Lawn And More by PriceWink. Prices are samples.</div>
-<header class="top">
+<div class="opener" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><i style="--k:5"></i><i style="--k:6"></i>
+  <div class="mark"><svg width="64" height="64" viewBox="0 0 40 40"><rect width="40" height="40" rx="11" fill="#10251a"/><path d="M9 31c3-6 4-12 3-19M16 31c1-5 1-10-1-15M23 31c0-5 1-9 4-13M30 31c-1-4 0-8 3-11" fill="none" stroke="#9ccc7a" stroke-width="2.4" stroke-linecap="round"/><path d="M6 31.5h28" stroke="#f6f4ec" stroke-width="2.4" stroke-linecap="round"/></svg><b>Hooks Lawn And More</b></div>
+</div>
+<header class="top" id="hdr">
+  <div class="pv"><span>Preview built for Hooks by PriceWink<span class="pv-l">. Prices are samples</span>.</span><a class="ib" href="../inbox/?c=hooks&amp;demo" target="_blank" rel="noopener">See your inbox <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="Hooks Lawn And More, home">
       <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#2f6b3a"/><path d="M9 31c3-6 4-12 3-19M16 31c1-5 1-10-1-15M23 31c0-5 1-9 4-13M30 31c-1-4 0-8 3-11" fill="none" stroke="#9ccc7a" stroke-width="2.4" stroke-linecap="round"/><path d="M6 31.5h28" stroke="#f6f4ec" stroke-width="2.4" stroke-linecap="round"/></svg>
@@ -318,47 +374,53 @@ footer b{color:var(--paper)}
 
 <main id="top">
 <section class="hero" aria-label="Intro">
-  <div class="stripes" aria-hidden="true"></div>
-  <div class="wrap">
+  <div class="scene" id="scene" aria-hidden="true"><svg class="ridge far" data-depth="0.42" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#1e3e29" d="M0,600L0,267L16,268L32,274L48,276L64,285L80,290L96,292L112,302L128,305L144,311L160,314L176,319L192,323L208,325L224,331L240,329L256,335L272,331L288,333L304,331L320,332L336,329L352,326L368,329L384,323L400,321L416,317L432,315L448,313L464,311L480,313L496,311L512,314L528,312L544,314L560,316L576,321L592,327L608,328L624,335L640,337L656,344L672,350L688,355L704,362L720,366L736,375L752,375L768,381L784,383L800,385L816,388L832,387L848,392L864,390L880,389L896,383L912,381L928,377L944,371L960,369L976,357L992,356L1008,346L1024,341L1040,330L1056,321L1072,319L1088,308L1104,308L1120,298L1136,295L1152,287L1168,283L1184,285L1200,279L1216,284L1232,277L1248,282L1264,279L1280,281L1296,285L1312,285L1328,294L1344,295L1360,300L1376,302L1392,306L1408,308L1424,309L1440,315L1456,315L1472,318L1488,316L1504,316L1520,314L1536,315L1552,314L1568,310L1584,311L1600,304L1600,600Z"/></svg><svg class="ridge mid" data-depth="0.28" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#234a2f" d="M0,600L0,394L16,401L32,399L48,402L64,400L80,400L96,401L112,392L128,398L144,392L160,392L176,390L192,383L208,387L224,388L240,393L256,385L272,395L288,395L304,403L320,410L336,408L352,423L368,418L384,428L400,426L416,427L432,428L448,422L464,428L480,418L496,423L512,409L528,408L544,401L560,389L576,385L592,374L608,380L624,366L640,366L656,357L672,356L688,351L704,349L720,355L736,351L752,355L768,353L784,365L800,367L816,364L832,377L848,370L864,385L880,383L896,383L912,382L928,385L944,390L960,381L976,384L992,374L1008,380L1024,374L1040,373L1056,374L1072,363L1088,377L1104,365L1120,373L1136,372L1152,373L1168,383L1184,381L1200,398L1216,394L1232,409L1248,408L1264,412L1280,418L1296,424L1312,429L1328,431L1344,440L1360,428L1376,432L1392,432L1408,422L1424,426L1440,416L1456,418L1472,404L1488,403L1504,394L1520,389L1536,383L1552,377L1568,379L1584,370L1600,374L1600,600Z"/></svg><div class="lawn" data-depth="0.12"><svg class="lawn-svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><path fill="#32703a" d="M420,0L468,0L-688,420L-900,420Z"/><path fill="#3a7b3e" d="M468,0L515,0L-475,420L-688,420Z"/><path fill="#32703a" d="M515,0L562,0L-262,420L-475,420Z"/><path fill="#3a7b3e" d="M562,0L610,0L-50,420L-262,420Z"/><path fill="#32703a" d="M610,0L658,0L162,420L-50,420Z"/><path fill="#3a7b3e" d="M658,0L705,0L375,420L162,420Z"/><path fill="#32703a" d="M705,0L752,0L588,420L375,420Z"/><path fill="#3a7b3e" d="M752,0L800,0L800,420L588,420Z"/><path fill="#32703a" d="M800,0L848,0L1012,420L800,420Z"/><path fill="#3a7b3e" d="M848,0L895,0L1225,420L1012,420Z"/><path fill="#32703a" d="M895,0L942,0L1438,420L1225,420Z"/><path fill="#3a7b3e" d="M942,0L990,0L1650,420L1438,420Z"/><path fill="#32703a" d="M990,0L1038,0L1862,420L1650,420Z"/><path fill="#3a7b3e" d="M1038,0L1085,0L2075,420L1862,420Z"/><path fill="#32703a" d="M1085,0L1132,0L2288,420L2075,420Z"/><path fill="#3a7b3e" d="M1132,0L1180,0L2500,420L2288,420Z"/></svg></div></div>
+  <div class="wrap" id="hwrap">
     <div>
-      <h1><span class="ln" style="--d:200ms">Clinton’s lawn,</span> <span class="ln" style="--d:300ms">yard and <em>more</em> crew.</span></h1>
-      <p class="lede fade" style="--d:520ms">Mowing, leaf cleanup, mulch beds, bush trimming and small dirt work. Get your price in about a minute and pick a time.</p>
-      <p class="qs-l fade" style="--d:600ms">Get a price for</p>
-      <div class="qs fade" style="--d:640ms" id="quick">
+      <p class="live fade" style="--d:0ms"><i></i>Booking leaf cleanups this week</p>
+      <h1><span class="ln"><span style="--d:120ms">Clinton’s</span></span><span class="ln"><span style="--d:220ms">yard <em>crew.</em></span></span></h1>
+      <p class="lede fade" style="--d:480ms">Mowing, leaf cleanup, mulch beds, bushes and dirt work. See your price in a minute and pick a time.</p>
+      <p class="qs-l fade" style="--d:560ms">Get a price for</p>
+      <div class="qs fade" style="--d:600ms" id="quick">
         <a class="chip" href="#quote" data-svc="leaves">Leaf cleanup</a>
         <a class="chip" href="#quote" data-svc="mow">Mowing</a>
         <a class="chip" href="#quote" data-svc="mulch">Mulch beds</a>
         <a class="chip" href="#quote" data-svc="bush">Bush trimming</a>
       </div>
-      <div class="rate fade" style="--d:760ms"><b class="tn" id="rateN">4.5</b><span><span class="stars" aria-label="4.5 out of 5 stars"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="16" height="16" viewBox="0 0 24 24"><defs><linearGradient id="hs"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="rgba(255,255,255,.25)"/></linearGradient></defs><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="url(#hs)"/></svg></span>24 Google reviews</span></div>
     </div>
-    <div class="pics">
-      <figure class="p1"><img src="img/dig.jpg" alt="Hooks Lawn And More's orange mini excavator" width="728" height="919" fetchpriority="high"></figure>
-      <figure class="p2"><img src="img/mulch.jpg" alt="Fresh red mulch bed around a tree, edged with stone" width="426" height="426"></figure>
-      <figure class="p3"><img src="img/mower.jpg" alt="Remote-control slope mower on a lawn" width="426" height="426"></figure>
+    <div class="stage" id="stage">
+      <figure class="c c1"><div class="p" style="--d:300ms;--r:-4deg;width:100%;height:100%"><img src="img/dig.jpg" alt="Hooks Lawn And More's orange mini excavator" width="728" height="919" fetchpriority="high"></div></figure>
+      <figure class="c c2"><div class="p" style="--d:420ms;--r:5deg;width:100%;height:100%"><img src="img/mulch.jpg" alt="Fresh red mulch bed edged with stone" width="426" height="426"></div></figure>
+      <figure class="c c3"><div class="p" style="--d:520ms;--r:-3deg;width:100%;height:100%"><img src="img/mower.jpg" alt="Remote-control slope mower on a lawn" width="426" height="426"></div></figure>
+      <a class="qcard p" href="#quote" data-svc="leaves" id="qcard" style="--d:760ms"><span class="k"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="currentColor"/></svg>Instant price</span><span class="w">Leaf cleanup · Medium yard</span><div class="a tn">$<span id="hLo">200</span> – $<span id="hHi">350</span></div><span class="r"><span>Next open: Wed 9:00 AM</span><b>Book</b></span></a>
+      <div class="badge p" style="--d:900ms"><span class="stars" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg></span><span>4.5 · 24 Google reviews</span></div>
+    </div>
+  </div>
+  <a class="cue" id="cue" href="#services" aria-label="Scroll to services"><i></i></a>
+</section>
+
+<section class="nums" id="nums">
+  <div class="fld" id="fld" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="ngrid" data-group>
+      <div class="reveal"><b><span class="cu" data-to="4.5" data-dec="1">4.5</span><em>★</em></b><span>Google rating</span></div>
+      <div class="reveal"><b><span class="cu" data-to="24">24</span></b><span>reviews on Google</span></div>
+      <div class="reveal"><b><span class="cu" data-to="7">7</span> PM</b><span>open till, every day out</span></div>
+      <div class="reveal"><b><span class="cu" data-to="5">5</span></b><span>services, one crew</span></div>
     </div>
   </div>
 </section>
-
-<div class="proof">
-  <div class="wrap">
-    <div><b class="tn">Open till 7</b><span>Every day the crew is out</span></div>
-    <div><b>Short notice</b><span>Reviewers say they fit jobs in fast</span></div>
-    <div><b>Steep banks</b><span>Remote mower handles the hills</span></div>
-    <div><b>Fair quotes</b><span>The top thing reviews mention</span></div>
-  </div>
-</div>
 
 <section class="s" id="services">
   <div class="wrap">
     <h2 class="reveal">What we take care of</h2>
     <p class="intro reveal">Tap a service to see your price.</p>
     <div class="svc" data-group>
-      <a class="row reveal" href="#quote" data-svc="leaves"><h3>Leaf &amp; yard cleanup <span class="tag">This season</span></h3><p>Leaves blown, bagged or hauled. Beds and the lawn left clean before winter.</p><span class="go">From $125 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="mow"><h3>Mowing</h3><p>Weekly or every two weeks, trimmed and blown off. Steep banks too.</p><span class="go">From $35 a visit <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="mulch"><h3>Mulch &amp; bed cleanup</h3><p>Weeds out, edges cut, fresh mulch down. Red, brown or black.</p><span class="go">From $180 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="bush"><h3>Bush &amp; hedge trimming</h3><p>Shaped and cleaned up, with clippings hauled off if you want.</p><span class="go">From $90 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-      <a class="row reveal" href="#quote" data-svc="dirt"><h3>The “and more”</h3><p>Our mini excavator handles drainage, grading, and rocks or roots in the way.</p><span class="go">From $300 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="leaves"><h3>Leaf &amp; yard cleanup <span class="tag">This season</span></h3><p>Leaves blown, bagged or hauled. Beds and the lawn left clean before winter.</p><span class="go"><span>From $<span class="cu" data-to="125">125</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="mow"><h3>Mowing</h3><p>Weekly or every two weeks, trimmed and blown off. Steep banks too.</p><span class="go"><span>From $<span class="cu" data-to="35">35</span> a visit</span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="mulch"><h3>Mulch &amp; bed cleanup</h3><p>Weeds out, edges cut, fresh mulch down. Red, brown or black.</p><span class="go"><span>From $<span class="cu" data-to="180">180</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="bush"><h3>Bush &amp; hedge trimming</h3><p>Shaped and cleaned up, with clippings hauled off if you want.</p><span class="go"><span>From $<span class="cu" data-to="90">90</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="dirt"><h3>The “and more”</h3><p>Our mini excavator handles drainage, grading, and rocks or roots in the way.</p><span class="go"><span>From $<span class="cu" data-to="300">300</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
     </div>
   </div>
 </section>
@@ -373,6 +435,7 @@ footer b{color:var(--paper)}
         <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Pick a real open time on the calendar</li>
         <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Hooks gets a text the second you book</li>
       </ul>
+      <a class="inbox-cta reveal" href="../inbox/?c=hooks&amp;demo" target="_blank" rel="noopener">See the owner inbox Hooks gets <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
     <div class="phone" id="qphone">
       <div class="tilt" id="qtilt">
@@ -456,7 +519,7 @@ footer b{color:var(--paper)}
   <div class="wrap">
     <h2 class="reveal">Recent work</h2>
     <p class="intro reveal">Real photos from Hooks Lawn And More.</p>
-    <div class="work" data-group>
+    <div class="work gal" data-group>
       <figure class="reveal"><div class="ph"><img src="img/dig.jpg" alt="Orange mini excavator on a gravel drive" loading="lazy" width="728" height="919"></div><figcaption>Dirt work, the “and more”<small>Mini excavator for drainage and grading</small></figcaption></figure>
       <figure class="reveal"><div class="ph"><img src="img/mulch.jpg" alt="Red mulch bed edged with stone around a tree" loading="lazy" width="426" height="426"></div><figcaption>Bed refresh<small>Fresh red mulch with a stone edge</small></figcaption></figure>
       <figure class="reveal"><div class="ph"><img src="img/mower.jpg" alt="Remote-control slope mower" loading="lazy" width="426" height="426"></div><figcaption>Steep spots<small>Remote mower for banks and hills</small></figcaption></figure>
@@ -604,7 +667,7 @@ footer b{color:var(--paper)}
   function go(n){ const qt=$('#qt'); qt.classList.toggle('back',n<step); step=n;
     $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
     if(n===2) buildSize();
-    if(n===3){ buildExtras(); showPrice(); const a=$('#amt'); a.classList.remove('swing'); void a.offsetWidth; if(!RM) a.classList.add('swing'); if(!SL) loadSlots(); else renderSlots(); }
+    if(n===3){ buildExtras(); showPrice(); const pb=$('#pbox'); pb.classList.remove('shine'); void pb.offsetWidth; pb.classList.add('shine'); const a=$('#amt'); a.classList.remove('swing'); void a.offsetWidth; if(!RM) a.classList.add('swing'); if(!SL) loadSlots(); else renderSlots(); }
     if(n===4) recap();
     $('#qlab').textContent=n===5?'All set':'Step '+n+' of 4'; $$('#dots i').forEach((d,i)=>d.classList.toggle('on',i<n)); $('#dots').hidden=n===5;
     $('#nav').style.display=(n===1||n===5)?'none':'flex'; $('#prev').hidden=n===1; nav();
@@ -645,7 +708,7 @@ footer b{color:var(--paper)}
 
   /* ---------- page wiring ---------- */
   function startWith(svc){ if(step===5){ S.slot=null; S.asap=false; S.when=null; } if(step!==1) go(1); pickSvc(svc); }
-  $$('#quick a, .row[data-svc]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); startWith(a.dataset.svc); $('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); }));
+  $$('#quick a, .row[data-svc], #qcard').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); startWith(a.dataset.svc); $('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); }));
   go(1);
 
   // notification: on phones it drops from the top of the screen, so it lives on <body>
@@ -668,6 +731,42 @@ footer b{color:var(--paper)}
     new IntersectionObserver(([e])=>{ heroOut=!e.isIntersecting; upd(); }).observe(hero);
     new IntersectionObserver(([e])=>{ inQuote=e.isIntersecting; upd(); },{threshold:.15}).observe(qs);
   } else $$('.reveal').forEach(el=>el.classList.add('in'));
+
+  /* count-ups: run once when their group reveals */
+  function countUp(el){ const to=+el.dataset.to, dec=+(el.dataset.dec||0), out=v=>dec?v.toFixed(dec):fmt(v); if(RM){ el.textContent=out(to); return; } const t0=performance.now();
+    (function f(t){ const p=Math.min(1,(t-t0)/1100), e=1-Math.pow(1-p,3); el.textContent=out(to*e); if(p<1) requestAnimationFrame(f); })(t0); }
+  if('IntersectionObserver' in window){ const cio=new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; e.target.querySelectorAll('.cu').forEach(countUp); cio.unobserve(e.target); }),{rootMargin:'0px 0px -10% 0px'});
+    $$('.ngrid, .svc').forEach(el=>cio.observe(el)); }
+  /* hero price card counts up once the intro is done */
+  { const intro=document.documentElement.matches('.motion:not(.seen)')?1500:0; setTimeout(()=>{ ['#hLo','#hHi'].forEach(sel=>{ const el=$(sel), to=+el.textContent; el.textContent='0'; animNum(el,to); }); }, intro+900); }
+
+  /* header goes solid after the hero starts scrolling */
+  const hdr=$('#hdr'); const solid=()=>hdr.classList.toggle('solid',scrollY>40); solid();
+
+  /* scroll motion: ridges and lawn at different depths, hero copy drifts and fades, photo cards separate,
+     the numbers stripes slide, gallery photos settle in. Measured once, batched in one rAF. */
+  if(!RM){
+    const cl=v=>v<0?0:v>1?1:v, eo=t=>1-Math.pow(1-t,3), hero=$('.hero'), hw=$('#hwrap'), cue=$('#cue'), layers=$$('#scene [data-depth]'),
+      cards=[['.stage .c1',.10],['.stage .c2',.18],['.stage .c3',.26]].map(([q,k])=>[$(q),k]), fld=$('#fld'), figs=$$('.gal .ph');
+    let VH=innerHeight, HH=hero.offsetHeight, T={};
+    const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
+    let px=0, py=0;
+    function measure(){ VH=innerHeight; HH=hero.offsetHeight; T.nums=top($('#nums')); T.figs=figs.map(top); update(); }
+    function update(){ const y=scrollY;
+      if(y<HH*1.3){ const p=cl(y/HH); hw.firstElementChild.style.transform='translate3d(0,'+(y*.28).toFixed(1)+'px,0)'; hw.firstElementChild.style.opacity=Math.max(0,1-p*1.7).toFixed(3);
+        if(cue) cue.style.opacity=Math.max(0,1-p*4).toFixed(3);
+        layers.forEach(l=>l.style.transform='translate3d(0,'+(y*(+l.dataset.depth)).toFixed(1)+'px,0)');
+        cards.forEach(([el,k])=>{ if(el) el.style.transform='translate3d('+(px*k*60).toFixed(1)+'px,'+(-y*k+py*k*40).toFixed(1)+'px,0)'; }); }
+      const d=y+VH-T.nums; if(fld&&d>0&&d<VH*2.4) fld.style.transform='translate3d('+(-d*.12).toFixed(1)+'px,0,0)';
+      figs.forEach((f,i)=>{ const p=eo(cl((y+VH-T.figs[i])/(VH*.6))); f.style.transform='translate3d(0,'+((1-p)*40).toFixed(1)+'px,0) scale('+(.9+.1*p).toFixed(4)+')'; f.firstElementChild.style.transform='scale('+(1.22-.22*p).toFixed(4)+')'; });
+      solid(); }
+    let tick=false; const req=()=>{ if(tick) return; tick=true; requestAnimationFrame(()=>{ update(); tick=false; }); };
+    addEventListener('scroll',req,{passive:true}); addEventListener('resize',()=>requestAnimationFrame(measure),{passive:true});
+    addEventListener('load',measure); if(document.fonts) document.fonts.ready.then(measure);
+    /* desktop: the photo stack shifts a little toward the pointer */
+    if(matchMedia('(hover:hover) and (pointer:fine)').matches) hero.addEventListener('pointermove',e=>{ if(innerWidth<960) return; px=e.clientX/innerWidth-.5; py=e.clientY/innerHeight-.5; req(); });
+    measure();
+  } else addEventListener('scroll',solid,{passive:true});
   $$('#barQ,#areaQ').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); $('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); }));
 })();
 </script>
