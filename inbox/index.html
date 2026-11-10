@@ -180,7 +180,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   <div class="tabs" role="tablist" id="tabs"><i aria-hidden="true"></i><button aria-pressed="true" data-t="up">Upcoming<em id="cUp"></em></button><button aria-pressed="false" data-t="new">New<em id="cNew"></em></button><button aria-pressed="false" data-t="past">Past</button></div>
   <p class="demo" id="demo" hidden>Sample bookings for the demo. Anything you book on the demo site shows up here, marked “You”.</p>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
-  <p class="ver">PriceWink inbox · build 24</p>
+  <p class="ver">PriceWink inbox · build 25</p>
 </main>
 <button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Block time</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -330,7 +330,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
         (b.details?'<p class="det">'+esc(b.details)+'</p>':'')+
         (b.notes?'<p class="note"><b>Note from customer</b>'+esc(b.notes)+'</p>':'')+
         '<p class="meta">'+(b.address?'<a href="'+maps+'" target="_blank" rel="noopener">'+IC.pin+esc(b.address)+'</a>':'')+(b.phone?'<a href="tel:'+esc(tel)+'">'+IC.phone+esc(b.phone)+'</a>':'')+'<span>'+IC.clock+'Booked '+esc(ago(b.created))+'</span></p>'+
-        '<div class="acts"><a class="call" href="tel:'+esc(tel)+'">'+IC.call+'Call</a><a href="sms:'+esc(tel)+'">'+IC.text+'Text</a><a href="'+maps+'" target="_blank" rel="noopener">'+IC.nav+'Directions</a></div>'+
+        '<div class="acts"><a class="call" href="tel:'+esc(tel)+'">'+IC.call+'Call</a><a class="txt" href="sms:'+esc(tel)+'">'+IC.text+'Text</a><a href="'+maps+'" target="_blank" rel="noopener">'+IC.nav+'Directions</a></div>'+
         '<div class="seg" role="group" aria-label="Status" style="--i:'+si+'"><i aria-hidden="true"></i>'+STS.map(s=>'<button type="button" data-s="'+s+'" aria-pressed="'+(b.status===s)+'">'+s+'</button>').join('')+'</div>'+
       '</div></div></div></article>'; }
   function blockRow(x,k){ const s0=new Date(x.start), e0=new Date(x.end), allDay=e0-s0>=20*3600e3, t=tmParts(s0), tm=d=>d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
@@ -359,6 +359,21 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     $('#list').innerHTML=html;
     if(firstPaint){ firstPaint=false; setTimeout(()=>$('#list').classList.add('settled'),900); }
   }
+  /* Text button: opens Messages with a draft that fits where this booking stands. The owner can edit before sending. */
+  function draftFor(b){ const biz=$('#biz').textContent.trim(), first=String(b.name||'').trim().split(/\s+/)[0]||'there', svc=String(b.service||'your job').toLowerCase(), hi='Hi '+first+', this is '+biz+'. ';
+    const d=b.slotStart?new Date(b.slotStart):null, now=new Date(), street=String(b.address||'').split(',')[0].trim();
+    const tm=d?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'', diff=d?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5):0;
+    const when=d?(diff===0?'today':diff===1?'tomorrow':d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}))+' at '+tm:'', past=d&&d.getTime()<now.getTime()-3600e3;
+    if(b.status==='Canceled') return hi+'Sorry we couldn’t make '+(d?(diff===0?'today':d.toLocaleDateString('en-US',{weekday:'long'})):'that time')+' work for your '+svc+' estimate. Want to pick a new time? Just reply with a day that works for you.';
+    if(b.status==='Done') return hi+'Thanks for having us out for your '+svc+'. If anything doesn’t look right, let us know and we’ll take care of it. And if you’re happy with the work, a quick Google review would mean a lot to us.';
+    if(b.urgent) return hi+'We got your emergency request for '+svc+(street?' at '+street:'')+'. We’re working on getting someone out to you as soon as we can. Is this the best number to call?';
+    if(!d) return hi+'Thanks for your '+svc+' request. What day and time works best for a free estimate?';
+    if(past) return hi+'Thanks for having us out to look at your '+svc+'. Any questions about the estimate? Happy to get you on the schedule whenever you’re ready.';
+    if(b.status==='New') return hi+'Thanks for booking your free '+svc+' estimate. You’re confirmed for '+when+(street?' at '+street:'')+'. Reply here if anything changes.';
+    if(diff<=1) return hi+'Just a reminder that we’ll be out '+when+' for your '+svc+' estimate'+(street?' at '+street:'')+'. See you then!';
+    return hi+'You’re all set for your '+svc+' estimate '+when+(street?' at '+street:'')+'. Reply here if you need to change anything.'; }
+  $('#list').addEventListener('click',e=>{ const a=e.target.closest('a.txt'); if(!a) return; const b=B.find(x=>x.id===a.closest('.bk').dataset.id); if(!b) return;
+    const tel=String(b.phone||'').replace(/[^\d+]/g,''); a.href='sms:'+tel+'?&body='+encodeURIComponent(draftFor(b)); toast('Draft ready in Messages. Edit it before you send.'); },true);
   function toggle(card){ const id=card.dataset.id, opening=!card.classList.contains('open');
     $$('#list .bk.open').forEach(c=>{ c.classList.remove('open'); c.querySelector('.sum').setAttribute('aria-expanded','false'); });
     openId=opening?id:null;
