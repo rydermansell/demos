@@ -238,7 +238,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   let B=[], BL=[], SRC=[], FEED='', tab='up';
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
-  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'}};
+  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'}};
   const SAMPLE_SETS={
     tree:[
       {urgent:1, mins:-14, status:'New', service:'Storm cleanup', details:'One downed tree: On a structure', lo:600, hi:1950, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Maryville', notes:'Big oak limb on the garage roof. Nobody hurt.'},
@@ -248,6 +248,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       {day:5, hour:10, status:'New', service:'Land clearing', details:'Clearing, 1 acre (brush and some trees): Haul it off', lo:2000, hi:5000, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Maryville', notes:'Clearing for a shop build.'},
       {day:-2, hour:10, status:'Done', service:'Tree removal', details:'Removal, 1 tree (50–85 ft)', lo:600, hi:1850, name:'Carol Jennings', addr:'301 Willow Bend Dr, Maryville'},
       {day:-1, hour:15, status:'Canceled', service:'Stump grinding', details:'1 stump (under 12 in)', lo:100, hi:175, name:'Kevin Ortiz', addr:'64 Birch Ct, Friendsville'}],
+    lawn:[
+      {urgent:1, mins:-22, status:'New', service:'Leaf cleanup', details:'Leaf cleanup, large: Haul leaves away', lo:400, hi:670, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Clinton', notes:'Hosting Thanksgiving, need it done this week if you can.'},
+      {day:1, hour:9, status:'New', service:'Leaf cleanup', details:'Leaf cleanup, medium: Clean out beds too', lo:260, hi:470, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Clinton', notes:'Gate code 4512. Dog stays inside.'},
+      {day:2, hour:11, status:'Confirmed', service:'Mulch & beds', details:'Mulch, 3 to 5 beds: Cut fresh edges, Pull weeds', lo:420, hi:760, name:'Brian Keller', addr:'2210 Laurel Bluff Dr, Oak Ridge', notes:'Red mulch to match the front.'},
+      {day:3, hour:14, status:'Confirmed', service:'Bush trimming', details:'Trimming, 10 bushes: Haul clippings', lo:160, hi:280, name:'Linda Sharpe', addr:'88 Cedar Knoll Rd, Norris'},
+      {day:5, hour:10, status:'New', service:'Dirt work', details:'Drainage or a ditch', lo:400, hi:900, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Clinton', notes:'Water pools by the driveway every time it rains.'},
+      {day:-2, hour:10, status:'Done', service:'Mowing', details:'Mowing, large (per visit): Steep areas', lo:80, hi:125, name:'Carol Jennings', addr:'301 Willow Bend Dr, Clinton'},
+      {day:-1, hour:15, status:'Canceled', service:'Mowing', details:'Mowing, small: Just once', lo:55, hi:75, name:'Kevin Ortiz', addr:'64 Birch Ct, Rocky Top'}],
     generic:[
       {urgent:1, mins:-14, status:'New', service:'Emergency repair', details:'Needs help today', lo:150, hi:400, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd'},
       {day:1, hour:9, status:'New', service:'Estimate visit', details:'Standard job', lo:250, hi:600, name:'Maria Lopez', addr:'507 Ridgecrest Ln', notes:'Gate code 4512.'},
