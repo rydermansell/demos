@@ -1,0 +1,757 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Christmas Light Installation in Knoxville | Knox Fantasy Christmas Lights</title>
+<meta name="description" content="Rooflines, trees, shrubs and businesses lit with commercial LEDs, with fixes, takedown and storage included. See your price and book an install in about a minute.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0e1424">
+<script>(function(d){d.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('rm');return}d.classList.add('motion');try{if(sessionStorage.getItem('kfIntro'))d.classList.add('seen');else sessionStorage.setItem('kfIntro','1')}catch(e){d.classList.add('seen')}})(document.documentElement)</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Knox Fantasy Christmas Lights. Reading this as: a Knoxville light installer's site for homeowners who want the house lit
+   without the ladder, feeling warm, tidy and a little magical, led by the roofline itself lighting up.
+   Palette from their own site: layered night navy and a warm bulb gold, muted, used only for actions and one word.
+   Pine green as the quiet support tone. Signature: bulbs. A strand lights up in the opener, then the rooflines in the hero. */
+:root{
+  --deep:#0e1424; --deep2:#151d33; --grass:#2c6650; --leaf:#e6d4a8;
+  --paper:#f3f4f7; --card:#fffdf9; --ink:#131826; --muted:#585f72; --line:#dcdfe6;
+  --cta:#e2ad55; --cta-h:#ebbd6c; --cta-ink:#1b1406; --mulch:#a9352a;
+  --d:'Barlow Condensed','Arial Narrow',system-ui,sans-serif; --b:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  --ease-out:cubic-bezier(0.23,1,0.32,1); --ease-in-out:cubic-bezier(0.77,0,0.175,1); --ease-drawer:cubic-bezier(0.32,0.72,0,1);
+  --fast:140ms; --base:220ms; --slow:650ms; --r1:8px; --r2:14px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden}@supports(overflow:clip){html,body{overflow-x:clip}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--b);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-underline-offset:3px}
+button{font:inherit;color:inherit}
+::selection{background:color-mix(in oklch,var(--cta) 38%,transparent);color:var(--ink)}
+input,textarea{caret-color:var(--cta);font-size:16px;accent-color:var(--grass)}
+:focus-visible{outline:2px solid var(--cta);outline-offset:3px;border-radius:6px}
+button,a,[role=button],.chip,.opt,.day,.time{touch-action:manipulation}
+button,[role=button],.btn,.chip,.opt,.day,.time{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.tn{font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--d);text-wrap:balance;margin:0}
+h2{font-size:clamp(42px,8.6vw,76px);line-height:.95;letter-spacing:-.005em;font-weight:800;text-transform:uppercase;margin-bottom:16px}
+.intro{color:var(--muted);max-width:52ch;margin:0 0 36px;font-size:18px}
+section.s{padding:clamp(64px,10vw,120px) 0}
+
+/* ---------- top ---------- */
+html{--intro:0s}
+html.motion:not(.seen){--intro:1.5s}
+header.top{position:fixed;inset:0 0 auto 0;z-index:30;color:var(--paper);transition:background-color 350ms var(--ease-out),box-shadow 350ms var(--ease-out)}
+header.top.solid{background:#0e1424;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+.pv{display:flex;justify-content:center;align-items:center;gap:6px 12px;flex-wrap:nowrap;white-space:nowrap;background:#ece6d6;color:#151d33;text-align:center;font-size:13px;font-weight:700;padding:6px 14px;line-height:1.3}
+.pv a.ib{display:inline-flex;align-items:center;gap:6px;background:#151d33;color:#f7efdc;text-decoration:none;padding:5px 11px;border-radius:999px;font-weight:800;transition:transform var(--fast) var(--ease-out)}
+.pv a.ib:active{transform:scale(.96)}
+.pv-l{display:inline}@media(max-width:520px){.pv-l{display:none}}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.brand svg{flex:none}
+.brand b{display:block;font-family:var(--d);font-weight:800;font-size:28px;letter-spacing:.04em;line-height:.85;text-transform:uppercase;white-space:nowrap}
+.brand small{display:block;font-size:10.5px;color:var(--leaf);font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin-top:4px;white-space:nowrap}
+.callbtn{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--cta);color:var(--cta-ink);text-decoration:none;font-weight:800;font-size:15px;padding:10px 16px;border-radius:999px;transition:transform var(--fast) var(--ease-out),background-color var(--base) var(--ease-out)}
+.callbtn:active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.callbtn:hover{background:var(--cta-h)}}
+.cl-s{display:none}@media(max-width:460px){.cl-l{display:none}.cl-s{display:inline}}
+
+/* ---------- opener: pickets go up one by one, the rails slide across, then it all drops away ---------- */
+.opener{display:none}
+.motion:not(.seen) .opener{display:block;position:fixed;inset:0;z-index:100;pointer-events:none;background:var(--deep);animation:openOut 650ms var(--ease-in-out) 1.35s forwards}
+@keyframes openOut{to{transform:translateY(-100%)}}
+.opener .strand{position:absolute;left:-2vw;right:-2vw;top:58vh;display:flex;justify-content:space-between;align-items:flex-start;padding:0 4vw}
+.opener i{position:relative;top:calc(var(--y) * 1px);width:13px;height:19px;border-radius:50% 50% 46% 46%/58% 58% 42% 42%;background:#3a3526;animation:lit 260ms var(--ease-out) forwards;animation-delay:calc(200ms + var(--k) * 48ms)}
+.opener i::before{content:"";position:absolute;left:3px;right:3px;top:-5px;height:6px;border-radius:2px;background:#3a4463}
+@keyframes lit{to{background:#ffd99a;box-shadow:0 0 16px 4px rgba(255,205,120,.55),0 0 46px 10px rgba(255,190,100,.18)}}
+.opener .mark{position:absolute;left:0;right:0;top:24vh;display:grid;justify-items:center;gap:12px;color:var(--paper);opacity:0;animation:fade 500ms var(--ease-out) 450ms forwards}
+.opener .mark b{font-family:var(--d);font-weight:800;font-size:clamp(30px,7vw,52px);letter-spacing:.06em;text-transform:uppercase;line-height:1}
+.opener .mark small{font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--leaf)}
+
+/* ---------- hero: sky, two ridges and a striped lawn, all at different depths ---------- */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;color:var(--paper);overflow:hidden;isolation:isolate;background:var(--deep)}
+@supports(min-height:100svh){.hero{min-height:100svh}}
+.scene{position:absolute;inset:0;z-index:-1;overflow:hidden;background:radial-gradient(55% 34% at 68% 78%,rgba(226,173,85,.24),transparent 70%),radial-gradient(30% 18% at 68% 76%,rgba(255,220,160,.20),transparent 70%),linear-gradient(180deg,#080c18 0%,#0e1428 45%,#1a2440 80%,#233056 100%)}
+.ridge{position:absolute;left:50%;width:max(112vw,1200px);margin-left:calc(max(112vw,1200px) / -2);height:auto;will-change:transform}
+.ridge.far{bottom:24%;opacity:.95}.ridge.trees{bottom:8%}
+.grass{position:absolute;left:50%;bottom:-2px;width:max(100vw,1300px);margin-left:calc(max(100vw,1300px) / -2);height:auto;will-change:transform}
+.lawn{position:absolute;left:0;right:0;bottom:0;height:23%;overflow:hidden;will-change:transform}
+.lawn-svg{position:absolute;left:50%;top:0;width:max(100vw,1300px);height:100%;margin-left:calc(max(100vw,1300px) / -2)}
+.lawn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,20,36,.95) 0%,rgba(18,26,51,0) 35%,rgba(12,17,34,0) 60%,rgba(12,17,34,.55) 100%)}
+.js .lawn-svg{clip-path:inset(0 100% 0 0);animation:mow 1300ms var(--ease-in-out) calc(var(--intro) + 50ms) forwards}
+@keyframes mow{to{clip-path:inset(0 0 0 0)}}
+.bulb{fill:#ffd99a}
+.bulbs{filter:drop-shadow(0 0 3px rgba(255,205,120,.95)) drop-shadow(0 0 10px rgba(255,180,90,.45))}
+.js .bulb{opacity:.12;animation:bulbOn 420ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + 250ms + var(--k) * 11ms)}
+@keyframes bulbOn{60%{opacity:1;fill:#fff3d6}to{opacity:1}}
+.scene::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,17,34,.55) 0%,transparent 40%);pointer-events:none}
+.hero .wrap{position:relative;width:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding-top:150px;padding-bottom:110px}
+@media(min-width:960px){.hero .wrap{padding-top:150px;padding-bottom:150px}}
+.live{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#e3e8f3;margin:0 0 20px}
+.live i{width:9px;height:9px;border-radius:50%;background:#f2c46b;box-shadow:0 0 0 0 rgba(242,196,107,.6);animation:ping 2s 3 calc(var(--intro) + 1.2s)}
+@keyframes ping{70%{box-shadow:0 0 0 10px rgba(242,196,107,0)}100%{box-shadow:0 0 0 0 rgba(242,196,107,0)}}
+.hero h1,h2,.step h3,.row h3,.brand b,.ngrid b,.big-r b,.opener .mark b{font-style:normal}
+@media(max-width:420px){.brand b{font-size:23px!important}.brand small{letter-spacing:.16em}}
+.hero h1{font-size:clamp(52px,min(15vw,15vh),150px);line-height:.86;letter-spacing:.005em;font-weight:800;text-transform:uppercase;margin:0 0 22px}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .ln>span{display:block}
+.js .hero h1 .ln>span{transform:translateY(105%);filter:blur(10px);animation:rise 1000ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d,100ms))}
+@keyframes rise{to{transform:none;filter:blur(0)}}
+.hero h1 .sg{color:#a3abc4}.hero h1 em{font-style:normal;color:var(--cta)}
+.lede{font-size:clamp(17px,2.2vw,20px);color:#d2d8e8;max-width:36ch;margin:0 0 24px}
+.js .hero .fade{opacity:0;transform:translateY(10px);animation:fade 700ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d,500ms))}
+@keyframes fade{to{opacity:1;transform:none}}
+.qs-l{margin:0 0 10px;font-size:14px;font-weight:700;color:#aeb7cf}
+@media(max-width:959px){.qs-l{display:none}}
+.qs{display:flex;flex-wrap:wrap;gap:8px;max-width:540px}
+.chip{display:inline-flex;align-items:center;min-height:48px;padding:0 18px;border-radius:999px;background:var(--cta);color:var(--cta-ink);text-decoration:none;font-weight:800;font-size:15.5px;border:0;cursor:pointer;box-shadow:0 8px 20px -12px rgba(226,173,85,.9);transition:transform var(--fast) var(--ease-out),background-color var(--base) var(--ease-out)}
+.chip:active{transform:scale(.96)}
+@media(hover:hover) and (pointer:fine){.chip:hover{background:var(--cta-h);transform:translateY(-1px)}}
+.stars{display:flex;gap:2px;color:#f5b83a}
+/* photo stage with floating price card + rating badge */
+.stage{position:relative;height:300px;max-width:520px;width:100%}
+@media(min-width:960px){.stage{height:560px}}
+.stage .c{position:absolute;margin:0;border-radius:var(--r2);overflow:hidden;background:var(--deep2);box-shadow:0 30px 60px -28px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.08);will-change:transform}
+.stage .c img{width:100%;height:100%;object-fit:cover}
+.stage .c::after{content:"";position:absolute;inset:0;background:rgba(27,37,80,.12);mix-blend-mode:multiply}
+.stage .c1{left:0;top:6%;width:52%;aspect-ratio:4/5;--r:-4deg}
+.stage .c2{right:0;top:0;width:40%;aspect-ratio:1;--r:5deg}
+.stage .c3{right:5%;bottom:6%;width:37%;aspect-ratio:1;--r:-3deg}
+.stage .p{transform:rotate(var(--r))}
+.js .stage .p{opacity:0;transform:translateY(40px) rotate(calc(var(--r) * 2.2)) scale(.92);animation:cardIn 900ms var(--ease-out) forwards;animation-delay:calc(var(--intro) + var(--d))}
+@keyframes cardIn{to{opacity:1;transform:rotate(var(--r))}}
+.qcard{position:absolute;left:3%;bottom:0;width:min(66%,280px);background:rgba(255,253,247,.97);color:var(--ink);border-radius:18px;padding:14px 16px;box-shadow:0 30px 60px -24px rgba(0,0,0,.7);text-decoration:none;display:block;--r:1.5deg}
+.qcard .k{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--grass)}
+.qcard .w{font-size:13.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.qcard .a{font-family:var(--d);font-weight:800;font-size:clamp(28px,7vw,38px);letter-spacing:-.03em;line-height:1.1;margin:2px 0 8px}
+.qcard .r{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:9px;font-size:13.5px;font-weight:700}
+.qcard .r span{color:var(--muted);font-weight:600}
+.qcard .r b{background:var(--cta);color:var(--cta-ink);border-radius:999px;padding:6px 12px;font-size:13.5px}
+.badge{position:absolute;left:40%;top:-4px;display:flex;align-items:center;gap:8px;background:rgba(255,253,247,.97);color:var(--ink);border-radius:999px;padding:8px 13px;font-size:13.5px;font-weight:800;box-shadow:0 18px 40px -18px rgba(0,0,0,.7);--r:-2deg;white-space:nowrap}
+.badge .stars{color:#e0a020}
+@media(min-width:960px){.badge{left:30%;top:2%}.qcard{left:-6%;bottom:4%}}
+@media(max-width:959px){.stage .c1{width:50%;top:12%}.stage .c2{width:42%;top:4%}.stage .c3{width:36%;bottom:2%}.badge{left:auto;right:0;top:auto;bottom:-14px}}
+.cue{display:none}
+@media(min-width:960px){.motion .cue{display:flex;flex-direction:column;align-items:center;gap:8px;position:absolute;left:0;right:0;bottom:22px;text-decoration:none;color:#c3cbe0;font-size:13.5px;font-weight:700;opacity:0;animation:fade 800ms var(--ease-out) calc(var(--intro) + 1.4s) forwards}}
+.cue i{position:relative;width:2px;height:30px;border-radius:2px;background:rgba(246,244,236,.18);overflow:hidden}
+.cue i::after{content:"";position:absolute;left:0;right:0;top:0;height:12px;border-radius:2px;background:var(--cta);animation:cueRun 2.2s var(--ease-in-out) calc(var(--intro) + 2s) infinite}
+@keyframes cueRun{0%{transform:translateY(-14px)}70%,100%{transform:translateY(32px)}}
+
+/* ---------- numbers strip: count up, stripes slide with the scroll ---------- */
+.nums{background:var(--deep);color:var(--paper);position:relative;overflow:hidden;padding:8px 0 60px}
+.nums .fld{position:absolute;inset:-20% -40%;background:repeating-linear-gradient(100deg,rgba(201,210,234,.05) 0 70px,transparent 70px 140px);pointer-events:none;will-change:transform}
+.ngrid{display:grid;grid-template-columns:1fr 1fr;position:relative;border-top:1px solid rgba(255,255,255,.12)}
+.ngrid div{padding:24px 14px 20px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.ngrid div:nth-child(odd){border-right:1px solid rgba(255,255,255,.12)}
+.ngrid div:nth-child(even){padding-left:18px}
+.ngrid b{display:block;font-family:var(--d);font-weight:800;font-size:clamp(44px,11vw,76px);line-height:1;letter-spacing:-.04em}
+.ngrid b em{font-style:normal;color:var(--cta)}
+.ngrid div>span{display:block;font-size:14.5px;color:#9aa3bd;margin-top:6px}
+@media(min-width:860px){.ngrid{grid-template-columns:repeat(4,1fr)}.ngrid div{border-bottom:0;border-right:1px solid rgba(255,255,255,.12)!important;padding:30px 22px 26px!important}.ngrid div:first-child{padding-left:0!important}.ngrid div:last-child{border-right:0!important}}
+.cu{font-variant-numeric:tabular-nums}
+
+/* ---------- reveals ---------- */
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity var(--slow) var(--ease-out),transform var(--slow) var(--ease-out)}
+.js .reveal.deco{transform:none}
+.js .reveal.in{opacity:1;transform:none}
+
+/* ---------- services ---------- */
+.svc{border-top:2px solid var(--ink)}
+.row{display:grid;grid-template-columns:1fr;gap:4px;padding:22px 4px;border-bottom:1px solid var(--line);text-decoration:none;position:relative;isolation:isolate;cursor:pointer}
+.row::before{content:"";position:absolute;inset:0 -12px;border-radius:10px;background:#eaedf3;z-index:-1;opacity:0;transition:opacity 300ms var(--ease-out)}
+@media(hover:hover) and (pointer:fine){.row:hover::before{opacity:1}.row:hover .go svg{transform:translateX(4px)}}
+.row:active::before{opacity:1}
+.row .dr{display:none}
+.row .dr svg{width:100%;height:auto;color:var(--grass)}
+.row .dr .lt{fill:var(--cta);stroke:none}
+@media(min-width:860px){.row{grid-template-columns:150px 1fr 1.2fr 200px!important}.row .dr{display:block}}
+@media(max-width:859px){.row .dr{display:block;width:150px;margin-bottom:6px}}
+.row h3{font-size:clamp(30px,6vw,40px);line-height:1;letter-spacing:0;text-transform:uppercase;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-family:var(--b);font-size:12px;font-weight:800;letter-spacing:.02em;padding:3px 9px;border-radius:999px;background:#f4e9cf;color:#6a4a12}
+.row p{margin:4px 0 0;color:var(--muted);font-size:16px;max-width:48ch}
+.go{margin-top:8px;font-weight:800;font-size:15.5px;display:flex;align-items:center;gap:8px}
+.go svg{color:var(--cta);transition:transform 300ms var(--ease-out)}
+@media(min-width:860px){.row{grid-template-columns:1.1fr 1.3fr 200px;align-items:center;padding:26px 8px;gap:20px}.row p,.go{margin:0}.go{justify-content:flex-end}}
+
+/* ---------- quote section + phone kit ---------- */
+.qsec{background:var(--deep);color:var(--paper);position:relative;overflow:hidden}@supports(overflow:clip){.qsec{overflow:clip}}
+.qsec .intro{color:#aab2c8}
+.qlay{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+@media(min-width:960px){.qlay{grid-template-columns:minmax(0,1fr) 440px;gap:64px;align-items:center}}
+.perks{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.perks li{display:flex;gap:12px;align-items:center;font-weight:600;color:#dde2ee}
+.perks svg{flex:none;color:var(--leaf)}
+@media(max-width:959px){.perks{display:none}}
+.phone{position:relative;perspective:1400px}
+.tilt{transition:transform 600ms var(--ease-out)}
+@media(min-width:960px){
+  .tilt{transform:rotate(-2deg);transform-style:preserve-3d}
+  .frame{position:relative;width:420px;margin:0 auto;padding:13px;border-radius:62px;background:linear-gradient(145deg,#4a514d,#1b1f1d 38%,#2e3431 62%,#121513);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.18),0 50px 80px -40px rgba(0,0,0,.8),0 30px 90px -30px rgba(226,173,85,.35),0 0 120px -40px rgba(201,210,234,.35)}
+  .frame::before,.frame::after{content:"";position:absolute;width:4px;border-radius:2px;background:#2a2f2c}
+  .frame::before{left:-3px;top:150px;height:58px;box-shadow:0 74px 0 #2a2f2c}
+  .frame::after{right:-3px;top:190px;height:92px}
+  .scr{position:relative;height:820px;border-radius:50px;overflow:hidden;background:var(--card);box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+  .scr::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:50px;background:linear-gradient(var(--ga,118deg),rgba(255,255,255,.14),rgba(255,255,255,0) 32%);z-index:5}
+  .island{position:absolute;top:11px;left:50%;width:118px;height:34px;margin-left:-59px;border-radius:20px;background:#050605;z-index:6}
+  .sb{display:flex;justify-content:space-between;align-items:center;height:54px;padding:0 34px 0 40px;font-weight:700;font-size:15px;color:var(--ink);position:relative;z-index:4}
+  .sb span{display:flex;gap:6px;align-items:center}
+  .home{position:absolute;bottom:8px;left:50%;width:136px;height:5px;margin-left:-68px;border-radius:3px;background:rgba(20,30,24,.85);z-index:6}
+  .qt{height:calc(100% - 54px);overflow-y:auto;overscroll-behavior:contain;border-radius:0;box-shadow:none;padding-bottom:26px}
+}
+@media(max-width:959px){.island,.sb,.home{display:none}}
+
+/* quote tool */
+.qt{background:var(--card);color:var(--ink);border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);scroll-margin-top:112px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);font-size:13px;font-weight:800;color:var(--muted)}
+.dots{display:flex;gap:5px}
+.dots i{width:24px;height:5px;border-radius:3px;background:var(--line);transition:background-color 400ms var(--ease-out)}
+.dots i.on{background:var(--cta)}
+.step{display:none;padding:22px 20px 8px}
+.step.active{display:block;animation:stepIn 240ms var(--ease-out)}
+.qt.back .step.active{animation-name:stepBack}
+@keyframes stepIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes stepBack{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.step h3{font-size:32px;letter-spacing:0;text-transform:uppercase;line-height:1;font-weight:800;margin:0 0 4px}
+.help{color:var(--muted);font-size:15px;margin:0 0 16px}
+.pane{display:none}.pane.active{display:block}
+.opts{display:grid;gap:9px}
+.opt{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;cursor:pointer;min-height:60px;transition:border-color 200ms var(--ease-out),background-color 200ms var(--ease-out),transform var(--fast) var(--ease-out)}
+.opt:active{transform:scale(.985)}
+@media(hover:hover) and (pointer:fine){.opt:hover{border-color:#b6af97}}
+.opt[aria-pressed=true]{border-color:var(--ink);background:#fbf6ea;box-shadow:inset 0 0 0 1px var(--ink)}
+.opt .ic{flex:none;width:40px;height:40px;border-radius:10px;background:#e3efe9;color:var(--grass);display:grid;place-items:center}
+.opt b{display:block;font-size:16.5px;line-height:1.25}
+.opt small{display:block;color:var(--muted);font-size:13.5px;line-height:1.35}
+.opt .fr{margin-left:auto;font-weight:700;font-size:13.5px;color:var(--muted);white-space:nowrap}
+.cnt{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cnt b{font-size:16.5px}
+.cnt small{display:block;color:var(--muted);font-size:13.5px}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:22px;line-height:1;transition:transform var(--fast) var(--ease-out)}
+.stepper button:active{transform:scale(.94);background:#f7efdc}
+.stepper output{min-width:36px;text-align:center;font-weight:800;font-size:20px}
+.price{background:var(--deep);color:var(--paper);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden}
+.price::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.03) 0 26px,transparent 26px 52px);pointer-events:none}
+.price::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(255,226,190,.16) 48%,rgba(255,255,255,.24) 50%,rgba(255,226,190,.16) 52%,transparent 70%);transform:translateX(-120%)}
+.price.shine::before{animation:shine 1.3s var(--ease-in-out) .35s}
+@keyframes shine{to{transform:translateX(120%)}}
+.price .k{font-size:13.5px;font-weight:700;color:var(--leaf)}
+.amt{font-family:var(--d);font-size:clamp(34px,9vw,46px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:2px 0 4px;display:inline-block;transform-origin:50% 0}
+.amt.swing{animation:swing 700ms cubic-bezier(.3,1.6,.5,1)}
+@keyframes swing{0%{transform:rotate(-7deg);opacity:.4}55%{transform:rotate(2deg);opacity:1}100%{transform:none}}
+.amt small{font-family:var(--b);font-size:15px;font-weight:600;color:#aab2c8;letter-spacing:0}
+.price p{margin:0;font-size:13.5px;color:#aab2c8}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px}
+.pills button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-weight:700;font-size:14px;cursor:pointer;min-height:40px;transition:transform var(--fast) var(--ease-out),background-color 200ms var(--ease-out)}
+.pills button:active{transform:scale(.96)}
+.pills button[aria-pressed=true]{border-color:var(--ink);background:#f7efdc}
+.lbl{font-weight:800;font-size:14px;margin:16px 0 8px}
+.days{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;overscroll-behavior-x:contain}
+.days::-webkit-scrollbar{display:none}
+.day{flex:none;width:66px;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:7px 4px;text-align:center;cursor:pointer;line-height:1.15}
+.day small{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+.day b{display:block;font-size:20px;font-weight:800}
+.day i{display:block;font-style:normal;font-size:11px;color:var(--grass);font-weight:700}
+.day[aria-selected=true]{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.day[aria-selected=true] small,.day[aria-selected=true] i{color:#c3cbe0}
+.times{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.times.swap{animation:xf 160ms var(--ease-out)}
+@keyframes xf{from{opacity:.2}to{opacity:1}}
+.time{border:1.5px solid var(--line);background:#fff;border-radius:10px;min-height:46px;font-weight:700;font-size:15px;cursor:pointer;transition:transform var(--fast) var(--ease-out)}
+.time:active{transform:scale(.96)}
+.time[aria-pressed=true]{border-color:var(--ink);background:var(--cta);color:var(--cta-ink)}
+.sk{color:transparent!important;background:#eceff4!important;border-color:transparent!important;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+.asap{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:9px;border:1.5px dashed #c9c2a8;background:transparent;border-radius:10px;padding:11px 13px;font-weight:700;font-size:14.5px;cursor:pointer;text-align:left}
+.asap[aria-pressed=true]{border-style:solid;border-color:var(--ink);background:#f7efdc}
+.msg{margin:10px 0 0;font-size:14.5px;color:var(--mulch);font-weight:600}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
+.field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 13px;background:#fff;font:inherit;font-size:16px;color:var(--ink)}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(226,173,85,.22)}
+.more{border:0;background:none;padding:4px 0 10px;font-weight:700;font-size:14.5px;color:#2c6650;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.recap{font-size:14.5px;color:var(--muted);margin:0 0 14px}
+.recap b{color:var(--ink)}
+.recap button{border:0;background:none;padding:0 0 0 6px;color:#2c6650;font-weight:700;text-decoration:underline;cursor:pointer}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 20px 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;font-weight:800;font-size:16.5px;padding:15px 22px;cursor:pointer;text-decoration:none;transition:transform var(--fast) var(--ease-out),background-color var(--base) var(--ease-out),opacity var(--base)}
+.btn:active{transform:scale(.97)}
+.btn.go2{background:var(--cta);color:var(--cta-ink);flex:1}
+@media(hover:hover) and (pointer:fine){.btn.go2:hover{background:var(--cta-h)}}
+.btn.go2[disabled]{opacity:.4;cursor:not-allowed}
+.btn.ln{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.busy{opacity:.75;pointer-events:none}
+.why{padding:0 20px 14px;margin:-8px 0 0;font-size:14px;color:var(--mulch);font-weight:600;min-height:1px}
+.why:empty{display:none}
+.done{text-align:center;padding-top:30px}
+.check{width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:#e3efe9;display:grid;place-items:center;color:var(--grass)}
+.check path{stroke-dasharray:30;stroke-dashoffset:30;animation:draw 500ms var(--ease-out) 250ms forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.rm .check path{stroke-dashoffset:0}
+.done p{color:var(--muted);margin:6px auto 16px;max-width:34ch}
+.done p b{color:var(--ink)}
+.sum{text-align:left;border:1px solid var(--line);border-radius:12px;margin:0 0 14px}
+.sum div{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14.5px}
+.sum div:last-child{border-bottom:0}
+.sum span{color:var(--muted)}
+.sum b{text-align:right}
+.cal{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.cal a{font-weight:700;font-size:14px;padding:9px 14px;border-radius:999px;border:1.5px solid var(--line);text-decoration:none}
+.inbox-l{display:block;margin:0 0 10px;font-weight:800;color:#2c6650}
+.pvtag{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:#ece6d6;color:#151d33;margin-bottom:10px}
+
+/* inbox shortcut inside the quote section */
+.inbox-cta{display:inline-flex;align-items:center;gap:8px;margin-top:22px;color:var(--paper);font-weight:800;text-decoration:none;border:1.5px solid rgba(246,244,236,.3);border-radius:999px;padding:11px 16px;transition:transform var(--fast) var(--ease-out),border-color var(--base) var(--ease-out)}
+.inbox-cta:active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.inbox-cta:hover{border-color:var(--paper)}}
+/* owner notification */
+.qn{position:absolute;z-index:40;left:50%;top:-6px;width:min(360px,calc(100vw - 24px));transform:translate(-50%,-140%);opacity:0;pointer-events:none;transition:transform 550ms cubic-bezier(.2,.9,.3,1.2),opacity 300ms var(--ease-out)}
+.qn.on{transform:translate(-50%,0);opacity:1}
+body>.qn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px))}
+@media(min-width:960px){.qn{left:auto;right:calc(100% + 26px);top:120px;transform:translateX(30px) scale(.96);width:300px}.qn.on{transform:none}}
+.qn .lb{font-size:11.5px;font-weight:800;color:#c3cbe0;margin:0 0 6px 6px}
+.qn .card{display:flex;gap:11px;align-items:flex-start;background:rgba(250,249,244,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:var(--ink);border-radius:20px;padding:12px 14px;box-shadow:0 18px 40px -14px rgba(0,0,0,.55)}
+.qn .ap{flex:none;width:38px;height:38px;border-radius:10px;background:#0e1424;display:grid;place-items:center;color:#fff}
+.qn .tx{min-width:0;flex:1}
+.qn .tx div{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-weight:600}
+.qn .tx b{display:block;font-size:15px;line-height:1.25;margin-top:1px}
+.qn .tx span{display:block;font-size:14px;color:#3a4157}
+
+/* ---------- work + reviews ---------- */
+.work{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:860px){.work{grid-template-columns:1.2fr 1fr 1fr;align-items:end}}
+.work figure{margin:0}
+.work .ph{will-change:transform;border-radius:var(--r2);overflow:hidden;position:relative;aspect-ratio:4/3}
+.work .ph::after{content:"";position:absolute;inset:0;background:rgba(27,37,80,.1);mix-blend-mode:multiply}
+.work img{width:100%;height:100%;object-fit:cover}
+@media(hover:hover) and (pointer:fine){.work img{transition:transform 600ms var(--ease-out)}.work figure:hover img{transform:scale(1.03)}}
+.work figcaption{margin-top:10px;font-weight:700;font-size:15.5px}
+.work figcaption small{display:block;font-weight:500;color:var(--muted);font-size:14.5px}
+.revs{display:grid;grid-template-columns:1fr;gap:16px;margin-top:8px}
+@media(min-width:860px){.revs{grid-template-columns:auto 1fr 1fr;gap:28px;align-items:start}}
+.big-r{display:flex;align-items:center;gap:14px}
+.big-r b{font-family:var(--d);font-size:88px;font-weight:800;line-height:1;letter-spacing:-.04em}
+.big-r small{display:block;color:var(--muted);font-size:14.5px;margin-top:3px}
+blockquote{margin:0;padding:18px 20px;background:var(--card);border:1px solid var(--line);border-radius:var(--r2)}
+blockquote p{margin:0 0 8px;font-size:18px;line-height:1.45;font-weight:500}
+blockquote cite{font-style:normal;font-size:14px;color:var(--muted);font-weight:700}
+.kw{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.kw span{font-size:13.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#e9ecf2}
+
+/* ---------- area + footer ---------- */
+.area{background:#e9ecf2}
+.area .wrap{display:grid;grid-template-columns:1fr;gap:28px}
+@media(min-width:860px){.area .wrap{grid-template-columns:1fr 1fr;align-items:center}}
+.hrs{list-style:none;padding:0;margin:0;border-top:2px solid var(--ink)}
+.hrs li{display:flex;justify-content:space-between;padding:13px 2px;border-bottom:1px solid #d3d8e3;font-weight:600}
+.hrs li span{color:var(--muted);font-weight:500}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.btn.dk{background:var(--deep);color:var(--paper)}
+footer{background:var(--deep);color:#aab2c8;padding:40px 0 calc(110px + env(safe-area-inset-bottom,0px));font-size:14.5px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer b{color:var(--paper)}
+@media(min-width:960px){footer{padding-bottom:40px}}
+
+/* sticky mobile bar */
+.cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:35;display:flex;gap:10px;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:rgba(14,20,36,.96);transform:translateY(110%);transition:transform 300ms var(--ease-out)}
+.cta-bar.show{transform:none}
+.cta-bar a{flex:1;justify-content:center;padding:14px 10px;font-size:16px}
+@media(min-width:960px){.cta-bar{display:none}}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-property:opacity,color,background-color,border-color!important}
+  .js .reveal,.js .hero .fade,.js .pics figure{transform:none}
+  .js .hero h1 .ln,.js .stripes{clip-path:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="opener" aria-hidden="true"><div class="strand"><i style="--k:0;--y:0"></i><i style="--k:1;--y:10"></i><i style="--k:2;--y:19"></i><i style="--k:3;--y:27"></i><i style="--k:4;--y:33"></i><i style="--k:5;--y:38"></i><i style="--k:6;--y:42"></i><i style="--k:7;--y:45"></i><i style="--k:8;--y:46"></i><i style="--k:9;--y:46"></i><i style="--k:10;--y:45"></i><i style="--k:11;--y:42"></i><i style="--k:12;--y:38"></i><i style="--k:13;--y:33"></i><i style="--k:14;--y:27"></i><i style="--k:15;--y:19"></i><i style="--k:16;--y:10"></i><i style="--k:17;--y:0"></i></div>
+  <div class="mark"><svg width="40" height="56" viewBox="0 0 24 34" aria-hidden="true"><path d="M8 2h8v6H8z" fill="#7d8aa8"/><path d="M12 8c5.5 0 9 5 9 11.5S16.8 32 12 32 3 26 3 19.5 6.5 8 12 8z" fill="#e2ad55"/><path d="M9 14c-1.6 1.6-2.4 3.8-2.4 6" fill="none" stroke="#fff3d6" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg><b>Knox Fantasy</b><small>Christmas Lights</small></div>
+</div>
+<header class="top" id="hdr">
+  <div class="pv"><span>Preview by PriceWink<span class="pv-l">. Prices are samples</span></span><a class="ib" href="../inbox/?c=knoxfantasy&amp;demo" target="_blank" rel="noopener">See your inbox <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="Knox Fantasy Christmas Lights, home">
+      <svg width="22" height="31" viewBox="0 0 24 34" aria-hidden="true"><path d="M8 2h8v6H8z" fill="#7d8aa8"/><path d="M12 8c5.5 0 9 5 9 11.5S16.8 32 12 32 3 26 3 19.5 6.5 8 12 8z" fill="#e2ad55"/><path d="M9 14c-1.6 1.6-2.4 3.8-2.4 6" fill="none" stroke="#fff3d6" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg>
+      <span><b>Knox Fantasy</b><small>Christmas Lights</small></span>
+    </a>
+    <a class="callbtn" href="tel:+18659955981"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" fill="currentColor"/></svg><span class="cl-l">(865) 995-5981</span><span class="cl-s">Call</span></a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero" aria-label="Intro">
+  <div class="scene" id="scene" aria-hidden="true"><svg class="ridge far" data-depth="0.42" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#202b55" d="M0,600L0,267L16,268L32,274L48,276L64,285L80,290L96,292L112,302L128,305L144,311L160,314L176,319L192,323L208,325L224,331L240,329L256,335L272,331L288,333L304,331L320,332L336,329L352,326L368,329L384,323L400,321L416,317L432,315L448,313L464,311L480,313L496,311L512,314L528,312L544,314L560,316L576,321L592,327L608,328L624,335L640,337L656,344L672,350L688,355L704,362L720,366L736,375L752,375L768,381L784,383L800,385L816,388L832,387L848,392L864,390L880,389L896,383L912,381L928,377L944,371L960,369L976,357L992,356L1008,346L1024,341L1040,330L1056,321L1072,319L1088,308L1104,308L1120,298L1136,295L1152,287L1168,283L1184,285L1200,279L1216,284L1232,277L1248,282L1264,279L1280,281L1296,285L1312,285L1328,294L1344,295L1360,300L1376,302L1392,306L1408,308L1424,309L1440,315L1456,315L1472,318L1488,316L1504,316L1520,314L1536,315L1552,314L1568,310L1584,311L1600,304L1600,600Z"/></svg><svg class="ridge trees" data-depth="0.22" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#18213f" d="M0,600L0,330L0,322A35,35 0 0 1 71,322L64,327A44,44 0 0 1 152,327L146,323A19,19 0 0 1 184,323L182,316A36,36 0 0 1 254,316L234,339A31,31 0 0 1 296,339L286,350A34,34 0 0 1 354,350L338,309A26,26 0 0 1 389,309L384,312A22,22 0 0 1 429,312L417,346A35,35 0 0 1 487,346L466,347A42,42 0 0 1 551,347L530,322A46,46 0 0 1 621,322L600,335A45,45 0 0 1 690,335L678,307A24,24 0 0 1 726,307L720,321A45,45 0 0 1 810,321L790,340A28,28 0 0 1 846,340L831,330A20,20 0 0 1 871,330L865,314A18,18 0 0 1 901,314L893,313A27,27 0 0 1 947,313L937,327A27,27 0 0 1 991,327L984,303A20,20 0 0 1 1023,303L1012,320A39,39 0 0 1 1090,320L1067,339A40,40 0 0 1 1147,339L1134,339A18,18 0 0 1 1171,339L1162,349A45,45 0 0 1 1251,349L1241,319A44,44 0 0 1 1329,319L1310,326A28,28 0 0 1 1366,326L1360,313A21,21 0 0 1 1402,313L1398,354A42,42 0 0 1 1482,354L1477,329A21,21 0 0 1 1518,329L1512,343A44,44 0 0 1 1599,343L1593,337A33,33 0 0 1 1660,337L1600,600Z"/></svg><svg class="grass" data-depth="0.05" viewBox="0 0 1600 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path fill="#070b16" d="M0,320V200L-8,198L125.0,120L258,198L250,200V320ZM250,320V190L242,188L415.0,80L588,188L580,190V320ZM600,320V215L592,213L705.0,150L818,213L810,215V320ZM830,320V180L822,178L1010.0,70L1198,178L1190,180V320ZM1210,320V205L1202,203L1330.0,130L1458,203L1450,205V320ZM1470,320V195L1462,193L1600.0,110L1738,193L1730,195V320Z"/><g class="bulbs"><circle class="bulb" cx="-8" cy="201" r="3.4" style="--k:0"/><circle class="bulb" cx="7" cy="192" r="3.4" style="--k:1"/><circle class="bulb" cx="22" cy="184" r="3.4" style="--k:2"/><circle class="bulb" cx="36" cy="175" r="3.4" style="--k:3"/><circle class="bulb" cx="51" cy="166" r="3.4" style="--k:4"/><circle class="bulb" cx="66" cy="158" r="3.4" style="--k:5"/><circle class="bulb" cx="81" cy="149" r="3.4" style="--k:6"/><circle class="bulb" cx="95" cy="140" r="3.4" style="--k:7"/><circle class="bulb" cx="110" cy="132" r="3.4" style="--k:8"/><circle class="bulb" cx="125" cy="123" r="3.4" style="--k:9"/><circle class="bulb" cx="140" cy="132" r="3.4" style="--k:10"/><circle class="bulb" cx="155" cy="140" r="3.4" style="--k:11"/><circle class="bulb" cx="169" cy="149" r="3.4" style="--k:12"/><circle class="bulb" cx="184" cy="158" r="3.4" style="--k:13"/><circle class="bulb" cx="199" cy="166" r="3.4" style="--k:14"/><circle class="bulb" cx="214" cy="175" r="3.4" style="--k:15"/><circle class="bulb" cx="228" cy="184" r="3.4" style="--k:16"/><circle class="bulb" cx="242" cy="191" r="3.4" style="--k:17"/><circle class="bulb" cx="243" cy="192" r="3.4" style="--k:18"/><circle class="bulb" cx="256" cy="182" r="3.4" style="--k:19"/><circle class="bulb" cx="258" cy="201" r="3.4" style="--k:20"/><circle class="bulb" cx="271" cy="173" r="3.4" style="--k:21"/><circle class="bulb" cx="285" cy="164" r="3.4" style="--k:22"/><circle class="bulb" cx="300" cy="155" r="3.4" style="--k:23"/><circle class="bulb" cx="314" cy="146" r="3.4" style="--k:24"/><circle class="bulb" cx="328" cy="137" r="3.4" style="--k:25"/><circle class="bulb" cx="343" cy="128" r="3.4" style="--k:26"/><circle class="bulb" cx="357" cy="119" r="3.4" style="--k:27"/><circle class="bulb" cx="372" cy="110" r="3.4" style="--k:28"/><circle class="bulb" cx="386" cy="101" r="3.4" style="--k:29"/><circle class="bulb" cx="401" cy="92" r="3.4" style="--k:30"/><circle class="bulb" cx="415" cy="83" r="3.4" style="--k:31"/><circle class="bulb" cx="429" cy="92" r="3.4" style="--k:32"/><circle class="bulb" cx="444" cy="101" r="3.4" style="--k:33"/><circle class="bulb" cx="458" cy="110" r="3.4" style="--k:34"/><circle class="bulb" cx="473" cy="119" r="3.4" style="--k:35"/><circle class="bulb" cx="487" cy="128" r="3.4" style="--k:36"/><circle class="bulb" cx="502" cy="137" r="3.4" style="--k:37"/><circle class="bulb" cx="516" cy="146" r="3.4" style="--k:38"/><circle class="bulb" cx="530" cy="155" r="3.4" style="--k:39"/><circle class="bulb" cx="545" cy="164" r="3.4" style="--k:40"/><circle class="bulb" cx="559" cy="173" r="3.4" style="--k:41"/><circle class="bulb" cx="574" cy="182" r="3.4" style="--k:42"/><circle class="bulb" cx="588" cy="191" r="3.4" style="--k:43"/><circle class="bulb" cx="592" cy="216" r="3.4" style="--k:44"/><circle class="bulb" cx="606" cy="208" r="3.4" style="--k:45"/><circle class="bulb" cx="620" cy="200" r="3.4" style="--k:46"/><circle class="bulb" cx="634" cy="192" r="3.4" style="--k:47"/><circle class="bulb" cx="648" cy="184" r="3.4" style="--k:48"/><circle class="bulb" cx="663" cy="177" r="3.4" style="--k:49"/><circle class="bulb" cx="677" cy="169" r="3.4" style="--k:50"/><circle class="bulb" cx="691" cy="161" r="3.4" style="--k:51"/><circle class="bulb" cx="705" cy="153" r="3.4" style="--k:52"/><circle class="bulb" cx="719" cy="161" r="3.4" style="--k:53"/><circle class="bulb" cx="733" cy="169" r="3.4" style="--k:54"/><circle class="bulb" cx="747" cy="177" r="3.4" style="--k:55"/><circle class="bulb" cx="762" cy="184" r="3.4" style="--k:56"/><circle class="bulb" cx="776" cy="192" r="3.4" style="--k:57"/><circle class="bulb" cx="790" cy="200" r="3.4" style="--k:58"/><circle class="bulb" cx="804" cy="208" r="3.4" style="--k:59"/><circle class="bulb" cx="818" cy="216" r="3.4" style="--k:60"/><circle class="bulb" cx="822" cy="181" r="3.4" style="--k:61"/><circle class="bulb" cx="836" cy="173" r="3.4" style="--k:62"/><circle class="bulb" cx="851" cy="164" r="3.4" style="--k:63"/><circle class="bulb" cx="865" cy="156" r="3.4" style="--k:64"/><circle class="bulb" cx="880" cy="148" r="3.4" style="--k:65"/><circle class="bulb" cx="894" cy="139" r="3.4" style="--k:66"/><circle class="bulb" cx="909" cy="131" r="3.4" style="--k:67"/><circle class="bulb" cx="923" cy="123" r="3.4" style="--k:68"/><circle class="bulb" cx="938" cy="115" r="3.4" style="--k:69"/><circle class="bulb" cx="952" cy="106" r="3.4" style="--k:70"/><circle class="bulb" cx="967" cy="98" r="3.4" style="--k:71"/><circle class="bulb" cx="981" cy="90" r="3.4" style="--k:72"/><circle class="bulb" cx="996" cy="81" r="3.4" style="--k:73"/><circle class="bulb" cx="1010" cy="73" r="3.4" style="--k:74"/><circle class="bulb" cx="1024" cy="81" r="3.4" style="--k:75"/><circle class="bulb" cx="1039" cy="90" r="3.4" style="--k:76"/><circle class="bulb" cx="1053" cy="98" r="3.4" style="--k:77"/><circle class="bulb" cx="1068" cy="106" r="3.4" style="--k:78"/><circle class="bulb" cx="1082" cy="115" r="3.4" style="--k:79"/><circle class="bulb" cx="1097" cy="123" r="3.4" style="--k:80"/><circle class="bulb" cx="1111" cy="131" r="3.4" style="--k:81"/><circle class="bulb" cx="1126" cy="139" r="3.4" style="--k:82"/><circle class="bulb" cx="1140" cy="148" r="3.4" style="--k:83"/><circle class="bulb" cx="1155" cy="156" r="3.4" style="--k:84"/><circle class="bulb" cx="1169" cy="164" r="3.4" style="--k:85"/><circle class="bulb" cx="1184" cy="173" r="3.4" style="--k:86"/><circle class="bulb" cx="1198" cy="181" r="3.4" style="--k:87"/><circle class="bulb" cx="1202" cy="206" r="3.4" style="--k:88"/><circle class="bulb" cx="1216" cy="198" r="3.4" style="--k:89"/><circle class="bulb" cx="1230" cy="190" r="3.4" style="--k:90"/><circle class="bulb" cx="1245" cy="182" r="3.4" style="--k:91"/><circle class="bulb" cx="1259" cy="174" r="3.4" style="--k:92"/><circle class="bulb" cx="1273" cy="165" r="3.4" style="--k:93"/><circle class="bulb" cx="1287" cy="157" r="3.4" style="--k:94"/><circle class="bulb" cx="1302" cy="149" r="3.4" style="--k:95"/><circle class="bulb" cx="1316" cy="141" r="3.4" style="--k:96"/><circle class="bulb" cx="1330" cy="133" r="3.4" style="--k:97"/><circle class="bulb" cx="1344" cy="141" r="3.4" style="--k:98"/><circle class="bulb" cx="1358" cy="149" r="3.4" style="--k:99"/><circle class="bulb" cx="1373" cy="157" r="3.4" style="--k:100"/><circle class="bulb" cx="1387" cy="165" r="3.4" style="--k:101"/><circle class="bulb" cx="1401" cy="174" r="3.4" style="--k:102"/><circle class="bulb" cx="1415" cy="182" r="3.4" style="--k:103"/><circle class="bulb" cx="1430" cy="190" r="3.4" style="--k:104"/><circle class="bulb" cx="1444" cy="198" r="3.4" style="--k:105"/><circle class="bulb" cx="1458" cy="206" r="3.4" style="--k:106"/><circle class="bulb" cx="1462" cy="196" r="3.4" style="--k:107"/><circle class="bulb" cx="1477" cy="187" r="3.4" style="--k:108"/><circle class="bulb" cx="1493" cy="178" r="3.4" style="--k:109"/><circle class="bulb" cx="1508" cy="168" r="3.4" style="--k:110"/><circle class="bulb" cx="1523" cy="159" r="3.4" style="--k:111"/><circle class="bulb" cx="1539" cy="150" r="3.4" style="--k:112"/><circle class="bulb" cx="1554" cy="141" r="3.4" style="--k:113"/><circle class="bulb" cx="1569" cy="131" r="3.4" style="--k:114"/><circle class="bulb" cx="1585" cy="122" r="3.4" style="--k:115"/><circle class="bulb" cx="1600" cy="113" r="3.4" style="--k:116"/><circle class="bulb" cx="1615" cy="122" r="3.4" style="--k:117"/><circle class="bulb" cx="1631" cy="131" r="3.4" style="--k:118"/><circle class="bulb" cx="1646" cy="141" r="3.4" style="--k:119"/><circle class="bulb" cx="1661" cy="150" r="3.4" style="--k:120"/><circle class="bulb" cx="1677" cy="159" r="3.4" style="--k:121"/><circle class="bulb" cx="1692" cy="168" r="3.4" style="--k:122"/><circle class="bulb" cx="1707" cy="178" r="3.4" style="--k:123"/><circle class="bulb" cx="1723" cy="187" r="3.4" style="--k:124"/><circle class="bulb" cx="1738" cy="196" r="3.4" style="--k:125"/></g></svg></div>
+  <div class="wrap" id="hwrap">
+    <div>
+      <p class="live fade" style="--d:0ms"><i></i><span class="pv-l">Knoxville · </span>Booking installs now</p>
+      <h1><span class="ln"><span style="--d:120ms">We hang it.</span></span><span class="ln"><span class="sg" style="--d:210ms">We fix it.</span></span><span class="ln"><span style="--d:300ms">We store <em>it.</em></span></span></h1>
+      <p class="lede fade" style="--d:480ms">Rooflines, trees and shrubs lit with commercial-grade LEDs. See your price and book an install in about a minute.</p>
+      <p class="qs-l fade" style="--d:560ms">Get a price for</p>
+      <div class="qs fade" style="--d:600ms" id="quick">
+        <a class="chip" href="#quote" data-svc="roof">Roofline</a>
+        <a class="chip" href="#quote" data-svc="tree">Trees</a>
+        <a class="chip" href="#quote" data-svc="bush">Shrubs</a>
+        <a class="chip" href="#quote" data-svc="biz">Business</a>
+      </div>
+    </div>
+  </div>
+  <a class="cue" id="cue" href="#services" aria-label="Scroll to services"><i></i></a>
+</section>
+
+<section class="nums" id="nums">
+  <div class="fld" id="fld" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="ngrid" data-group>
+      <div class="reveal"><b><span class="cu" data-to="5" data-dec="1">5.0</span></b><span>stars on Google</span></div>
+      <div class="reveal"><b><span class="cu" data-to="53">53</span></b><span>Google reviews</span></div>
+      <div class="reveal"><b>$<span class="cu" data-to="0">0</span></b><span>for your design and quote</span></div>
+      <div class="reveal"><b>Down<em>+</em></b><span>takedown and storage included</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="services">
+  <div class="wrap">
+    <h2 class="reveal">What we light</h2>
+    <p class="intro reveal">Tap one to see your price. Install, mid-season fixes, takedown and storage included.</p>
+    <div class="svc" data-group>
+      <a class="row reveal" href="#quote" data-svc="roof"><div class="dr"><svg class="draw" viewBox="0 0 200 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M20 104V66L100 20l80 46v38"/><path d="M84 104V76h32v28M36 74h30v22H36zM134 74h30v22h-30z" opacity=".6"/></g><path d="M4 104h192" stroke="currentColor" stroke-width="1.8" opacity=".4"/><circle class="lt" cx="20" cy="66" r="2.6"/><circle class="lt" cx="30" cy="60" r="2.6"/><circle class="lt" cx="40" cy="54" r="2.6"/><circle class="lt" cx="50" cy="49" r="2.6"/><circle class="lt" cx="60" cy="43" r="2.6"/><circle class="lt" cx="70" cy="37" r="2.6"/><circle class="lt" cx="80" cy="32" r="2.6"/><circle class="lt" cx="90" cy="26" r="2.6"/><circle class="lt" cx="100" cy="20" r="2.6"/><circle class="lt" cx="110" cy="26" r="2.6"/><circle class="lt" cx="120" cy="32" r="2.6"/><circle class="lt" cx="130" cy="37" r="2.6"/><circle class="lt" cx="140" cy="43" r="2.6"/><circle class="lt" cx="150" cy="49" r="2.6"/><circle class="lt" cx="160" cy="54" r="2.6"/><circle class="lt" cx="170" cy="60" r="2.6"/><circle class="lt" cx="180" cy="66" r="2.6"/></svg></div><h3>Rooflines</h3><p>Bulbs traced along every gable and eave. Warm white, color, or a mix.</p><span class="go"><span>From $<span class="cu" data-to="450">450</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="tree"><div class="dr"><svg class="draw" viewBox="0 0 200 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M100 8L60 92h80z"/><path d="M100 92v12"/><path d="M78 46l44 12M70 64l60 14M86 30l26 8" opacity=".55"/></g><path d="M4 104h192" stroke="currentColor" stroke-width="1.8" opacity=".4"/><circle class="lt" cx="88" cy="34" r="2.6"/><circle class="lt" cx="104" cy="38" r="2.6"/><circle class="lt" cx="112" cy="40" r="2.6"/><circle class="lt" cx="80" cy="50" r="2.6"/><circle class="lt" cx="96" cy="53" r="2.6"/><circle class="lt" cx="116" cy="58" r="2.6"/><circle class="lt" cx="74" cy="66" r="2.6"/><circle class="lt" cx="92" cy="70" r="2.6"/><circle class="lt" cx="110" cy="74" r="2.6"/><circle class="lt" cx="126" cy="77" r="2.6"/><circle class="lt" cx="100" cy="24" r="2.6"/></svg></div><h3>Trees</h3><p>Evergreens and big yard trees wrapped trunk to tip.</p><span class="go"><span>From $<span class="cu" data-to="150">150</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="bush"><div class="dr"><svg class="draw" viewBox="0 0 200 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M14 104c0-24 12-36 30-36s30 12 30 36M74 104c0-20 10-30 26-30s26 10 26 30M126 104c0-24 12-36 30-36s30 12 30 36"/><path d="M26 92c8-10 28-10 36 0M86 94c6-8 22-8 28 0M138 92c8-10 28-10 36 0" opacity=".5"/></g><path d="M4 104h192" stroke="currentColor" stroke-width="1.8" opacity=".4"/><circle class="lt" cx="30" cy="80" r="2.6"/><circle class="lt" cx="44" cy="74" r="2.6"/><circle class="lt" cx="58" cy="80" r="2.6"/><circle class="lt" cx="36" cy="92" r="2.6"/><circle class="lt" cx="52" cy="92" r="2.6"/><circle class="lt" cx="88" cy="88" r="2.6"/><circle class="lt" cx="100" cy="82" r="2.6"/><circle class="lt" cx="112" cy="88" r="2.6"/><circle class="lt" cx="140" cy="80" r="2.6"/><circle class="lt" cx="156" cy="74" r="2.6"/><circle class="lt" cx="170" cy="80" r="2.6"/><circle class="lt" cx="148" cy="92" r="2.6"/><circle class="lt" cx="164" cy="92" r="2.6"/></svg></div><h3>Shrubs &amp; hedges</h3><p>Net lights laid even on bushes and hedges along the front.</p><span class="go"><span>$<span class="cu" data-to="35">35</span> each</span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="roof"><div class="dr"><svg class="draw" viewBox="0 0 200 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><circle cx="100" cy="52" r="34"/><circle cx="100" cy="52" r="20" opacity=".55"/><path d="M90 84l-8 16M110 84l8 16M92 84h16" /><path d="M10 12c30 16 60 16 90 0s60-16 90 0" opacity=".6"/></g><path d="M4 104h192" stroke="currentColor" stroke-width="1.8" opacity=".4"/><circle class="lt" cx="100" cy="18" r="2.6"/><circle class="lt" cx="124" cy="28" r="2.6"/><circle class="lt" cx="134" cy="52" r="2.6"/><circle class="lt" cx="124" cy="76" r="2.6"/><circle class="lt" cx="76" cy="76" r="2.6"/><circle class="lt" cx="66" cy="52" r="2.6"/><circle class="lt" cx="76" cy="28" r="2.6"/><circle class="lt" cx="28" cy="20" r="2.6"/><circle class="lt" cx="54" cy="26" r="2.6"/><circle class="lt" cx="146" cy="26" r="2.6"/><circle class="lt" cx="172" cy="20" r="2.6"/></svg></div><h3>Wreaths &amp; garland</h3><p>Lit garland on the entry and a wreath on the door. Add it to any roofline.</p><span class="go"><span>Add from $<span class="cu" data-to="150">150</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="row reveal" href="#quote" data-svc="biz"><div class="dr"><svg class="draw" viewBox="0 0 200 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M16 104V30h168v74"/><path d="M16 46h168"/><path d="M30 60h56v30H30zM114 60h56v44h-56z" opacity=".6"/><path d="M50 38h100" opacity=".5"/></g><path d="M4 104h192" stroke="currentColor" stroke-width="1.8" opacity=".4"/><circle class="lt" cx="16" cy="30" r="2.6"/><circle class="lt" cx="28" cy="30" r="2.6"/><circle class="lt" cx="40" cy="30" r="2.6"/><circle class="lt" cx="52" cy="30" r="2.6"/><circle class="lt" cx="64" cy="30" r="2.6"/><circle class="lt" cx="76" cy="30" r="2.6"/><circle class="lt" cx="88" cy="30" r="2.6"/><circle class="lt" cx="100" cy="30" r="2.6"/><circle class="lt" cx="112" cy="30" r="2.6"/><circle class="lt" cx="124" cy="30" r="2.6"/><circle class="lt" cx="136" cy="30" r="2.6"/><circle class="lt" cx="148" cy="30" r="2.6"/><circle class="lt" cx="160" cy="30" r="2.6"/><circle class="lt" cx="172" cy="30" r="2.6"/><circle class="lt" cx="184" cy="30" r="2.6"/></svg></div><h3>Businesses</h3><p>Storefronts, offices and neighborhood entrances, lit before the busy weeks.</p><span class="go"><span>From $<span class="cu" data-to="600">600</span></span> <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="s qsec" id="quote">
+  <div class="wrap qlay">
+    <div>
+      <h2 class="reveal">Your price in about a minute</h2>
+      <p class="intro reveal">Two quick questions, your price, then pick an install day.</p>
+      <ul class="perks reveal deco">
+        <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>See a price before you give your number</li>
+        <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Pick a real open install day</li>
+        <li><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Justin gets a text the second you book</li>
+      </ul>
+      <a class="inbox-cta reveal" href="../inbox/?c=knoxfantasy&amp;demo" target="_blank" rel="noopener">See Justin’s inbox <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="phone" id="qphone">
+      <div class="tilt" id="qtilt">
+        <div class="frame"><div class="scr"><div class="island"></div>
+          <div class="sb"><span class="tn" id="clock">9:41</span><span><svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x=".5" y=".5" width="22" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="2.5" y="2.5" width="16" height="8" rx="2" fill="currentColor"/><rect x="24" y="4.5" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".45"/></svg></span></div>
+          <div class="qt" id="qt">
+            <div class="qhead"><span id="qlab">Step 1 of 4</span><span class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i></span></div>
+
+            <div class="step" data-step="1">
+              <h3>What do you need?</h3>
+              <p class="help">Installed, fixed if needed, taken down and stored.</p>
+              <div class="opts" id="svcPick">
+                <button type="button" class="opt" data-v="roof" aria-pressed="false"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l9-8 9 8M6 11v9h12v-9"/></svg></span><span><b>Roofline</b><small>Bulbs on every edge of the house</small></span><span class="fr">from $450</span></button>
+                <button type="button" class="opt" data-v="tree" aria-pressed="false"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L6 16h12zM12 16v5"/></svg></span><span><b>Trees</b><small>Wrapped trunk to tip</small></span><span class="fr">from $150</span></button>
+                <button type="button" class="opt" data-v="bush" aria-pressed="false"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20c0-5 3-8 6-8s4 2 4 2 1-2 4-2 4 3 4 8z"/></svg></span><span><b>Shrubs</b><small>Net lights on bushes and hedges</small></span><span class="fr">$35 each</span></button>
+                <button type="button" class="opt" data-v="biz" aria-pressed="false"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V8h16v12M4 12h16M9 20v-5h6v5"/></svg></span><span><b>Business</b><small>Storefronts, offices, entrances</small></span><span class="fr">from $600</span></button>
+                </div>
+            </div>
+
+            <div class="step" data-step="2">
+              <div class="pane" data-pane="size">
+                <h3 id="sizeQ">How big is the yard?</h3>
+                <p class="help" id="sizeHelp">A guess is fine.</p>
+                <div class="opts" id="sizePick"></div>
+              </div>
+              <div class="pane" data-pane="bush">
+                <h3>How many shrubs?</h3>
+                <p class="help">Count a long hedge as one for every 6 feet.</p>
+                <div class="cnt"><span><b>Shrubs</b><small>Most front yards have 6 to 12</small></span><span class="stepper"><button type="button" id="bMinus" aria-label="One fewer">−</button><output id="bOut" class="tn">8</output><button type="button" id="bPlus" aria-label="One more">+</button></span></div>
+              </div>
+            </div>
+
+            <div class="step" data-step="3">
+              <div class="price" id="pbox"><div class="k" id="pK">Your price</div><div class="amt tn" id="amt">$<span id="lo">0</span> – $<span id="hi">0</span></div><p id="pNote">Install, fixes, takedown and storage included.</p></div>
+              <div class="pills" id="extras"></div>
+              <div class="lbl">Pick an install day</div>
+              <div class="days" id="days" role="tablist" aria-label="Day"></div>
+              <div class="times" id="times"></div>
+              <p class="msg" id="slotMsg" hidden></p>
+              <button type="button" class="asap" id="asapBtn" aria-pressed="false"><span>Not sure on a day? Have Justin text me</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+            </div>
+
+            <div class="step" data-step="4">
+              <h3>Where are we lighting?</h3>
+              <p class="recap" id="recap"></p>
+              <label class="field"><span>Name</span><input id="fName" autocomplete="name" enterkeyhint="next" placeholder="First and last"></label>
+              <label class="field"><span>Mobile phone</span><input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="(865) 555-0123"></label>
+              <label class="field"><span>Address</span><input id="fAddr" autocomplete="street-address" enterkeyhint="done" placeholder="Street and town"></label>
+              <button type="button" class="more" id="moreBtn" aria-expanded="false">+ Add email or a note (optional)</button>
+              <div id="moreBox" hidden>
+                <label class="field"><span>Email</span><input id="fEmail" type="email" inputmode="email" autocomplete="email" enterkeyhint="next"></label>
+                <label class="field"><span>Note for Justin</span><textarea id="fNote" rows="2" placeholder="Outlet spots, gate code, warm white or color…"></textarea></label>
+              </div>
+              <label class="hp" aria-hidden="true">Website<input id="fWeb" tabindex="-1" autocomplete="off"></label>
+            </div>
+
+            <div class="step done" data-step="5">
+              <div class="check"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="pvtag" id="pvTag">Preview: nothing was sent</span>
+              <h3 id="doneT">You’re booked!</h3>
+              <p id="doneL"></p>
+              <div class="cal" id="cal"><a id="calA" download="light-install.ics">Apple Calendar</a><a id="calG" target="_blank" rel="noopener">Google Calendar</a></div>
+              <div class="sum" id="sum"></div>
+              <a class="inbox-l" id="inboxL" href="../inbox/?c=knoxfantasy&amp;demo" target="_blank" rel="noopener">See what Justin gets in his inbox</a>
+              <button type="button" class="btn ln" id="again">Start over</button>
+            </div>
+
+            <div class="nav" id="nav"><button type="button" class="btn ln" id="prev" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="btn go2" id="next">See my price</button></div>
+            <p class="why" id="why"></p>
+          </div>
+          <div class="home"></div>
+        </div></div>
+        <div class="qn" id="qn" aria-live="polite"><p class="lb">Preview of what Justin gets</p><div class="card"><span class="ap"><svg width="18" height="26" viewBox="0 0 24 34" aria-hidden="true"><path d="M8 2h8v6H8z" fill="#7d8aa8"/><path d="M12 8c5.5 0 9 5 9 11.5S16.8 32 12 32 3 26 3 19.5 6.5 8 12 8z" fill="#e2ad55"/><path d="M9 14c-1.6 1.6-2.4 3.8-2.4 6" fill="none" stroke="#fff3d6" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg></span><span class="tx"><div><span>PriceWink · Knox Fantasy</span><span>now</span></div><b id="qnT">New booking</b><span id="qnS"></span></span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="work">
+  <div class="wrap">
+    <h2 class="reveal">What neighbors say</h2>
+    <p class="intro reveal">From Knox Fantasy’s Google reviews.</p>
+    <div class="revs" data-group>
+      <div class="big-r reveal"><b class="tn">5.0</b><div><span class="stars"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z" fill="currentColor"/></svg><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z" fill="currentColor"/></svg><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z" fill="currentColor"/></svg><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z" fill="currentColor"/></svg><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z" fill="currentColor"/></svg></span><small>53 reviews on Google</small></div></div>
+      <blockquote class="reveal"><p>Justin has been great to work with. He replied quickly with a quote, and had a very fair price. The install was done early, and it looks great!</p><cite>Google review</cite></blockquote>
+      <blockquote class="reveal"><p>I got quotes from four different Christmas light installers in Knoxville, and Knox Fantasy Christmas Lights was hands down the most pleasant to work with.</p><cite>Google review</cite></blockquote>
+    </div>
+  </div>
+</section>
+
+<section class="s area">
+  <div class="wrap">
+    <div>
+      <h2 class="reveal">Knoxville and around</h2>
+      <p class="intro reveal" style="margin-bottom:0">Farragut, West Knox, Maryville and nearby. Not sure you’re in range? Text Justin.</p>
+      <div class="ctas reveal"><a class="btn go2" style="flex:none" href="#quote" id="areaQ">Get my price</a><a class="btn dk" href="tel:+18659955981">Call (865) 995-5981</a></div>
+    </div>
+    <ul class="hrs reveal">
+      <li>Design and quote<span>Free</span></li>
+      <li>Mid-season fixes<span>Included</span></li>
+      <li>Takedown and storage<span>Included</span></li>
+      <li>Online booking<span>Any time</span></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span><b>Knox Fantasy Christmas Lights</b> · Knoxville, TN · <a href="tel:+18659955981">(865) 995-5981</a></span><span>Site preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a></span></div></footer>
+<div class="cta-bar" id="ctaBar"><a class="btn dk" style="background:#1d2846" href="tel:+18659955981">Call</a><a class="btn go2" href="#quote" id="barQ">Get my price</a></div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt=n=>Math.round(n).toLocaleString('en-US');
+  const r5=n=>Math.round(n/5)*5;
+
+  /* =====================================================================
+     PRICES: sample numbers for the preview. The owner sets every number before going live.
+     ===================================================================== */
+  const PRICING={
+    minJob:300,
+    roof:{ sizes:{one:[450,700],two:[650,1000],big:[950,1450],estate:[1400,2400]}, tree:[250,500], bush:[210,360], wreath:[150,325], walk:[150,300] },
+    tree:{ sizes:{s:[150,250],m:[250,450],l:[450,850],xl:[800,1500]}, bush:[210,360], wreath:[150,325] },
+    bush:{ each:[35,60], wreath:[150,325], walk:[150,300] },
+    biz:{ sizes:{shop:[600,1100],office:[1000,2000],hoa:[800,1600],big:[2200,4500]}, wreath:[150,325] }
+  };
+  const SIZES={
+    roof:{q:'How big is the house?',help:'Pick the closest. Justin confirms the final price.',o:[['one','One story','About 100 ft of roofline'],['two','Two story','About 150 ft'],['big','Big two story','About 220 ft'],['estate','Lots of gables or a big home','300 ft or more']]},
+    tree:{q:'How tall is the tree?',help:'A guess is fine.',o:[['s','Under 10 ft','A small evergreen'],['m','10 to 20 ft','Most front-yard trees'],['l','20 to 35 ft','A big yard tree'],['xl','Over 35 ft','The tallest one on the street']]},
+    biz:{q:'What are we lighting?',help:'Justin will set the design with you.',o:[['shop','A storefront','One building front'],['office','An office or restaurant','Front plus a tree or two'],['hoa','A neighborhood entrance','Signs, trees and columns'],['big','A big building','Long frontage or several buildings']]}
+  };
+  const EXTRAS={roof:[['tree','Light a tree'],['bush','6 shrubs'],['wreath','Wreath & garland'],['walk','Walkway']],tree:[['bush','6 shrubs'],['wreath','Wreath & garland']],bush:[['wreath','Wreath & garland'],['walk','Walkway']],biz:[['wreath','Wreaths & garland']]};
+  const NAMES={roof:'Roofline lighting',tree:'Tree lighting',bush:'Shrub lighting',biz:'Business lighting'};
+  const BOOKING_ENDPOINT='';
+  const CLIENT_ID='knoxfantasy';
+
+  const S={svc:null,size:null,bushes:8,ex:{},slot:null,asap:false,when:null};
+  let step=1, booted=false, sending=false;
+
+  function price(){ const P=PRICING, L=[]; let lo=0,hi=0; const add=(n,a,b)=>{L.push([n,a,b]);lo+=a;hi+=b;}, k=P[S.svc];
+    if(k){ if(S.svc==='bush') add('Shrubs, '+S.bushes,S.bushes*k.each[0],S.bushes*k.each[1]); else { const [a,b]=k.sizes[S.size||Object.keys(k.sizes)[1]]; add(NAMES[S.svc]+', '+label(),a,b); }
+      (EXTRAS[S.svc]||[]).forEach(([e,t])=>{ if(S.ex[e]&&k[e]) add(t,k[e][0],k[e][1]); }); }
+    lo=Math.max(P.minJob,r5(lo)); hi=Math.max(lo+10,r5(hi)); return {lo,hi,L}; }
+  function label(){ const set=SIZES[S.svc]; if(!set) return ''; const o=set.o.find(x=>x[0]===S.size); return o?o[1].toLowerCase():''; }
+
+  /* ---------- step 1: service ---------- */
+  function pickSvc(v){ if(S.svc!==v){ S.ex={}; S.size=null; } S.svc=v; $$('#svcPick .opt').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v))); buildSize(); setTimeout(()=>go(2),RM?0:260); }
+  $$('#svcPick .opt').forEach(b=>b.addEventListener('click',()=>pickSvc(b.dataset.v)));
+  function buildSize(){ const set=SIZES[S.svc]; $$('[data-pane]').forEach(p=>p.classList.toggle('active',p.dataset.pane===(S.svc==='bush'?'bush':'size'))); if(!set) return;
+    $('#sizeQ').textContent=set.q; $('#sizeHelp').textContent=set.help;
+    const box=$('#sizePick'); box.innerHTML=''; set.o.forEach(([k,t,s])=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.setAttribute('aria-pressed',String(S.size===k));
+      b.innerHTML='<span><b></b><small></small></span><span class="fr tn"></span>'; b.querySelector('b').textContent=t; b.querySelector('small').textContent=s;
+      const r=PRICING[S.svc].sizes[k]; b.querySelector('.fr').textContent='$'+fmt(r[0])+'+';
+      b.onclick=()=>{ S.size=k; $$('#sizePick .opt').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); setTimeout(()=>go(3),RM?0:260); }; box.appendChild(b); }); }
+  const bOut=$('#bOut'); $('#bMinus').onclick=()=>{ S.bushes=Math.max(1,S.bushes-1); bOut.textContent=S.bushes; }; $('#bPlus').onclick=()=>{ S.bushes=Math.min(60,S.bushes+1); bOut.textContent=S.bushes; };
+
+  /* ---------- step 3: price + times ---------- */
+  function buildExtras(){ const box=$('#extras'); box.innerHTML=''; (EXTRAS[S.svc]||[]).forEach(([k,t])=>{ const b=document.createElement('button'); b.type='button'; b.textContent='+ '+t; b.setAttribute('aria-pressed',String(!!S.ex[k]));
+    b.onclick=()=>{ S.ex[k]=!S.ex[k]; if(S.svc==='mow'&&S.ex[k]){ if(k==='once') S.ex.every2=false; if(k==='every2') S.ex.once=false; } $$('#extras button').forEach((x,i)=>x.setAttribute('aria-pressed',String(!!S.ex[EXTRAS[S.svc][i][0]]))); showPrice(); }; box.appendChild(b); }); }
+  function animNum(el,to){ if(RM){ el.textContent=fmt(to); return; } const from=+el.textContent.replace(/\D/g,'')||0, t0=performance.now(), dur=from?450:900;
+    (function f(t){ const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3); el.textContent=fmt(from+(to-from)*e); if(p<1) requestAnimationFrame(f); })(t0); }
+  function showPrice(){ const {lo,hi}=price(); animNum($('#lo'),lo); animNum($('#hi'),hi);
+    $('#pK').textContent='Your price';
+    $('#pNote').textContent='Install, fixes, takedown and storage included. Justin confirms the final price.'; }
+
+  let SL=null, selDay=0, slotsErr=false;
+  function demoBusy(){ const now=new Date(), at=(d,h)=>new Date(now.getFullYear(),now.getMonth(),now.getDate()+d,h).getTime(), k='pw_demo_blocks_'+CLIENT_ID; let mine=[],gone=[],bk=[];
+    try{ mine=JSON.parse(localStorage.getItem(k)||'[]'); gone=JSON.parse(localStorage.getItem(k+'_removed')||'[]'); bk=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]'); }catch(e){}
+    const out=[[at(2,13),at(2,15),'SB-1'],[at(6,0),at(7,0),'SB-2']].filter(x=>gone.indexOf(x[2])<0);
+    mine.forEach(b=>out.push([new Date(b.start).getTime(),new Date(b.end).getTime()]));
+    bk.forEach(b=>{ if(b.client===CLIENT_ID&&b.slotStart&&b.status!=='Canceled'){ const t=new Date(b.slotStart).getTime(); out.push([t,t+3600e3]); } });
+    return out; }
+  function previewSlots(){ const busy=demoBusy(), out=[], now=new Date(), earliest=new Date(now.getTime()+12*3600e3), DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    for(let i=0;i<=14&&out.length<12;i++){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i); if(d.getDay()===0) continue; const times=[];
+      for(let h=8;h<=17;h++){ const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),h); const r=Math.sin(d.getDate()*12.9898+h*78.233+d.getMonth()*3.1)*43758.5453, seed=r-Math.floor(r);
+        if(t<earliest||seed<.4||busy.some(x=>t.getTime()<x[1]&&t.getTime()+3600e3>x[0])) continue; times.push({start:t.toISOString(),label:(h%12||12)+':00 '+(h<12?'AM':'PM')}); }
+      if(times.length) out.push({label:DW[d.getDay()]+' '+MO[d.getMonth()]+' '+d.getDate(),times}); }
+    return out; }
+  function loadSlots(){ SL=null; slotsErr=false; renderSlots();
+    if(!BOOKING_ENDPOINT){ setTimeout(()=>{ SL=previewSlots(); renderSlots(); },350); return; }
+    fetch(BOOKING_ENDPOINT+'?action=slots&c='+encodeURIComponent(CLIENT_ID)).then(r=>r.json()).then(j=>{ if(!j.ok) throw 0; SL=j.days; renderSlots(); }).catch(()=>{ slotsErr=true; SL=[]; renderSlots(); }); }
+  function renderSlots(){ const dbox=$('#days'), tbox=$('#times'), msg=$('#slotMsg');
+    if(!SL){ dbox.innerHTML='<span class="day sk">.</span>'.repeat(5); tbox.innerHTML='<span class="time sk">.</span>'.repeat(6); msg.hidden=true; return; }
+    if(!SL.length){ dbox.innerHTML=''; tbox.innerHTML=''; msg.hidden=false; msg.textContent=slotsErr?'The calendar didn’t load. Tap below and Justin will text you to set a day.':'No open install times in the next two weeks. Tap below and Justin will text you.'; $('#asapBtn span').textContent='Call me to set a time'; return; }
+    if(selDay>=SL.length) selDay=0;
+    dbox.innerHTML=SL.map((d,i)=>{ const p=d.label.split(' '); return '<button type="button" class="day" role="tab" aria-selected="'+(i===selDay)+'" data-i="'+i+'"><small>'+p[0]+'</small><b>'+p[2]+'</b><i>'+d.times.length+' open</i></button>'; }).join('');
+    tbox.innerHTML=SL[selDay].times.map((t,k)=>'<button type="button" class="time" aria-pressed="'+(!!S.slot&&S.slot.start===t.start)+'" data-k="'+k+'">'+t.label+'</button>').join('');
+    if(!RM){ tbox.classList.remove('swap'); void tbox.offsetWidth; tbox.classList.add('swap'); } }
+  $('#days').addEventListener('click',e=>{ const b=e.target.closest('.day'); if(!b||!SL||!SL.length) return; selDay=+b.dataset.i; renderSlots(); });
+  $('#times').addEventListener('click',e=>{ const b=e.target.closest('.time'); if(!b||!SL||!SL.length) return; const d=SL[selDay], t=d.times[+b.dataset.k], p=d.label.split(' ');
+    S.slot={start:t.start,label:p[0]+', '+p[1]+' '+p[2]+' at '+t.label,short:p[0]+' '+t.label}; S.asap=false; S.when=S.slot.label;
+    $$('#times .time').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); $('#asapBtn').setAttribute('aria-pressed','false'); setTimeout(()=>go(4),RM?0:240); });
+  $('#asapBtn').addEventListener('click',()=>{ S.slot=null; S.asap=true; S.when='Text me to set a day'; $('#asapBtn').setAttribute('aria-pressed','true'); $$('#times .time').forEach(x=>x.setAttribute('aria-pressed','false')); setTimeout(()=>go(4),RM?0:240); });
+
+  /* ---------- step 4: contact ---------- */
+  $('#moreBtn').addEventListener('click',()=>{ $('#moreBox').hidden=false; $('#moreBtn').hidden=true; $('#fEmail').focus(); });
+  $('#fPhone').addEventListener('input',e=>{ const d=e.target.value.replace(/\D/g,'').replace(/^1/,'').slice(0,10); let o=d; if(d.length>6) o='('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6); else if(d.length>3) o='('+d.slice(0,3)+') '+d.slice(3); e.target.value=o; });
+  ['#fName','#fPhone','#fAddr'].forEach((sel,i,arr)=>{ $(sel).addEventListener('input',nav); $(sel).addEventListener('keydown',e=>{ if(e.key!=='Enter') return; e.preventDefault(); const nx=arr[i+1]; if(nx) $(nx).focus(); else if(valid()) submit(); }); });
+  function recap(){ const r=$('#recap'); r.innerHTML=''; const {lo,hi}=price();
+    r.append(NAMES[S.svc]+', $'+fmt(lo)+' – $'+fmt(hi)+'. '); if(S.slot){ const b=document.createElement('b'); b.textContent=S.slot.label; r.append(b); } else r.append(S.when+'.');
+    const c=document.createElement('button'); c.type='button'; c.textContent='Change'; c.onclick=()=>go(3); r.append(c); }
+
+  /* ---------- navigation ---------- */
+  function valid(){ if(step===1) return !!S.svc; if(step===2) return S.svc==='bush'||!!S.size; if(step===3) return !!S.when;
+    if(step===4) return $('#fName').value.trim().length>1&&$('#fPhone').value.replace(/\D/g,'').length===10&&$('#fAddr').value.trim().length>4; return true; }
+  function submitLabel(){ return S.slot?'Book '+S.slot.short:'Send my request'; }
+  function nav(){ const need=(step===2&&S.svc==='bush')||step===4; const nx=$('#next'); nx.hidden=!need; nx.disabled=!valid(); nx.textContent=step===4?submitLabel():'See my price';
+    $('#why').textContent=step===4&&!valid()&&($('#fName').value||$('#fPhone').value)?'Add your name, a 10-digit phone and your address.':''; }
+  function go(n){ const qt=$('#qt'); qt.classList.toggle('back',n<step); step=n;
+    $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
+    if(n===2) buildSize();
+    if(n===3){ buildExtras(); showPrice(); const pb=$('#pbox'); pb.classList.remove('shine'); void pb.offsetWidth; pb.classList.add('shine'); const a=$('#amt'); a.classList.remove('swing'); void a.offsetWidth; if(!RM) a.classList.add('swing'); if(!SL) loadSlots(); else renderSlots(); }
+    if(n===4) recap();
+    $('#qlab').textContent=n===5?'All set':'Step '+n+' of 4'; $$('#dots i').forEach((d,i)=>d.classList.toggle('on',i<n)); $('#dots').hidden=n===5;
+    $('#nav').style.display=(n===1||n===5)?'none':'flex'; $('#prev').hidden=n===1; nav();
+    if(innerWidth>=960) qt.scrollTo({top:0,behavior:RM?'auto':'smooth'});
+    if(!booted){ booted=true; return; }
+    if(innerWidth<960){ const t=qt.getBoundingClientRect().top; if(t<0||t>innerHeight*.5) qt.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); } }
+  $('#next').addEventListener('click',()=>{ if(!valid()||sending) return; if(step===4) submit(); else go(step+1); });
+  $('#prev').addEventListener('click',()=>go(Math.max(1,step-1)));
+  $('#again').addEventListener('click',()=>{ S.slot=null; S.asap=false; S.when=null; $('#asapBtn').setAttribute('aria-pressed','false'); loadSlots(); go(1); });
+
+  /* ---------- submit (preview saves to the demo inbox on this device) ---------- */
+  async function submit(){ if(sending) return; sending=true; const btn=$('#next'); btn.classList.add('busy'); btn.textContent=S.slot?'Booking…':'Sending…';
+    const {lo,hi,L}=price(), note=$('#fNote').value.trim();
+    const data={action:'book',client:CLIENT_ID,job:NAMES[S.svc],estimateLow:lo,estimateHigh:hi,slotStart:S.slot?S.slot.start:null,when:S.when,urgent:false,
+      name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),email:$('#fEmail').value.trim(),address:$('#fAddr').value.trim(),notes:note,website:$('#fWeb').value,
+      details:L.map(([n,a,b])=>n+': $'+fmt(r5(a))+'–$'+fmt(r5(b))).join('; ')};
+    let res;
+    try{ if(BOOKING_ENDPOINT){ const r=await fetch(BOOKING_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); res=await r.json(); }
+      else { await new Promise(r=>setTimeout(r,600)); res={ok:true,slotLabel:S.slot?S.slot.label:S.when,id:'DEMO-'+Date.now().toString(36).toUpperCase()};
+        try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push({id:res.id,created:new Date().toISOString(),client:CLIENT_ID,status:'New',slotStart:data.slotStart||'',slotLabel:res.slotLabel,service:data.job,details:data.details,estimateLow:lo,estimateHigh:hi,urgent:'',name:data.name,phone:data.phone,email:data.email,address:data.address,notes:note}); localStorage.setItem(k,JSON.stringify(all.slice(-40))); }catch(e){} } }
+    catch(e){ res={ok:false}; }
+    sending=false; btn.classList.remove('busy'); btn.textContent=submitLabel();
+    if(res&&res.ok){ go(5); finish(res); return; }
+    if(res&&res.error==='slot_taken'){ S.slot=null; S.when=null; loadSlots(); go(3); setTimeout(()=>{ const m=$('#slotMsg'); m.hidden=false; m.textContent='Someone just booked that time. Pick another.'; },400); return; }
+    const w=$('#why'); w.innerHTML=''; w.append('That didn’t send. Please call '); const a=document.createElement('a'); a.href='tel:+18659955981'; a.textContent='(865) 995-5981'; w.append(a); }
+  function finish(res){ const {lo,hi}=price(), first=$('#fName').value.trim().split(' ')[0], addr=$('#fAddr').value.trim();
+    $('#doneT').textContent=(S.slot?'Install booked, ':'Got it, ')+first+'!';
+    const dl=$('#doneL'); dl.innerHTML=''; if(S.slot){ dl.append('Knox Fantasy will be out '); const b=document.createElement('b'); b.textContent=res.slotLabel||S.slot.label; dl.append(b,'. You’ll get a text to confirm.'); } else dl.textContent='Justin will text you to set a day.';
+    $('#cal').hidden=!S.slot;
+    if(S.slot){ const s0=new Date(S.slot.start), e0=new Date(s0.getTime()+3600e3), z=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+      $('#calA').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//PriceWink//EN','BEGIN:VEVENT','UID:'+z(s0)+'@pricewink','DTSTAMP:'+z(new Date()),'DTSTART:'+z(s0),'DTEND:'+z(e0),'SUMMARY:Knox Fantasy: '+NAMES[S.svc],'LOCATION:'+addr.replace(/[,;]/g,'\\$&'),'DESCRIPTION:Questions? Call (865) 995-5981','END:VEVENT','END:VCALENDAR'].join('\r\n'));
+      $('#calG').href='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('Knox Fantasy: '+NAMES[S.svc])+'&dates='+z(s0)+'/'+z(e0)+'&location='+encodeURIComponent(addr); }
+    const rows=[['Job',NAMES[S.svc]],['Price','$'+fmt(lo)+' – $'+fmt(hi)],['When',res.slotLabel||S.when],['Address',addr]]; if($('#fNote').value.trim()) rows.push(['Note',$('#fNote').value.trim()]);
+    const sum=$('#sum'); sum.innerHTML=''; rows.forEach(([k,v])=>{ const d=document.createElement('div'), a=document.createElement('span'), b=document.createElement('b'); a.textContent=k; b.textContent=v; d.append(a,b); sum.appendChild(d); });
+    $('#pvTag').hidden=!!BOOKING_ENDPOINT; $('#inboxL').hidden=!!BOOKING_ENDPOINT;
+    const q=$('#qn'); $('#qnT').textContent='New booking: '+NAMES[S.svc]; $('#qnS').textContent=(S.slot?S.slot.short:S.when)+' · $'+fmt(lo)+' to $'+fmt(hi)+' · '+first;
+    clearTimeout(q._t); setTimeout(()=>{ q.classList.add('on'); q._t=setTimeout(()=>q.classList.remove('on'),5500); },RM?0:900); }
+
+  /* ---------- page wiring ---------- */
+  function startWith(svc){ if(step===5){ S.slot=null; S.asap=false; S.when=null; } if(step!==1) go(1); pickSvc(svc); }
+  $$('#quick a, .row[data-svc], #qcard').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); startWith(a.dataset.svc); $('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); }));
+  go(1);
+
+  // notification: on phones it drops from the top of the screen, so it lives on <body>
+  { const qn=$('#qn'), home=$('#qtilt'), place=()=>{ if(innerWidth<960){ if(qn.parentElement!==document.body) document.body.appendChild(qn); } else if(qn.parentElement!==home) home.appendChild(qn); }; place(); addEventListener('resize',place,{passive:true}); }
+  // desktop: phone tilts toward the pointer, glare follows
+  const qp=$('#qphone'), qtl=$('#qtilt');
+  if(!RM&&matchMedia('(hover:hover) and (pointer:fine)').matches){ let pend=null;
+    qp.addEventListener('pointermove',e=>{ if(innerWidth<960||pend) return; const r=qp.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+      pend=requestAnimationFrame(()=>{ pend=null; qtl.style.transform='rotate(-2deg) rotateY('+(x*7).toFixed(2)+'deg) rotateX('+(-y*5).toFixed(2)+'deg)'; $('.scr').style.setProperty('--ga',(118+x*40).toFixed(1)+'deg'); }); });
+    qp.addEventListener('pointerleave',()=>{ qtl.style.transform=''; }); }
+  // status bar clock
+  { const c=$('#clock'), t=()=>{ const d=new Date(); c.textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0'); }; t(); setInterval(t,30000); }
+
+  // reveals: once, lead first, shrinking gaps inside a group
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; const kids=e.target.matches('[data-group]')?[...e.target.querySelectorAll('.reveal')]:[e.target];
+      kids.forEach((k,i)=>{ k.style.transitionDelay=Math.round(110*Math.pow(i,.75))+'ms'; k.classList.add('in'); }); io.unobserve(e.target); }),{rootMargin:'0px 0px -10% 0px'});
+    $$('[data-group], .reveal').forEach(el=>{ if(el.matches('.reveal')&&el.closest('[data-group]')) return; io.observe(el); });
+    const bar=$('#ctaBar'), hero=$('.hero'), qs=$('#quote'); let heroOut=false, inQuote=false; const upd=()=>bar.classList.toggle('show',heroOut&&!inQuote);
+    new IntersectionObserver(([e])=>{ heroOut=!e.isIntersecting; upd(); }).observe(hero);
+    new IntersectionObserver(([e])=>{ inQuote=e.isIntersecting; upd(); },{threshold:.15}).observe(qs);
+  } else $$('.reveal').forEach(el=>el.classList.add('in'));
+
+  /* count-ups: run once when their group reveals */
+  function countUp(el){ const to=+el.dataset.to, dec=+(el.dataset.dec||0), out=v=>dec?v.toFixed(dec):fmt(v); if(RM){ el.textContent=out(to); return; } const t0=performance.now();
+    (function f(t){ const p=Math.min(1,(t-t0)/1100), e=1-Math.pow(1-p,3); el.textContent=out(to*e); if(p<1) requestAnimationFrame(f); })(t0); }
+  if('IntersectionObserver' in window){ const cio=new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) return; e.target.querySelectorAll('.cu').forEach(countUp); cio.unobserve(e.target); }),{rootMargin:'0px 0px -10% 0px'});
+    $$('.ngrid, .svc').forEach(el=>cio.observe(el)); }
+  /* header goes solid after the hero starts scrolling */
+  const hdr=$('#hdr'); const solid=()=>hdr.classList.toggle('solid',scrollY>40); solid();
+
+  /* scroll motion: ridges and lawn at different depths, hero copy drifts and fades, photo cards separate,
+     the numbers stripes slide, gallery photos settle in. Measured once, batched in one rAF. */
+  if(!RM){
+    const cl=v=>v<0?0:v>1?1:v, eo=t=>1-Math.pow(1-t,3), hero=$('.hero'), hw=$('#hwrap'), cue=$('#cue'), layers=$$('#scene [data-depth]'),
+      cards=[['.stage .c1',.10],['.stage .c2',.18],['.stage .c3',.26]].map(([q,k])=>[$(q),k]), fld=$('#fld'), figs=$$('.gal .ph');
+    let VH=innerHeight, HH=hero.offsetHeight, T={};
+    const top=el=>{ let t=0; while(el){ t+=el.offsetTop; el=el.offsetParent; } return t; };
+    let px=0, py=0;
+    function measure(){ VH=innerHeight; HH=hero.offsetHeight; T.nums=top($('#nums')); T.figs=figs.map(top); update(); }
+    function update(){ const y=scrollY;
+      if(y<HH*1.3){ const p=cl(y/HH); hw.firstElementChild.style.transform='translate3d(0,'+(y*.28).toFixed(1)+'px,0)'; hw.firstElementChild.style.opacity=Math.max(0,1-p*1.7).toFixed(3);
+        if(cue) cue.style.opacity=Math.max(0,1-p*4).toFixed(3);
+        layers.forEach(l=>l.style.transform='translate3d(0,'+(y*(+l.dataset.depth)).toFixed(1)+'px,0)');
+        cards.forEach(([el,k])=>{ if(el) el.style.transform='translate3d('+(px*k*60).toFixed(1)+'px,'+(-y*k+py*k*40).toFixed(1)+'px,0)'; }); }
+      const d=y+VH-T.nums; if(fld&&d>0&&d<VH*2.4) fld.style.transform='translate3d('+(-d*.12).toFixed(1)+'px,0,0)';
+      figs.forEach((f,i)=>{ const p=eo(cl((y+VH-T.figs[i])/(VH*.6))); f.style.transform='translate3d(0,'+((1-p)*40).toFixed(1)+'px,0) scale('+(.9+.1*p).toFixed(4)+')'; f.firstElementChild.style.transform='scale('+(1.22-.22*p).toFixed(4)+')'; });
+      solid(); }
+    let tick=false; const req=()=>{ if(tick) return; tick=true; requestAnimationFrame(()=>{ update(); tick=false; }); };
+    addEventListener('scroll',req,{passive:true}); addEventListener('resize',()=>requestAnimationFrame(measure),{passive:true});
+    addEventListener('load',measure); if(document.fonts) document.fonts.ready.then(measure);
+    /* desktop: the photo stack shifts a little toward the pointer */
+    if(matchMedia('(hover:hover) and (pointer:fine)').matches) hero.addEventListener('pointermove',e=>{ if(innerWidth<960) return; px=e.clientX/innerWidth-.5; py=e.clientY/innerHeight-.5; req(); });
+    measure();
+  } else addEventListener('scroll',solid,{passive:true});
+  $$('#barQ,#areaQ').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); $('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); }));
+})();
+</script>
+</body></html>
