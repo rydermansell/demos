@@ -238,7 +238,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   let B=[], BL=[], SRC=[], FEED='', tab='up';
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
-  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'}};
+  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'},ferree:{name:'Ferree Guttering',trade:'gutters'}};
   const SAMPLE_SETS={
     tree:[
       {urgent:1, mins:-14, status:'New', service:'Storm cleanup', details:'One downed tree: On a structure', lo:600, hi:1950, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Maryville', notes:'Big oak limb on the garage roof. Nobody hurt.'},
@@ -288,6 +288,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       {day:5, hour:10, status:'New', service:'Stump grinding', details:'Stump grinding, 4 to 6: Fill with topsoil', lo:440, hi:890, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Hardin Valley', notes:'Old fence line, getting ready to reseed.'},
       {day:-2, hour:10, status:'Done', service:'Tree removal', details:'Tree removal, under 25 ft', lo:300, hi:650, name:'Carol Jennings', addr:'301 Willow Bend Dr, Knoxville'},
       {day:-1, hour:15, status:'Canceled', service:'Firewood', details:'Firewood, a face cord', lo:110, hi:150, name:'Kevin Ortiz', addr:'64 Birch Ct, Karns'}],
+    gutters:[
+      {urgent:1, mins:-15, status:'New', service:'Gutter repair', details:'Gutter repair, storm damage', lo:300, hi:900, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Seymour', notes:'Wind tore the gutter off the back corner. Water pouring down by the basement door.'},
+      {day:1, hour:9, status:'New', service:'Seamless gutters', details:'Seamless gutters, an average house: Add gutter guards', lo:2100, hi:3700, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Sevierville', notes:'Gate code 4512. Want black to match the windows.'},
+      {day:2, hour:11, status:'Confirmed', service:'Gutter guards', details:'Gutter guards, a big two-story', lo:1200, hi:2000, name:'Brian Keller', addr:'2210 Laurel Bluff Dr, Seymour', notes:'Big oak over the back side, clogs every fall.'},
+      {day:3, hour:14, status:'Confirmed', service:'Siding', details:'Siding, one side of the house: Soffit and fascia', lo:3700, hi:8500, name:'Linda Sharpe', addr:'88 Cedar Knoll Rd, Kodak'},
+      {day:5, hour:10, status:'New', service:'Roofing', details:'Roofing, an average house: New gutters too', lo:10600, hi:16300, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Seymour', notes:'Insurance claim from the hail. Adjuster coming next week.'},
+      {day:-2, hour:10, status:'Done', service:'Seamless gutters', details:'Seamless gutters, a small ranch', lo:1100, hi:1700, name:'Carol Jennings', addr:'301 Willow Bend Dr, Seymour'},
+      {day:-1, hour:15, status:'Canceled', service:'Gutter repair', details:'Gutter repair, a downspout', lo:125, hi:275, name:'Kevin Ortiz', addr:'64 Birch Ct, Sevierville'}],
     generic:[
       {urgent:1, mins:-14, status:'New', service:'Emergency repair', details:'Needs help today', lo:150, hi:400, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd'},
       {day:1, hour:9, status:'New', service:'Estimate visit', details:'Standard job', lo:250, hi:600, name:'Maria Lopez', addr:'507 Ridgecrest Ln', notes:'Gate code 4512.'},
