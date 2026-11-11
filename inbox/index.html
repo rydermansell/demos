@@ -238,7 +238,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   let B=[], BL=[], SRC=[], FEED='', tab='up';
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
-  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'},ferree:{name:'Ferree Guttering',trade:'gutters'}};
+  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'},ferree:{name:'Ferree Guttering',trade:'gutters'},abcfence:{name:'ABC Fence Co',trade:'fenceabc'}};
   const SAMPLE_SETS={
     tree:[
       {urgent:1, mins:-14, status:'New', service:'Storm cleanup', details:'One downed tree: On a structure', lo:600, hi:1950, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Maryville', notes:'Big oak limb on the garage roof. Nobody hurt.'},
@@ -272,6 +272,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       {day:5, hour:10, status:'New', service:'Chain link fence', details:'Chain link fence, an acre or more: Drive gate', lo:7300, hi:12200, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Seymour', notes:'Keeping goats in. Some slope on the back side.'},
       {day:-2, hour:10, status:'Done', service:'Wood privacy fence', details:'Wood privacy fence, small yard', lo:2800, hi:4200, name:'Carol Jennings', addr:'301 Willow Bend Dr, Knoxville'},
       {day:-1, hour:15, status:'Canceled', service:'Gate', details:'Gate, walk gate', lo:450, hi:900, name:'Kevin Ortiz', addr:'64 Birch Ct, Friendsville'}],
+    fenceabc:[
+      {urgent:1, mins:-25, status:'New', service:'Gate', details:'Gate, fix a gate', lo:150, hi:400, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Kodak', notes:'Drive gate dragging and won’t latch. Dogs keep getting out.'},
+      {day:1, hour:9, status:'New', service:'Cedar privacy fence', details:'Cedar privacy fence, average backyard: Walk gate', lo:5400, hi:8200, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Sevierville', notes:'Gate code 4512. Survey pins are marked with pink flags.'},
+      {day:2, hour:11, status:'Confirmed', service:'Ornamental iron fence', details:'Ornamental iron fence, small yard', lo:3600, hi:5800, name:'Brian Keller', addr:'2210 Laurel Bluff Dr, Knoxville', notes:'Around the pool. Needs to meet code.'},
+      {day:3, hour:14, status:'Confirmed', service:'Vinyl fence', details:'Vinyl fence, big backyard: Remove old fence', lo:9500, hi:14700, name:'Linda Sharpe', addr:'88 Cedar Knoll Rd, Seymour'},
+      {day:5, hour:10, status:'New', service:'Chain link fence', details:'Chain link fence, an acre or more: Drive gate', lo:7300, hi:12200, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Dandridge', notes:'Keeping goats in. Some slope on the back side.'},
+      {day:-2, hour:10, status:'Done', service:'Cedar privacy fence', details:'Cedar privacy fence, small yard', lo:2800, hi:4200, name:'Carol Jennings', addr:'301 Willow Bend Dr, Strawberry Plains'},
+      {day:-1, hour:15, status:'Canceled', service:'Gate', details:'Gate, walk gate', lo:450, hi:900, name:'Kevin Ortiz', addr:'64 Birch Ct, Jefferson City'}],
     lights:[
       {urgent:1, mins:-16, status:'New', service:'Roofline lighting', details:'Roofline lighting, two story: Wreath & garland', lo:800, hi:1325, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Farragut', notes:'Family flies in Friday. Any chance you can get it up before then?'},
       {day:1, hour:9, status:'New', service:'Roofline lighting', details:'Roofline lighting, one story: Light a tree', lo:700, hi:1200, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Knoxville', notes:'Gate code 4512. Outlet is on the left side of the garage.'},
