@@ -238,7 +238,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   let B=[], BL=[], SRC=[], FEED='', tab='up';
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
-  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'}};
+  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'}};
   const SAMPLE_SETS={
     tree:[
       {urgent:1, mins:-14, status:'New', service:'Storm cleanup', details:'One downed tree: On a structure', lo:600, hi:1950, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Maryville', notes:'Big oak limb on the garage roof. Nobody hurt.'},
@@ -280,6 +280,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       {day:5, hour:10, status:'New', service:'Business lighting', details:'Business lighting, a storefront: Wreaths & garland', lo:750, hi:1425, name:'Tom Reynolds', addr:'Kingston Pike storefront, Knoxville', notes:'Want it up before the first weekend of December.'},
       {day:-2, hour:10, status:'Done', service:'Shrub lighting', details:'Shrubs, 10', lo:350, hi:600, name:'Carol Jennings', addr:'301 Willow Bend Dr, Knoxville'},
       {day:-1, hour:15, status:'Canceled', service:'Tree lighting', details:'Tree lighting, under 10 ft', lo:150, hi:250, name:'Kevin Ortiz', addr:'64 Birch Ct, Farragut'}],
+    treehv:[
+      {urgent:1, mins:-12, status:'New', service:'Storm cleanup', details:'Storm cleanup, one tree down: Haul it all off', lo:650, hi:1900, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Hardin Valley', notes:'Big oak came down across the driveway last night. Can’t get the car out.'},
+      {day:1, hour:9, status:'New', service:'Tree removal', details:'Tree removal, 25 to 50 ft: Near the house or lines, Grind the stump', lo:875, hi:2025, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Knoxville', notes:'Gate code 4512. Dog stays inside.'},
+      {day:2, hour:11, status:'Confirmed', service:'Firewood', details:'Firewood, a full cord: Deliver it, Stack it', lo:360, hi:515, name:'Brian Keller', addr:'2210 Laurel Bluff Dr, Karns', notes:'Stack it by the back porch please.'},
+      {day:3, hour:14, status:'Confirmed', service:'Tree trimming', details:'Tree trimming, 50 to 85 ft: Over the roof or lines', lo:600, hi:1400, name:'Linda Sharpe', addr:'88 Cedar Knoll Rd, Farragut', notes:'Limbs over the roof by the chimney.'},
+      {day:5, hour:10, status:'New', service:'Stump grinding', details:'Stump grinding, 4 to 6: Fill with topsoil', lo:440, hi:890, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Hardin Valley', notes:'Old fence line, getting ready to reseed.'},
+      {day:-2, hour:10, status:'Done', service:'Tree removal', details:'Tree removal, under 25 ft', lo:300, hi:650, name:'Carol Jennings', addr:'301 Willow Bend Dr, Knoxville'},
+      {day:-1, hour:15, status:'Canceled', service:'Firewood', details:'Firewood, a face cord', lo:110, hi:150, name:'Kevin Ortiz', addr:'64 Birch Ct, Karns'}],
     generic:[
       {urgent:1, mins:-14, status:'New', service:'Emergency repair', details:'Needs help today', lo:150, hi:400, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd'},
       {day:1, hour:9, status:'New', service:'Estimate visit', details:'Standard job', lo:250, hi:600, name:'Maria Lopez', addr:'507 Ridgecrest Ln', notes:'Gate code 4512.'},
