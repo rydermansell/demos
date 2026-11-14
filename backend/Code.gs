@@ -223,15 +223,36 @@ function setStatus_(client, d) {
   const iId = H.indexOf('id'), iC = H.indexOf('client'), iS = H.indexOf('status'), iE = H.indexOf('eventId');
   for (let r = 1; r < rows.length; r++) {
     if (rows[r][iId] === d.id && rows[r][iC] === client.id) {
+      const was = String(rows[r][iS]);
       sh.getRange(r + 1, iS + 1).setValue(d.status);
+      let emailed = false;
       if (d.status === 'Canceled' && rows[r][iE] && client.calendarId) {        // free the slot
         const cal = CalendarApp.getCalendarById(client.calendarId), ev = cal && cal.getEventById(rows[r][iE]);
         if (ev) ev.deleteEvent();
       }
-      return { ok: true };
+      if (d.status === 'Canceled' && was !== 'Canceled') {                      // tell the customer, if they left an email
+        const b = {}; H.forEach((k, i) => b[k] = rows[r][i]);
+        if (b.email) { try { notifyCanceled_(client, b); emailed = true; } catch (err) { emailed = false; } }
+      }
+      return { ok: true, emailed: emailed };
     }
   }
   return { ok: false, error: 'not_found' };
+}
+
+/** Sent when the owner cancels a booking in the inbox. Plain, apologetic, with a way to pick a new time. */
+function notifyCanceled_(client, b) {
+  const first = String(b.name || '').split(' ')[0] || 'there';
+  const when = b.slotLabel ? 'your estimate visit on <b>' + esc_(String(b.slotLabel)) + '</b>' : 'your estimate visit';
+  const rebook = client.site ? '<p><a href="' + esc_(String(client.site)) + '">Pick a new time here</a>' + (client.phone ? ', or call or text ' + esc_(String(client.phone)) + '.' : '.') + '</p>'
+                             : (client.phone ? '<p>Call or text ' + esc_(String(client.phone)) + ' to pick a new time.</p>' : '');
+  MailApp.sendEmail({
+    to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
+    subject: 'Your estimate visit was canceled - ' + client.name,
+    htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(first) + ',</p>' +
+      '<p>We’re sorry, we had to cancel ' + when + (b.service ? ' for ' + esc_(String(b.service).toLowerCase()) : '') + '.</p>' + rebook +
+      '<p>' + esc_(client.name) + '</p></div>'
+  });
 }
 
 /* ------------------------------------------------------------------ availability */
