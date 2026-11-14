@@ -106,6 +106,7 @@ main{max-width:720px;margin:0 auto;padding:6px 0 calc(112px + env(safe-area-inse
 .bk.blkd .tm b,.bk.blkd .nm b{color:var(--muted)}.bk.blkd .nm b{font-weight:500}
 .rm{border:0;background:none;padding:6px 0;font:600 13.5px var(--f);color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:#B9AF99;cursor:pointer}.rm:active{opacity:.6}
 .empty,.msg{text-align:center;color:var(--muted);padding:56px 24px}
+body.pend .lead,body.pend .lead2,body.pend .hcal,body.pend .tabs,body.pend .fab,body.pend #demo{display:none}
 .empty b{display:block;font:800 22px var(--disp);letter-spacing:-.02em;color:var(--ink);margin-bottom:4px}
 .sk{height:66px;margin:0 20px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent 0%,rgba(14,27,46,.04) 50%,transparent 100%);background-size:200% 100%;animation:sk 1.2s linear infinite}
 .sk:first-child{margin-top:60px}
@@ -182,7 +183,7 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   <div class="tabs" role="tablist" id="tabs"><i aria-hidden="true"></i><button aria-pressed="true" data-t="up">Upcoming<em id="cUp"></em></button><button aria-pressed="false" data-t="new">New<em id="cNew"></em></button><button aria-pressed="false" data-t="past">Past</button></div>
   <p class="demo" id="demo" hidden>Sample bookings for the demo. Anything you book on the demo site shows up here, marked “You”.</p>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
-  <p class="ver">PriceWink inbox · build 26</p>
+  <p class="ver">PriceWink inbox · build 27</p>
 </main>
 <button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Block time</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -232,7 +233,8 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   const API='';
   /* Paste the PriceWink Connect web-app URL (backend/connect) here to show the Google Calendar button. */
   const CONNECT='';
-  const q=new URLSearchParams(location.search), C=q.get('c')||'', KEY=location.hash.slice(1), DEMO=!API||q.has('demo');
+  const q=new URLSearchParams(location.search), C=q.get('c')||'', KEY=location.hash.slice(1), DEMO=q.has('demo')||(!API&&!KEY), PEND=!API&&!!KEY&&!q.has('demo');
+  /* PEND: an owner's real link (it carries a key) opened before their site is connected. Shows a calm "almost ready" screen, never sample bookings. */
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
   let B=[], BL=[], SRC=[], FEED='', tab='up';
@@ -331,14 +333,18 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),2200); }
+  function pending(){ const n=(CLIENTS[C]||CLIENTS[C.replace(/-/g,'')]||{}).name||'Your bookings'; document.body.classList.add('pend'); $('#biz').textContent=n; $('#miniBiz').textContent=n;
+    $('#list').innerHTML='<div class="empty"><b>Almost ready</b>Your bookings will show up here as soon as your site is live. Nothing for you to do yet.</div>'; }
   async function load(){
     $('#ref').classList.add('spin'); setTimeout(()=>$('#ref').classList.remove('spin'),600);
+    if(PEND){ pending(); return; }
     if(DEMO){ $('#demo').hidden=false; $('#biz').textContent=(CLIENTS[C]||{}).name||'Your business';
       let mine=[]; try{ mine=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]').filter(b=>!C||b.client===C); }catch(e){}
       B=[...mine,...samples()]; BL=demoBlocks(); SRC=demoSources(); render(); return; }
     try{ const r=await fetch(API+'?action=inbox&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)), j=await r.json();
+      if(!j.ok&&j.error==='unknown_client'&&KEY){ pending(); return; }
       if(!j.ok){ $('#biz').textContent='Can’t open this inbox'; $('#list').innerHTML='<p class="msg">'+(j.error==='bad_key'?'This link is missing its key. Use the full link you were sent.':'Something went wrong. Try again in a minute.')+'</p>'; return; }
-      $('#biz').textContent=j.name; B=j.bookings; BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack();
+      document.body.classList.remove('pend'); $('#biz').textContent=j.name; B=j.bookings; BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack();
     }catch(e){ $('#list').innerHTML='<p class="msg">No connection. Pull down or tap refresh to try again.</p>'; }
   }
   async function setStatus(id,status){
