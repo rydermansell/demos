@@ -8,22 +8,27 @@
  *   POST {action:"status", client, key, id, status}    owner updates a booking from the inbox
  *   POST {action:"block", client, key, start, end, label}  owner blocks time (phone job, day off)
  *   POST {action:"unblock", client, key, eventId}       owner removes a block
+ *   POST {action:"reschedule", client, key, id, slotStart}  owner moves a booking to another open time
+ *   POST {action:"add", client, key, name, phone, slotStart, ...}  owner adds a booking they took by phone
+ *   POST {action:"outcome", client, key, id, outcome, jobValue}    owner records whether they won the job
+ *   GET  ?action=photo&c=<client>&key=<key>&id=<file>   one of the photos a customer attached (owner only)
  *
  * Open times automatically skip anything on the owner's own calendars: Google calendars shared with this
  * account (free/busy is enough) and private calendar links (iPhone/iCloud, Outlook). See README.md.
  * sendDigests() emails each owner tomorrow's schedule every evening (run installTriggers() once).
  *
  * Bookings land on the "Bookings" tab, on the client's Google Calendar (which the owner sees on
- * their phone), and in the owner's email. The customer gets a confirmation email if they gave one.
+ * their phone), and in the owner's email. The customer gets a confirmation email if they gave one,
+ * an email if the owner cancels or moves the visit, and a reminder the evening before (sendDigests).
  * Setup steps: see README.md next to this file.
  */
 
 const TZ = 'America/New_York';
 const DAYS_AHEAD = 14;
-const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest'];
+const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl'];
 const BLOCK_PREFIX = 'Blocked: ';
 const INBOX_BASE = 'https://rydermansell.github.io/demos/inbox/';
-const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId'];
+const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -65,6 +70,7 @@ function addClient() {
     leadHours: 12,                          // no bookings sooner than this
     phone: '(865) 367-4667',
     site: 'https://rydermansell.github.io/demos/gonzalez-tree/',
+    reviewUrl: '',                          // their Google "write a review" link, used by the inbox's Ask for a review button
   };
   const ss = sheet_();
   if (findClient_(c.id)) throw new Error('A client with id "' + c.id + '" already exists. Edit their row on the Clients tab instead.');
@@ -124,7 +130,11 @@ function doGet(e) {
     }
     if (p.action === 'inbox') {
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_({ ok: true, name: client.name, bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client) });
+      return json_({ ok: true, name: client.name, reviewUrl: String(client.reviewUrl || ''), bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client) });
+    }
+    if (p.action === 'photo') {         // a customer's job photo, as a data URL, for the owner only
+      if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
+      return json_(photo_(client, String(p.id || '')));
     }
     if (p.action === 'connectInfo') {   // used by the Connect app (connect/Code.gs) before it shares the owner's calendar
       if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
@@ -148,6 +158,9 @@ function doPost(e) {
     if (d.action === 'unblock') return json_(unblock_(client, d));
     if (d.action === 'connect') return json_(connect_(client, d));
     if (d.action === 'disconnect') return json_(disconnect_(client, d));
+    if (d.action === 'reschedule') return json_(reschedule_(client, d));
+    if (d.action === 'add') return json_(addByOwner_(client, d));
+    if (d.action === 'outcome') return json_(outcome_(client, d));
     return json_(book_(client, d));
   } catch (err) {
     return json_({ ok: false, error: 'server', detail: String(err) });
@@ -172,8 +185,10 @@ function book_(client, d) {
   const b = {
     id: id, created: new Date(), client: client.id, status: 'New', slotStart: start ? start.toISOString() : '', slotLabel: slotLabel,
     service: clean_(d.job, 60), details: clean_(d.details, 600), estimateLow: Number(d.estimateLow) || '', estimateHigh: Number(d.estimateHigh) || '',
-    urgent: urgent ? 'Yes' : '', name: name, phone: phone, email: clean_(d.email, 120), address: address, notes: clean_(d.notes, 600), eventId: ''
+    urgent: urgent ? 'Yes' : '', name: name, phone: phone, email: clean_(d.email, 120), address: address, notes: clean_(d.notes, 600), eventId: '',
+    photos: '', outcome: '', jobValue: '', reminded: ''
   };
+  try { b.photos = savePhotos_(client, id, d.photos).join(','); } catch (err) { b.photos = ''; }   // a photo problem never blocks a booking
   const range = b.estimateLow ? '$' + fmt_(b.estimateLow) + ' to $' + fmt_(b.estimateHigh) : '';
   // calendar event (the slot is held for slotMinutes)
   if (start && client.calendarId) {
@@ -195,7 +210,8 @@ function book_(client, d) {
 function notifyOwner_(client, b, range) {
   const inbox = INBOX_BASE + '?c=' + client.id + '#' + client.inboxKey;
   const subject = (b.urgent ? 'EMERGENCY request: ' : 'New booking: ') + b.service + ' - ' + b.slotLabel;
-  const rows = [['When', b.slotLabel], ['Job', b.service], ['Estimate', range], ['Details', b.details], ['Name', b.name], ['Phone', b.phone], ['Email', b.email], ['Address', b.address], ['Notes', b.notes]].filter(r => r[1]);
+  const nPhotos = String(b.photos || '').split(',').filter(String).length;
+  const rows = [['When', b.slotLabel], ['Job', b.service], ['Estimate', range], ['Details', b.details], ['Name', b.name], ['Phone', b.phone], ['Email', b.email], ['Address', b.address], ['Notes', b.notes], ['Photos', nPhotos ? nPhotos + ' attached. Open your inbox to see them.' : '']].filter(r => r[1]);
   const html = '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14">' +
     '<h2 style="margin:0 0 12px">' + esc_(subject) + '</h2><table cellpadding="6" style="border-collapse:collapse">' +
     rows.map(r => '<tr><td style="color:#5d6459">' + esc_(r[0]) + '</td><td><b>' + esc_(String(r[1])) + '</b></td></tr>').join('') + '</table>' +
@@ -253,6 +269,122 @@ function notifyCanceled_(client, b) {
       '<p>We’re sorry, we had to cancel ' + when + (b.service ? ' for ' + esc_(String(b.service).toLowerCase()) : '') + '.</p>' + rebook +
       '<p>' + esc_(client.name) + '</p></div>'
   });
+}
+
+
+/* ------------------------------------------------------------------ owner actions from the inbox */
+
+/** Finds one of this client's bookings. Returns { sh, r (0-based row in the data), H, b (the row as an object) } or null. */
+function bookingRow_(client, id) {
+  const sh = sheet_().getSheetByName('Bookings'), rows = sh.getDataRange().getValues(), H = rows[0];
+  const iId = H.indexOf('id'), iC = H.indexOf('client');
+  for (let r = 1; r < rows.length; r++) {
+    if (rows[r][iId] === id && rows[r][iC] === client.id) { const b = {}; H.forEach((k, i) => b[k] = rows[r][i]); return { sh: sh, r: r, H: H, b: b }; }
+  }
+  return null;
+}
+function setCells_(row, values) {
+  Object.keys(values).forEach(k => {
+    let c = row.H.indexOf(k);
+    if (c < 0) { c = row.H.length; row.H.push(k); row.sh.getRange(1, c + 1).setValue(k).setFontWeight('bold'); }
+    row.sh.getRange(row.r + 1, c + 1).setValue(values[k]);
+  });
+}
+/** A time the owner may put a booking on: one of their normal start times, in the future, with nothing else on it. No minimum notice (it is their own schedule). */
+function ownerSlotOk_(client, start, ignoreEventId) {
+  const now = new Date();
+  if (isNaN(start) || start.getTime() <= now.getTime()) return false;
+  if (!candidates_(client, now).some(s => s.getTime() === start.getTime())) return false;
+  const a = start.getTime(), z = a + Number(client.slotMinutes || 60) * 60000, list = [];
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
+  if (cal) cal.getEvents(new Date(a - 86400000), new Date(z + 86400000)).forEach(ev => { if (ev.getId() !== ignoreEventId) list.push([ev.getStartTime().getTime(), ev.getEndTime().getTime()]); });
+  const ext = googleBusy_(client, new Date(a - 86400000), new Date(z + 86400000)).concat(icsBusy_(client, new Date(a - 86400000), new Date(z + 86400000)));
+  return !list.concat(ext).some(x => x[0] < z && x[1] > a);
+}
+function eventText_(b) {
+  const range = b.estimateLow ? '$' + fmt_(b.estimateLow) + ' to $' + fmt_(b.estimateHigh) : '';
+  return [String(b.service || '') + (range ? ' (' + range + ')' : ''), b.details, 'Customer: ' + b.name + (b.phone ? ', ' + b.phone : '') + (b.email ? ', ' + b.email : ''), b.notes ? 'Notes: ' + b.notes : '', 'Booking ' + b.id + ' via PriceWink'].filter(String).join('\n');
+}
+
+/** Owner moves a booking to another open time. The calendar event moves with it and the customer is emailed the new time. */
+function reschedule_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  const row = bookingRow_(client, d.id); if (!row) return { ok: false, error: 'not_found' };
+  const b = row.b, start = new Date(d.slotStart);
+  if (!ownerSlotOk_(client, start, String(b.eventId || ''))) return { ok: false, error: 'slot_taken' };
+  const end = new Date(start.getTime() + Number(client.slotMinutes || 60) * 60000), was = String(b.slotLabel || '');
+  let eventId = String(b.eventId || '');
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
+  if (cal) {
+    const ev = eventId && cal.getEventById(eventId);
+    if (ev) ev.setTime(start, end);
+    else eventId = cal.createEvent('Estimate: ' + (b.service || 'Visit') + ' - ' + b.name, start, end, { location: String(b.address || ''), description: eventText_(b) }).getId();
+  }
+  const status = (b.status === 'Canceled' || b.status === 'Done' || b.status === 'New') ? 'Confirmed' : String(b.status);
+  setCells_(row, { slotStart: start.toISOString(), slotLabel: label_(start), eventId: eventId, status: status, urgent: '', reminded: '' });
+  let emailed = false;
+  if (b.email) {
+    try {
+      MailApp.sendEmail({
+        to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
+        subject: 'New time for your estimate visit: ' + label_(start) + ' - ' + client.name,
+        htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(String(b.name).split(' ')[0]) + ',</p>' +
+          '<p>We moved your estimate visit' + (was ? ' from ' + esc_(was) : '') + ' to <b>' + esc_(label_(start)) + '</b>.</p>' +
+          (client.phone ? '<p>If that doesn’t work, call or text ' + esc_(String(client.phone)) + ' and we’ll find another time.</p>' : '') +
+          '<p>' + esc_(client.name) + '</p></div>'
+      }); emailed = true;
+    } catch (err) {}
+  }
+  return { ok: true, slotStart: start.toISOString(), slotLabel: label_(start), status: status, emailed: emailed };
+}
+
+/** Owner adds a booking they took by phone. It is already confirmed, holds the time, and nobody is emailed. */
+function addByOwner_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  const name = clean_(d.name, 80); if (name.length < 2) return { ok: false, error: 'missing_fields' };
+  const start = new Date(d.slotStart);
+  if (!ownerSlotOk_(client, start, '')) return { ok: false, error: 'slot_taken' };
+  const id = 'B' + Utilities.formatDate(new Date(), TZ, 'yyMMdd') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+  const b = { id: id, created: new Date(), client: client.id, status: 'Confirmed', slotStart: start.toISOString(), slotLabel: label_(start),
+    service: clean_(d.job, 60) || 'Phone booking', details: 'Added by you', estimateLow: '', estimateHigh: '', urgent: '', name: name, phone: clean_(d.phone, 30),
+    email: '', address: clean_(d.address, 160), notes: clean_(d.notes, 600), eventId: '', photos: '', outcome: '', jobValue: '', reminded: '' };
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
+  if (cal) b.eventId = cal.createEvent('Estimate: ' + b.service + ' - ' + name, start, new Date(start.getTime() + Number(client.slotMinutes || 60) * 60000), { location: b.address, description: eventText_(b) }).getId();
+  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => b[k]));
+  const out = {}; BOOKING_COLS.forEach(k => { if (k !== 'eventId') out[k] = b[k] instanceof Date ? b[k].toISOString() : b[k]; });
+  return { ok: true, booking: out };
+}
+
+/** Owner records how the estimate turned out: 'Won' (with what the job sold for, optional), 'Lost', or '' to clear it. */
+function outcome_(client, d) {
+  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
+  const o = String(d.outcome || ''); if (['Won', 'Lost', ''].indexOf(o) < 0) return { ok: false, error: 'bad_outcome' };
+  const row = bookingRow_(client, d.id); if (!row) return { ok: false, error: 'not_found' };
+  const v = Math.round(Number(String(d.jobValue == null ? '' : d.jobValue).replace(/[^\d.]/g, '')));
+  setCells_(row, { outcome: o, jobValue: o === 'Won' && v > 0 && v < 10000000 ? v : '' });
+  return { ok: true };
+}
+
+/* ------------------------------------------------------------------ job photos from the customer */
+
+/** Saves up to 3 photos sent with a booking (data URLs, already shrunk in the browser) to a private Drive folder. Returns their file ids. */
+function savePhotos_(client, bookingId, photos) {
+  if (!photos || !photos.length) return [];
+  const root = DriveApp.getFoldersByName('PriceWink job photos'), folder = root.hasNext() ? root.next() : DriveApp.createFolder('PriceWink job photos');
+  const ids = [];
+  photos.slice(0, 3).forEach((p, i) => {
+    const m = String(p || '').match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+    if (!m || m[2].length > 1400000) return;   // about 1 MB each at most
+    const blob = Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], client.id + '-' + bookingId + '-' + (i + 1) + '.' + m[1].split('/')[1].replace('jpeg', 'jpg'));
+    ids.push(folder.createFile(blob).getId());
+  });
+  return ids;
+}
+/** Only photos listed on one of this client's own bookings can be read, so a file id alone opens nothing. */
+function photo_(client, id) {
+  if (!id || !bookingsFor_(client.id).some(b => String(b.photos || '').split(',').indexOf(id) >= 0)) return { ok: false, error: 'not_found' };
+  const blob = DriveApp.getFileById(id).getBlob();
+  return { ok: true, data: 'data:' + blob.getContentType() + ';base64,' + Utilities.base64Encode(blob.getBytes()) };
 }
 
 /* ------------------------------------------------------------------ availability */
@@ -499,7 +631,7 @@ function blocksFor_(client) {
 
 /* ------------------------------------------------------------------ evening digest */
 
-/** Run once from the editor: emails every owner tomorrow's schedule at 7pm Eastern. */
+/** Run once from the editor. Every evening at 7pm Eastern: customers with a visit tomorrow get a reminder, and each owner gets tomorrow's schedule. */
 function installTriggers() {
   ScriptApp.getProjectTriggers().filter(t => ['sendDigests', 'setupNewClients'].indexOf(t.getHandlerFunction()) >= 0).forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('setupNewClients').timeBased().everyMinutes(10).create();
@@ -507,7 +639,28 @@ function installTriggers() {
 }
 function sendDigests() {
   const rows = sheet_().getSheetByName('Clients').getDataRange().getValues(), H = rows[0];
-  for (let r = 1; r < rows.length; r++) { const c = {}; H.forEach((h, i) => c[h] = rows[r][i]); if (isOn_(c.active) && c.ownerEmail && c.digest !== false && !/^(FALSE|NO|OFF)$/i.test(String(c.digest).trim())) digest_(c); }
+  for (let r = 1; r < rows.length; r++) {
+    const c = {}; H.forEach((h, i) => c[h] = rows[r][i]); if (!isOn_(c.active)) continue;
+    try { remind_(c); } catch (err) {}
+    if (c.ownerEmail && c.digest !== false && !/^(FALSE|NO|OFF)$/i.test(String(c.digest).trim())) { try { digest_(c); } catch (err) {} }
+  }
+}
+/** Day-before reminder to each customer with a visit tomorrow who left an email. Sent once per booking time. */
+function remind_(client) {
+  const now = new Date(), tomorrow = Utilities.formatDate(new Date(now.getTime() + 86400000), TZ, 'yyyy-MM-dd');
+  const dayStart = zoned_(tomorrow, 0), dayEnd = new Date(dayStart.getTime() + 86400000);
+  bookingsFor_(client.id).forEach(b => {
+    if (!b.email || b.reminded || b.status === 'Canceled' || b.status === 'Done' || !b.slotStart) return;
+    const t = new Date(b.slotStart); if (t < dayStart || t >= dayEnd) return;
+    MailApp.sendEmail({
+      to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
+      subject: 'Reminder: your estimate visit is tomorrow at ' + Utilities.formatDate(t, TZ, 'h:mm a') + ' - ' + client.name,
+      htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(String(b.name).split(' ')[0]) + ',</p>' +
+        '<p>Just a reminder that we’ll be out <b>' + esc_(label_(t)) + '</b> for your free ' + esc_(String(b.service || 'estimate').toLowerCase()) + ' estimate' + (b.address ? ' at ' + esc_(String(b.address)) : '') + '.</p>' +
+        (client.phone ? '<p>Need to change it? Call or text ' + esc_(String(client.phone)) + '.</p>' : '') + '<p>' + esc_(client.name) + '</p></div>'
+    });
+    const row = bookingRow_(client, b.id); if (row) setCells_(row, { reminded: tomorrow });
+  });
 }
 function digest_(client) {
   const now = new Date(), tomorrow = Utilities.formatDate(new Date(now.getTime() + 86400000), TZ, 'yyyy-MM-dd');

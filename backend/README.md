@@ -94,3 +94,14 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Free Gmail accounts can send about 100 emails a day through Apps Script; Google Workspace accounts get 1,500. Each booking sends 1 to 3 emails.
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
+
+## What's new (Nov 2026)
+
+After pasting the new `Code.gs`, run `setup` once more and click **Allow**. Google asks again because the backend now saves customers' job photos to a private Drive folder ("PriceWink job photos"). Then **Deploy > Manage deployments > edit > Version: New version > Deploy** (the URL stays the same).
+
+- **New columns** on the Bookings tab (`photos`, `outcome`, `jobValue`, `reminded`) and the Clients tab (`reviewUrl`) are added automatically by `setup`.
+- **reviewUrl**: paste the client's Google "write a review" link here. The inbox's **Ask for a review** text uses it.
+- **Reminders**: the 7 PM run now also emails customers with a visit the next day (only those who left an email, once per booking time).
+- **Cancel / move**: the customer is emailed when the owner cancels or moves their visit from the inbox.
+- **Owner-added bookings** (taken by phone) are confirmed right away, hold the time online, and email nobody.
+- **Photos**: up to 3 per booking, shrunk on the customer's phone first. Only the owner's inbox link can open them.

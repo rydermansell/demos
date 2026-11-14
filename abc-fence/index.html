@@ -267,6 +267,12 @@ header.top.solid{background:#16181b;box-shadow:0 1px 0 rgba(255,255,255,.06)}
 .field{display:block;margin-bottom:12px}
 .field span{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
 .field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 13px;background:#fff;font:inherit;font-size:16px;color:var(--ink)}
+.phrow{display:flex;flex-wrap:wrap;gap:8px}
+.phadd{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:84px;height:84px;border:1.5px dashed var(--line);border-radius:10px;background:#fff;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer;text-align:center}
+.phadd svg{width:22px;height:22px}.phadd:active{transform:scale(.97)}
+.phth{position:relative;width:84px;height:84px;border-radius:10px;overflow:hidden;border:1.5px solid var(--line)}
+.phth img{display:block;width:100%;height:100%;object-fit:cover}
+.phth button{position:absolute;top:4px;right:4px;width:26px;height:26px;border:0;border-radius:50%;background:rgba(14,20,16,.78);color:#fff;font:700 15px/1 system-ui;cursor:pointer}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(207,122,60,.22)}
 .more{border:0;background:none;padding:4px 0 10px;font-weight:700;font-size:14.5px;color:#96531f;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .recap{font-size:14.5px;color:var(--muted);margin:0 0 14px}
@@ -489,10 +495,13 @@ footer b{color:var(--paper)}
               <label class="field"><span>Name</span><input id="fName" autocomplete="name" enterkeyhint="next" placeholder="First and last"></label>
               <label class="field"><span>Mobile phone</span><input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="(865) 555-0123"></label>
               <label class="field"><span>Address</span><input id="fAddr" autocomplete="street-address" enterkeyhint="done" placeholder="Street and town"></label>
-              <button type="button" class="more" id="moreBtn" aria-expanded="false">+ Add email or a note (optional)</button>
+              <button type="button" class="more" id="moreBtn" aria-expanded="false">+ Add a photo, email or a note (optional)</button>
               <div id="moreBox" hidden>
                 <label class="field"><span>Email</span><input id="fEmail" type="email" inputmode="email" autocomplete="email" enterkeyhint="next"></label>
                 <label class="field"><span>Note for the crew</span><textarea id="fNote" rows="2" placeholder="Dogs, slopes, where the fence line runs…"></textarea></label>
+                <div class="field"><span>Photos of the spot <small style="font-weight:500;opacity:.7">(optional, up to 3)</small></span>
+                  <div class="phrow" id="phRow"><label class="phadd" id="phAdd"><input id="fPhotos" type="file" accept="image/*" multiple style="position:absolute;width:1px;height:1px;opacity:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg>Add a photo</label></div>
+                </div>
               </div>
               <label class="hp" aria-hidden="true">Website<input id="fWeb" tabindex="-1" autocomplete="off"></label>
             </div>
@@ -670,18 +679,32 @@ footer b{color:var(--paper)}
     if(innerWidth<960){ const t=qt.getBoundingClientRect().top; if(t<0||t>innerHeight*.5) qt.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); } }
   $('#next').addEventListener('click',()=>{ if(!valid()||sending) return; if(step===4) submit(); else go(step+1); });
   $('#prev').addEventListener('click',()=>go(Math.max(1,step-1)));
-  $('#again').addEventListener('click',()=>{ S.slot=null; S.asap=false; S.when=null; $('#asapBtn').setAttribute('aria-pressed','false'); loadSlots(); go(1); });
+  $('#again').addEventListener('click',()=>{ PHOTOS.length=0; drawPhotos(); S.slot=null; S.asap=false; S.when=null; $('#asapBtn').setAttribute('aria-pressed','false'); loadSlots(); go(1); });
+
+  /* ---------- optional job photos: shrunk on the phone before sending, so they upload fast on cell signal ---------- */
+  const PHOTOS=[];
+  function shrink(file,max,q){ return new Promise((ok,no)=>{ const u=URL.createObjectURL(file), im=new Image();
+    im.onload=()=>{ const k=Math.min(1,max/Math.max(im.width,im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u); ok(c.toDataURL('image/jpeg',q)); };
+    im.onerror=()=>{ URL.revokeObjectURL(u); no(); }; im.src=u; }); }
+  function drawPhotos(){ $$('#phRow .phth').forEach(x=>x.remove());
+    PHOTOS.forEach((p,i)=>{ const d=document.createElement('div'); d.className='phth'; const im=document.createElement('img'); im.src=p.thumb; im.alt='Photo '+(i+1);
+      const b=document.createElement('button'); b.type='button'; b.textContent='×'; b.setAttribute('aria-label','Remove photo '+(i+1)); b.addEventListener('click',()=>{ PHOTOS.splice(i,1); drawPhotos(); }); d.append(im,b); $('#phAdd').before(d); });
+    $('#phAdd').hidden=PHOTOS.length>=3; }
+  $('#fPhotos').addEventListener('change',async e=>{ for(const f of [...e.target.files]){ if(PHOTOS.length>=3) break; if(!/^image\//.test(f.type)) continue;
+      try{ PHOTOS.push({full:await shrink(f,1280,.72),thumb:await shrink(f,220,.6)}); }catch(err){} }
+    e.target.value=''; drawPhotos(); });
 
   /* ---------- submit (preview saves to the demo inbox on this device) ---------- */
   async function submit(){ if(sending) return; sending=true; const btn=$('#next'); btn.classList.add('busy'); btn.textContent=S.slot?'Booking…':'Sending…';
     const {lo,hi,L}=price(), note=$('#fNote').value.trim();
     const data={action:'book',client:CLIENT_ID,job:NAMES[S.svc],estimateLow:lo,estimateHigh:hi,slotStart:S.slot?S.slot.start:null,when:S.when,urgent:false,
-      name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),email:$('#fEmail').value.trim(),address:$('#fAddr').value.trim(),notes:note,website:$('#fWeb').value,
+      name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),email:$('#fEmail').value.trim(),address:$('#fAddr').value.trim(),notes:note,website:$('#fWeb').value,photos:PHOTOS.map(p=>p.full),
       details:L.map(([n,a,b])=>n+': $'+fmt(r5(a))+'–$'+fmt(r5(b))).join('; ')};
     let res;
     try{ if(BOOKING_ENDPOINT){ const r=await fetch(BOOKING_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); res=await r.json(); }
       else { await new Promise(r=>setTimeout(r,600)); res={ok:true,slotLabel:S.slot?S.slot.label:S.when,id:'DEMO-'+Date.now().toString(36).toUpperCase()};
-        try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push({id:res.id,created:new Date().toISOString(),client:CLIENT_ID,status:'New',slotStart:data.slotStart||'',slotLabel:res.slotLabel,service:data.job,details:data.details,estimateLow:lo,estimateHigh:hi,urgent:'',name:data.name,phone:data.phone,email:data.email,address:data.address,notes:note}); localStorage.setItem(k,JSON.stringify(all.slice(-40))); }catch(e){} } }
+        try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push({id:res.id,created:new Date().toISOString(),client:CLIENT_ID,status:'New',slotStart:data.slotStart||'',slotLabel:res.slotLabel,service:data.job,details:data.details,estimateLow:lo,estimateHigh:hi,urgent:'',name:data.name,phone:data.phone,email:data.email,address:data.address,notes:note,photoThumbs:PHOTOS.map(p=>p.thumb)}); localStorage.setItem(k,JSON.stringify(all.slice(-40))); }catch(e){} } }
     catch(e){ res={ok:false}; }
     sending=false; btn.classList.remove('busy'); btn.textContent=submitLabel();
     if(res&&res.ok){ go(5); finish(res); return; }

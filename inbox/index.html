@@ -35,7 +35,9 @@ button,.chips button,.opt,.sub,.tabs button{user-select:none;-webkit-user-select
 .stats b{display:block;font:800 22px/1.1 var(--disp);letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums}
 .stats .hot b{color:var(--tag)}
 .stats span{display:block;margin-top:4px;font-size:13.5px;line-height:1.2;color:#9FB0CA;white-space:nowrap}
-.hcal{max-width:720px;margin:14px auto 0;padding:0 2px}
+.month{max-width:720px;margin:12px auto 0;padding:0 2px;font-size:14.5px;line-height:1.4;color:#B4C1D6;font-variant-numeric:tabular-nums}
+.month b{color:#fff;font-weight:600;margin-right:6px}
+.hcal{max-width:720px;margin:10px auto 0;padding:0 2px}
 .mini{position:fixed;top:0;left:0;right:0;z-index:7;background:var(--ink);color:#fff;padding:calc(8px + env(safe-area-inset-top,0px)) 16px 8px;transform:translateY(-102%);transition:transform .3s var(--ease)}
 .mini.on{transform:none}
 .mini .row{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:10px;height:36px}
@@ -119,6 +121,28 @@ main{max-width:720px;margin:0 auto;padding:0 0 calc(104px + env(safe-area-inset-
 .go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border:0;border-radius:13px;background:var(--tag);color:var(--tag-ink);font:700 17px var(--f);cursor:pointer;transition:transform .14s var(--ease)}
 .go svg{width:19px;height:19px}.go:active{transform:scale(.98)}
 a.go{text-decoration:none;background:var(--ink);color:#fff}
+.go+.go,.amtf+.go{margin-top:8px}
+.two{display:grid;grid-template-columns:1.5fr 1fr;gap:8px}.two .go{margin:0}
+.go.ghost{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px #CFC6B2}
+.alts{display:flex;flex-wrap:wrap;justify-content:center;gap:0 22px;margin-top:4px}.alts .alt{width:auto;margin:0}
+.amtf{display:block;margin:0 0 4px;font-size:15px;color:var(--body)}.amtf small{color:var(--muted)}
+.amtf div{display:flex;align-items:center;gap:8px;margin-top:7px}
+.amtf span{flex:1;display:flex;align-items:center;gap:6px;min-width:0;padding:0 14px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line);font-weight:600;color:var(--ink)}
+.amtf input{flex:1;min-width:0;border:0;background:none;padding:13px 0;font:600 17px var(--f);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
+.amtf span:focus-within{box-shadow:inset 0 0 0 2px var(--ink)}
+.amtf button{flex:none;border:0;border-radius:12px;padding:0 18px;height:48px;background:var(--ink);color:#fff;font:600 15px var(--f);cursor:pointer}
+.phs{display:flex;gap:8px;margin-top:6px}
+.pt{position:relative;width:76px;height:76px;padding:0;border:0;border-radius:12px;overflow:hidden;background:var(--paper2);cursor:pointer;box-shadow:inset 0 0 0 1px var(--line)}
+.pt img{display:block;width:100%;height:100%;object-fit:cover}
+.pt i{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.5) 50%,transparent 100%);background-size:200% 100%;animation:sk 1.2s linear infinite}
+.viewer{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:calc(16px + env(safe-area-inset-top,0px)) 12px calc(20px + env(safe-area-inset-bottom,0px));background:rgba(8,15,27,.94);animation:fadeIn .2s ease}
+.viewer img{max-width:100%;max-height:calc(100% - 76px);border-radius:10px;object-fit:contain}
+.viewer button{flex:none;border:0;border-radius:999px;padding:13px 28px;background:#fff;color:var(--ink);font:700 16px var(--f);cursor:pointer}
+.inp{display:block;width:100%;font:inherit;font-size:16px;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.inp:focus{outline:none;border-color:var(--ink)}
+.chips.wrap{flex-wrap:wrap;overflow:visible;margin:0;padding:0}
+.chips p{margin:4px 0;font-size:14.5px;color:var(--muted)}
+
 .alt{display:block;width:100%;margin-top:4px;border:0;background:none;padding:13px 8px;font:600 15px var(--f);color:var(--body);text-decoration:underline;text-decoration-color:#C3B9A4;text-underline-offset:4px;cursor:pointer}
 .alt:active{opacity:.6}.alt.solo{margin-top:0}
 .hint{margin:12px 20px 0;font-size:14.5px;line-height:1.45;color:var(--muted)}
@@ -165,6 +189,7 @@ body.ex .hcal,body.ex .fab{display:none}
 .fab{position:fixed;right:max(16px,calc((100vw - 720px) / 2 + 16px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;align-items:center;gap:9px;border:0;border-radius:14px;padding:14px 18px 14px 15px;
   background:var(--ink);color:#fff;font:600 15px var(--f);cursor:pointer;box-shadow:0 14px 28px -12px rgba(14,27,46,.6);transition:transform .3s var(--ease)}
 body.has-open .fab{transform:translateY(calc(100% + 40px))}
+.fab{min-height:52px}
 .fab span{font:800 21px/1 var(--disp);color:var(--tag)}.fab:active{transform:scale(.96)}
 .sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(14,27,46,.45);animation:fadeIn .25s ease}
 @keyframes fadeIn{from{opacity:0}}
@@ -188,12 +213,13 @@ body.has-open .fab{transform:translateY(calc(100% + 40px))}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:14px;width:max-content;max-width:calc(100% - 32px);transform:translate(-50%,calc(100% + 130px));visibility:hidden;background:var(--ink);color:#fff;font-weight:600;font-size:15px;line-height:1.35;padding:12px 18px;border-radius:16px;box-shadow:0 14px 30px -14px rgba(14,27,46,.7);transition:transform .45s cubic-bezier(.2,.9,.3,1.2);z-index:9}
 .toast.on{transform:translate(-50%,0);visibility:visible}
 .toast button{flex:none;border:0;border-radius:10px;background:rgba(255,255,255,.14);color:var(--tag);font:700 15px var(--f);padding:9px 14px;margin:-3px -8px -3px 0;cursor:pointer}
-body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:1ms!important;animation-delay:0s!important;transition-property:opacity,color,background-color,border-color!important}.more{transition:none}}
 </style></head><body>
 <header class="top" id="top"><div class="row"><div><small id="sub">Bookings</small><h1 id="biz">Loading…</h1></div>
   <button class="ref" id="ref" aria-label="Refresh"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
   <div class="stats"><button type="button" class="hot" id="stNew"><b id="nNew">0</b><span>New</span></button><p><b id="nWeek">0</b><span>Next 7 days</span></p><p><b id="nVal">$0</b><span>Quoted</span></p></div>
+  <p class="month" id="month" hidden></p>
   <div class="hcal"><div id="sync" hidden></div></div>
 </header>
 <div class="mini" id="mini" aria-hidden="true"><div class="row"><b id="miniBiz"></b><span class="pill" id="miniNew" hidden></span>
@@ -204,9 +230,9 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   <p class="hint" id="hint" hidden>Tap a booking to see the details and call or text your customer.</p>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <p class="upd" id="upd" hidden></p>
-  <p class="ver">PriceWink inbox · build 29</p>
+  <p class="ver">PriceWink inbox · build 30</p>
 </main>
-<button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Block time</button>
+<button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Add</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shT" hidden>
   <i class="grab" aria-hidden="true"></i>
@@ -247,6 +273,30 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   <p class="fine">No calendar? No problem. Use <b>Block time</b> for phone jobs, and the 7 PM email shows tomorrow’s schedule.</p>
   <button class="cancel" id="cClose" type="button">Close</button>
 </section>
+<section class="sheet" id="aSheet" role="dialog" aria-modal="true" aria-labelledby="aT" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="aT">What do you want to add?</h2>
+  <p class="sh-help">Either one blocks that time on your booking page.</p>
+  <button class="opt" id="aBook" type="button"><i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1B2E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 19.5a6.5 6.5 0 0 1 13 0M18.5 8v6M15.5 11h6"/></svg></i><span><b>A booking</b><small>A job you took by phone or in person</small></span><em aria-hidden="true">›</em></button>
+  <button class="opt" id="aBlock" type="button"><i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1B2E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg></i><span><b>Time off</b><small>Block a day or a few hours</small></span><em aria-hidden="true">›</em></button>
+  <button class="cancel" id="aClose" type="button">Close</button>
+</section>
+<section class="sheet" id="mSheet" role="dialog" aria-modal="true" aria-labelledby="mT" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="mT">Move this booking</h2>
+  <p class="sh-help" id="mHelp"></p>
+  <div id="mForm">
+    <label class="sh-l" for="mName">Customer’s name</label><input class="inp" id="mName" maxlength="80" autocomplete="off" autocapitalize="words" placeholder="Pat Smith" enterkeyhint="next">
+    <label class="sh-l" for="mPhone">Phone <small>(optional)</small></label><input class="inp" id="mPhone" type="tel" inputmode="tel" maxlength="30" autocomplete="off" placeholder="(865) 555-0100" enterkeyhint="next">
+    <label class="sh-l" for="mJob">What’s the job? <small>(optional)</small></label><input class="inp" id="mJob" maxlength="60" autocomplete="off" placeholder="Fence repair" enterkeyhint="next">
+    <label class="sh-l" for="mAddr">Address <small>(optional)</small></label><input class="inp" id="mAddr" maxlength="160" autocomplete="off" placeholder="123 Main St, Kodak" enterkeyhint="done">
+  </div>
+  <p class="sh-l">Day</p><div class="chips" id="mDays"></div>
+  <p class="sh-l">Time</p><div class="chips wrap" id="mTimes"></div>
+  <button class="save" id="mSave" type="button" disabled>Pick a time</button>
+  <button class="cancel" id="mCancel" type="button">Cancel</button>
+</section>
+<div class="viewer" id="viewer" hidden><img alt="Photo from the customer"><button type="button" id="vClose">Close</button></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
 (function(){
@@ -261,7 +311,8 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   const CL=()=>CLIENTS[C]||CLIENTS[C.replace(/-/g,'')]||{};
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
-  let B=[], BL=[], SRC=[], FEED='', tab='up';
+  let B=[], BL=[], SRC=[], FEED='', REVIEW='', tab='up';
+  const PH={};   // customer photos already fetched this visit, by file id
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
   const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'},ferree:{name:'Ferree Guttering',trade:'gutters'},abcfence:{name:'ABC Fence Co',trade:'fenceabc'}};
@@ -300,7 +351,7 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
       {day:-1, hour:15, status:'Canceled', service:'Gate', details:'Gate, walk gate', lo:450, hi:900, name:'Kevin Ortiz', addr:'64 Birch Ct, Friendsville'}],
     fenceabc:[
       {urgent:1, mins:-25, status:'New', service:'Gate', details:'Gate, fix a gate', lo:150, hi:400, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Kodak', notes:'Drive gate dragging and won’t latch. Dogs keep getting out.'},
-      {day:1, hour:9, status:'New', service:'Cedar privacy fence', details:'Cedar privacy fence, average backyard: Walk gate', lo:5400, hi:8200, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Sevierville', notes:'Gate code 4512. Survey pins are marked with pink flags.'},
+      {day:1, hour:9, status:'New', service:'Cedar privacy fence', details:'Cedar privacy fence, average backyard: Walk gate', lo:5400, hi:8200, name:'Maria Lopez', addr:'507 Ridgecrest Ln, Sevierville', notes:'Gate code 4512. Survey pins are marked with pink flags.', pics:['../abc-fence/img/cedar-privacy.jpg','../abc-fence/img/ranch-rail.jpg']},
       {day:2, hour:11, status:'Confirmed', service:'Ornamental iron fence', details:'Ornamental iron fence, small yard', lo:3600, hi:5800, name:'Brian Keller', addr:'2210 Laurel Bluff Dr, Knoxville', notes:'Around the pool. Needs to meet code.'},
       {day:3, hour:14, status:'Confirmed', service:'Vinyl fence', details:'Vinyl fence, big backyard: Remove old fence', lo:9500, hi:14700, name:'Linda Sharpe', addr:'88 Cedar Knoll Rd, Seymour'},
       {day:5, hour:10, status:'New', service:'Chain link fence', details:'Chain link fence, an acre or more: Drive gate', lo:7300, hi:12200, name:'Tom Reynolds', addr:'Lot off Mill Creek Rd, Dandridge', notes:'Keeping goats in. Some slope on the back side.'},
@@ -347,24 +398,28 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   function saveDemoSources(){ try{ localStorage.setItem('pw_demo_sources_'+C,JSON.stringify(SRC)); }catch(e){} }
   function saveDemoBlocks(){ try{ localStorage.setItem('pw_demo_blocks_'+C,JSON.stringify(BL.filter(b=>!b.sample))); }catch(e){} }
   function samples(){
-    const now=new Date(), set=SAMPLE_SETS[CL().trade]||SAMPLE_SETS.generic; let st={}; try{ st=JSON.parse(localStorage.getItem('pw_demo_status_'+C)||'{}'); }catch(e){}
+    const now=new Date(), set=SAMPLE_SETS[CL().trade]||SAMPLE_SETS.generic; let st={}, mv={}, oc={}; try{ st=JSON.parse(localStorage.getItem('pw_demo_status_'+C)||'{}'); mv=JSON.parse(localStorage.getItem('pw_demo_moves_'+C)||'{}'); oc=JSON.parse(localStorage.getItem('pw_demo_out_'+C)||'{}'); }catch(e){}
     return set.map((x,i)=>{ let when=null;
       if(!x.urgent){ when=new Date(now.getFullYear(),now.getMonth(),now.getDate()+x.day,x.hour); if(x.day>0&&when.getDay()===0) when.setDate(when.getDate()+1); }
       const created=x.urgent?new Date(now.getTime()+x.mins*60000):new Date((when||now).getTime()-3*864e5);
-      const id='S-'+i;
+      const id='S-'+i, moved=mv[id]?new Date(mv[id]):null; if(moved) when=moved;
+      const out=oc[id]||(x.status==='Done'?{o:'Won',v:Math.round((x.lo+x.hi)/100)*50}:{o:'',v:''});
       return {id, sample:true, created:created.toISOString(), client:C, status:st[id]||x.status, slotStart:when?when.toISOString():'', service:x.service, details:x.details,
-        estimateLow:x.lo, estimateHigh:x.hi, urgent:x.urgent?'Yes':'', name:x.name, phone:'(865) 555-01'+String(42+i*13).slice(-2), email:'', address:x.addr, notes:x.notes||''}; }); }
+        outcome:out.o, jobValue:out.v, estimateLow:x.lo, estimateHigh:x.hi, urgent:x.urgent&&!moved?'Yes':'', name:x.name, phone:'(865) 555-01'+String(42+i*13).slice(-2), email:x.name.toLowerCase().replace(/\s+/g,'.')+'@example.com', address:x.addr, notes:x.notes||'', photoThumbs:x.pics||[]}; }); }
 
+  const SHEETS=['#sheet','#cSheet','#aSheet','#mSheet'];
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function toast(t,undo){ const el=$('#toast'); el.textContent=t; el._undo=undo||null; if(undo){ const u=document.createElement('button'); u.type='button'; u.textContent='Undo'; el.appendChild(u); }
     el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),undo?6000:2600); }
   $('#toast').addEventListener('click',e=>{ const el=$('#toast'); if(e.target.closest('button')&&el._undo){ const f=el._undo; el._undo=null; el.classList.remove('on'); f(); } });
   $('#sub').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
   async function load(){
+    const ae=document.activeElement; if((ae&&ae.tagName==='INPUT'&&$('#list').contains(ae))||SHEETS.some(q=>!$(q).hidden)) return;   // don't redraw while they are typing or picking
+    const keep={}; B.forEach(b=>{ if(b.moved||b.emailed) keep[b.id]={moved:b.moved,emailed:b.emailed}; });
     $('#ref').classList.add('spin'); setTimeout(()=>$('#ref').classList.remove('spin'),600);
     if(API&&!FORCE_DEMO){
       try{ const r=await fetch(API+'?action=inbox&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)), j=await r.json();
-        if(j.ok){ EX=DEMO=false; document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
+        if(j.ok){ EX=DEMO=false; document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; REVIEW=j.reviewUrl||''; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
         if(j.error==='unknown_client'&&KEY){ EX=DEMO=true; }
         else { $('#biz').textContent='Can’t open this inbox'; $('#list').innerHTML='<p class="msg">'+(j.error==='bad_key'?'This link is missing its key. Use the full link you were sent.':'Something went wrong. Try again in a minute.')+'</p>'; return; }
       }catch(e){ if(!EX){ $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; } }
@@ -374,7 +429,7 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
                                   :'<span><b>Sample bookings.</b> Tap one to open it. Anything you book on the demo site shows up here, marked “You”.</span>');
     $('#biz').textContent=CL().name||(EX?'Your bookings':'Your business');
     let mine=[]; if(!EX){ try{ mine=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]').filter(b=>!C||b.client===C); }catch(e){} }
-    B=[...mine,...samples()]; BL=EX?[]:demoBlocks(); SRC=EX?[]:demoSources(); render();
+    B=[...mine,...samples()]; B.forEach(b=>{ if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=EX?[]:demoBlocks(); SRC=EX?[]:demoSources(); render();
   }
   const tOf=b=>b.slotStart?new Date(b.slotStart).getTime():new Date(b.created).getTime();
   const nowT=()=>Date.now();
@@ -392,6 +447,9 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
     check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
     chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
     inbox:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 13.5l2.6-7.2A2 2 0 0 1 8 5h8a2 2 0 0 1 1.9 1.3l2.6 7.2V18a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M3.5 13.5h5l1 2.5h5l1-2.5h5"/></svg>',
+    star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></svg>',
+    cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg>',
+    bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4"/></svg>',
     info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.2"/></svg>',
     clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'};
   const slHtml=s=>(s==='Confirmed'||s==='Done'?IC.check:'')+esc(s);
@@ -407,6 +465,9 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
     $('#nNew').textContent=nNew; $('#stNew').classList.toggle('hot',nNew>0);
     $('#nWeek').textContent=live.filter(b=>b.slotStart&&tOf(b)>=now&&tOf(b)<wk).length;
     const val=fmt(live.reduce((a,b)=>a+((+b.estimateLow||0)+(+b.estimateHigh||0))/2,0)); $('#nVal').textContent=val; $('#nVal').classList.toggle('sm',val.length>7);
+    const mo=new Date(), inMo=iso=>{ const d=new Date(iso); return d.getFullYear()===mo.getFullYear()&&d.getMonth()===mo.getMonth(); };
+    const nMo=live.filter(b=>inMo(b.created)).length, won=B.filter(b=>b.outcome==='Won'&&b.status!=='Canceled'&&inMo(b.slotStart||b.created)), wonV=won.reduce((a,b)=>a+(+b.jobValue||0),0);
+    $('#month').hidden=!B.length; $('#month').innerHTML='<b>'+mo.toLocaleDateString('en-US',{month:'long'})+'</b>'+nMo+(nMo===1?' booking':' bookings')+(won.length?' · '+won.length+(won.length===1?' job won':' jobs won')+(wonV?' · '+fmt(wonV):''):'');
     const up=B.filter(b=>belongs(b,'up')).length; $('#cUp').textContent=up||''; $('#cNew').textContent=nNew||'';
     moveTab(); $('#miniBiz').textContent=$('#biz').textContent; $('#miniNew').hidden=!nNew; $('#miniNew').textContent=nNew+' new'; }
   function bookingRow(b,k){
@@ -423,34 +484,54 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
       '</button>'+
       '<div class="more"><div><div class="in"><div class="rows">'+
         (est?row(IC.tag,'Instant estimate','<span class="tag">'+est+'</span>'):'')+
-        (b.details?row(IC.job,'Job',esc(b.details)):'')+
+        (b.details&&b.details!=='Added by you'?row(IC.job,'Job',esc(b.details)):'')+
         (b.notes?row(IC.note,'Note from customer',esc(b.notes)):'')+
+        (photosHtml(b)?row(IC.cam,'Photos from customer',photosHtml(b)):'')+
         (b.address?row(IC.pin,'Address',esc(b.address),maps):'')+
         (b.phone?row(IC.phone,'Phone',esc(b.phone),'tel:'+esc(tel)):'')+
-        row(IC.clock,'','Booked '+esc(ago(b.created)))+
+        (b.email&&b.slotStart&&tOf(b)>nowT()&&b.status!=='Canceled'&&b.status!=='Done'?row(IC.bell,'',b.reminded?'Reminder email sent':'They get a reminder email the evening before'):'')+
+        row(IC.clock,'',(b.details==='Added by you'?'Added ':'Booked ')+esc(ago(b.created)))+
         '</div>'+
-        '<div class="acts"><a class="call" href="tel:'+esc(tel)+'">'+IC.call+'Call</a><a class="txt" href="sms:'+esc(tel)+'">'+IC.text+'Text</a><a href="'+maps+'" target="_blank" rel="noopener">'+IC.nav+'Directions</a></div>'+
+        (b.phone||b.address?'<div class="acts" style="grid-template-columns:repeat('+((b.phone?2:0)+(b.address?1:0))+',minmax(0,1fr))">'+(b.phone?'<a class="call" href="tel:'+esc(tel)+'">'+IC.call+'Call</a><a class="txt" href="sms:'+esc(tel)+'">'+IC.text+'Text</a>':'')+(b.address?'<a href="'+maps+'" target="_blank" rel="noopener">'+IC.nav+'Directions</a>':'')+'</div>':'')+
         '<div class="next">'+nextHtml(b)+'</div>'+
       '</div></div></div></article>'; }
   /* One obvious next step per booking, in plain words, instead of a status switch. Every change can be undone from the toast. */
-  function nextHtml(b){ const s=b.status;
-    return s==='New'?'<p>Does this time work for you?</p><button class="go" type="button" data-set="Confirmed">'+IC.check+'Yes, confirm it</button><button class="alt" type="button" data-set="Canceled">I can’t make it. Cancel this booking</button>'
-      :s==='Confirmed'?'<p>You confirmed this one. Finished the visit?</p><button class="go" type="button" data-set="Done">'+IC.check+'Mark as done</button><button class="alt" type="button" data-set="Canceled">Cancel this booking</button>'
-      :s==='Done'?'<p>This one is marked done.</p><button class="alt solo" type="button" data-set="Confirmed">Not finished? Put it back on the schedule</button>'
-      :'<p>'+(b.emailed?esc(first(b))+' was emailed that this is canceled. A quick text is a nice touch too.':'This booking is canceled and that time is open again. Let '+esc(first(b))+' know so they aren’t waiting on you.')+'</p>'+
-        (b.phone?'<a class="go txt" href="sms:'+esc(String(b.phone).replace(/[^\d+]/g,''))+'">'+IC.text+'Text '+esc(first(b))+'</a>':'')+
-        '<button class="alt" type="button" data-set="Confirmed">Changed your mind? Put it back on the schedule</button>'; }
+  function nextHtml(b){ const s=b.status, f=esc(first(b)), tel=esc(String(b.phone||'').replace(/[^\d+]/g,''));
+    const txt=(kind,icon,label)=>b.phone?'<a class="go txt" data-kind="'+kind+'" href="sms:'+tel+'">'+icon+label+'</a>':'';
+    const move='<button class="alt" type="button" data-move>Move to a different time</button>', back='<button class="alt" type="button" data-set="Confirmed">Put it back on the schedule</button>';
+    if(b.moved&&s!=='Canceled'&&s!=='Done') return '<p>'+(b.emailed?f+' was emailed the new time. A quick text is a nice touch too.':'This booking has a new time. Let '+f+' know.')+'</p>'+txt('moved',IC.text,'Text '+f+' the new time')+
+      '<div class="alts">'+move+'<button class="alt" type="button" data-set="Canceled">Cancel this booking</button></div>';
+    if(s==='New') return (b.slotStart?'<p>Does this time work for you?</p><button class="go" type="button" data-set="Confirmed">'+IC.check+'Yes, confirm it</button>'
+        :'<p>This one still needs a time.</p><button class="go" type="button" data-move>Pick a time</button>')+
+      '<div class="alts">'+(b.slotStart?move:'')+'<button class="alt" type="button" data-set="Canceled">Cancel this booking</button></div>';
+    if(s==='Confirmed') return '<p>You confirmed this one. Finished the visit?</p><button class="go" type="button" data-set="Done">'+IC.check+'Mark as done</button>'+
+      '<div class="alts">'+move+'<button class="alt" type="button" data-set="Canceled">Cancel this booking</button></div>';
+    if(s==='Done'){
+      if(!b.outcome) return '<p>Marked as done. Did you get the job?</p><div class="two"><button class="go" type="button" data-out="Won">'+IC.check+'Yes, we got it</button><button class="go ghost" type="button" data-out="Lost">No</button></div><div class="alts">'+back+'</div>';
+      if(b.outcome==='Lost') return '<p>Marked as not won. On to the next one.</p><div class="alts"><button class="alt" type="button" data-out="">Change that</button></div>';
+      return '<p>Job won. Nice work.</p><label class="amtf">What did it sell for? <small>(optional)</small><div><span>$<input inputmode="numeric" maxlength="9" value="'+(b.jobValue?Number(b.jobValue).toLocaleString('en-US'):'')+'" placeholder="4,800" enterkeyhint="done" aria-label="Job total in dollars"></span><button type="button" data-saveval>Save</button></div></label>'+
+        txt('review',IC.star,'Ask '+f+' for a review')+'<div class="alts"><button class="alt" type="button" data-out="">Change that</button></div>'; }
+    return '<p>'+(b.emailed?f+' was emailed that this is canceled. A quick text is a nice touch too.':'This booking is canceled and that time is open again. Let '+f+' know so they aren’t waiting on you.')+'</p>'+
+      txt('',IC.text,'Text '+f)+'<div class="alts">'+back+'</div>'; }
+  function photosHtml(b){ const th=b.photoThumbs||[], ids=String(b.photos||'').split(',').filter(String);
+    if(th.length) return '<span class="phs">'+th.map((u,i)=>'<button type="button" class="pt" aria-label="Open photo '+(i+1)+'"><img src="'+esc(u)+'" alt=""></button>').join('')+'</span>';
+    if(!ids.length) return '';
+    return '<span class="phs">'+ids.map((id,i)=>'<button type="button" class="pt" data-pid="'+esc(id)+'" aria-label="Open photo '+(i+1)+'">'+(PH[id]?'<img src="'+PH[id]+'" alt="">':'<i></i>')+'</button>').join('')+'</span>'; }
+  /* Photos stay private: each one is fetched with the owner's key the first time its booking is opened. */
+  function loadPhotos(card){ if(DEMO||!card) return; card.querySelectorAll('.pt[data-pid]').forEach(async el=>{ const id=el.dataset.pid; if(PH[id]||el.dataset.busy) return; el.dataset.busy='1';
+    try{ const r=await fetch(API+'?action=photo&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)+'&id='+encodeURIComponent(id)), j=await r.json(); if(!j.ok) throw 0; PH[id]=j.data;
+      $$('.pt[data-pid]').forEach(x=>{ if(x.dataset.pid===id) x.innerHTML='<img src="'+j.data+'" alt="">'; }); }catch(e){ el.dataset.busy=''; } }); }
   const first=b=>String(b.name||'').trim().split(/\s+/)[0]||'your customer';
   function blockRow(x,k){ const s0=new Date(x.start), e0=new Date(x.end), allDay=e0-s0>=20*3600e3, t=tmParts(s0), tm=d=>d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
     return '<article class="bk blkd" style="--d:'+Math.round(70*Math.pow(Math.min(k,7),.7))+'ms"><div class="sum"><span class="tm">'+(allDay?'<b>All</b><small>DAY</small>':'<b>'+t[0]+'</b><small>'+(t[1]||'')+'</small>')+'</span>'+
       '<span class="nm"><b><span>'+esc(x.label||'Busy')+'</span></b><small>Blocked'+(allDay?' all day':' until '+tm(e0))+'</small></span>'+
       '<span class="pr"><button class="rm" type="button" data-unblock="'+esc(x.id)+'">Remove</button></span></div></article>'; }
   function render(){
-    renderStats(); renderSync(); document.body.classList.toggle('has-open',!!openId&&B.some(b=>b.id===openId&&belongs(b,tab)));
+    renderStats(); renderSync(); document.body.classList.toggle('has-open',!!openId&&B.some(b=>b.id===openId));
     let seen=false; try{ seen=!!localStorage.getItem('pw_hint'); }catch(e){} $('#hint').hidden=DEMO||seen||!B.length;
     $('#upd').hidden=false; $('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'. This page refreshes on its own.';
     const now=nowT();
-    let list=B.filter(b=>belongs(b,tab));
+    let list=B.filter(b=>belongs(b,tab)||b.id===openId);   // an open booking stays put until they close it, even if its status moved it to another tab
     list.sort((a,b)=>tab==='past'?tOf(b)-tOf(a):(b.urgent?1:0)-(a.urgent?1:0)||tOf(a)-tOf(b));
     const blocks=tab==='up'?BL.filter(x=>new Date(x.end).getTime()>now):[];
     if(!list.length&&!blocks.length){ $('#list').innerHTML='<div class="empty">'+IC.inbox+'<b>'+(tab==='new'?'You’re all caught up':tab==='past'?'No past bookings yet':'Nothing booked yet')+'</b>'+(DEMO&&!EX?'Book a time on the preview site and it shows up here.':tab==='new'?'Every request has been confirmed or closed out.':'New bookings show up here the moment they’re made.')+'</div>'; firstPaint=false; return; }
@@ -467,12 +548,15 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
       g.items.forEach(it=>{ html+=it.b?bookingRow(it.b,k):blockRow(it.x,k); k++; }); });
     $('#list').innerHTML=html;
     if(firstPaint){ firstPaint=false; setTimeout(()=>$('#list').classList.add('settled'),900); }
+    if(openId) loadPhotos($$('#list .bk').find(c=>c.dataset.id===openId));
   }
   /* Text button: opens Messages with a draft that fits where this booking stands. The owner can edit before sending. */
-  function draftFor(b){ const biz=$('#biz').textContent.trim(), first=String(b.name||'').trim().split(/\s+/)[0]||'there', svc=String(b.service||'your job').toLowerCase(), hi='Hi '+first+', this is '+biz+'. ';
+  function draftFor(b,kind){ const biz=$('#biz').textContent.trim(), first=String(b.name||'').trim().split(/\s+/)[0]||'there', svc=String(b.service||'your job').toLowerCase(), hi='Hi '+first+', this is '+biz+'. ';
     const d=b.slotStart?new Date(b.slotStart):null, now=new Date(), street=String(b.address||'').split(',')[0].trim();
     const tm=d?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'', diff=d?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5):0;
     const when=d?(diff===0?'today':diff===1?'tomorrow':d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}))+' at '+tm:'', past=d&&d.getTime()<now.getTime()-3600e3;
+    if(kind==='review') return hi+'Thanks for choosing us for your '+svc+'. If you’re happy with how it turned out, a quick Google review would mean a lot to us'+(REVIEW?': '+REVIEW:'.');
+    if(kind==='moved'&&d) return hi+'We needed to move your '+svc+' estimate. Your new time is '+when+(street?' at '+street:'')+'. Reply here if that doesn’t work and we’ll find another time.';
     if(b.status==='Canceled') return hi+'Sorry we couldn’t make '+(d?(diff===0?'today':d.toLocaleDateString('en-US',{weekday:'long'})):'that time')+' work for your '+svc+' estimate. Want to pick a new time? Just reply with a day that works for you.';
     if(b.status==='Done') return hi+'Thanks for having us out for your '+svc+'. If anything doesn’t look right, let us know and we’ll take care of it. And if you’re happy with the work, a quick Google review would mean a lot to us.';
     if(b.urgent) return hi+'We got your emergency request for '+svc+(street?' at '+street:'')+'. We’re working on getting someone out to you as soon as we can. Is this the best number to call?';
@@ -483,12 +567,13 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
     return hi+'You’re all set for your '+svc+' estimate '+when+(street?' at '+street:'')+'. Reply here if you need to change anything.'; }
   $('#list').addEventListener('click',e=>{ if(!EX) return; const a=e.target.closest('.acts a,a.r,a.go'); if(!a) return; e.preventDefault(); e.stopPropagation(); toast('This is an example. On a real booking, this button reaches your customer.'); },true);
   $('#list').addEventListener('click',e=>{ if(EX) return; const a=e.target.closest('a.txt'); if(!a) return; const b=B.find(x=>x.id===a.closest('.bk').dataset.id); if(!b) return;
-    const tel=String(b.phone||'').replace(/[^\d+]/g,''); a.href='sms:'+tel+'?&body='+encodeURIComponent(draftFor(b)); toast('Draft ready in Messages. Edit it before you send.'); },true);
+    const tel=String(b.phone||'').replace(/[^\d+]/g,''); a.href='sms:'+tel+'?&body='+encodeURIComponent(draftFor(b,a.dataset.kind)); toast('Draft ready in Messages. Edit it before you send.'); },true);
   function toggle(card){ const id=card.dataset.id, opening=!card.classList.contains('open');
     $$('#list .bk.open').forEach(c=>{ c.classList.remove('open'); c.querySelector('.sum').setAttribute('aria-expanded','false'); c.querySelector('.open-l span').textContent='Details'; });
     $('#hint').hidden=true; try{ localStorage.setItem('pw_hint','1'); }catch(e){}
     openId=opening?id:null; document.body.classList.toggle('has-open',opening);
-    if(opening){ card.classList.add('open'); card.querySelector('.sum').setAttribute('aria-expanded','true'); card.querySelector('.open-l span').textContent='Close';
+    const cb=B.find(x=>x.id===id); if(!opening&&cb&&!belongs(cb,tab)){ card.classList.add('leaving'); setTimeout(render,230); }
+    if(opening){ card.classList.add('open'); card.querySelector('.sum').setAttribute('aria-expanded','true'); card.querySelector('.open-l span').textContent='Close'; loadPhotos(card);
       setTimeout(()=>{ const r=card.getBoundingClientRect(), bottom=innerHeight-90; if(r.bottom>bottom) scrollBy({top:Math.min(r.bottom-bottom,r.top-70),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); },330); } }
   const SAID={Confirmed:'Confirmed.',Done:'Marked as done.',Canceled:'Canceled. That time is open again.',New:'Moved back to New.'};
   /* Saving a cancel waits for the Undo window to pass, because the backend emails the customer when a booking is canceled. */
@@ -500,10 +585,9 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   function flush(){ Object.keys(pend).forEach(id=>{ const p=pend[id]; clearTimeout(p.t); save(id,p.status,p.old); }); }
   addEventListener('pagehide',flush); addEventListener('visibilitychange',()=>{ if(document.hidden) flush(); });
   function setStatus(id,status,isUndo){
-    const b=B.find(x=>x.id===id); if(!b||b.status===status) return; const old=b.status; b.status=status; b.emailed=false;
+    const b=B.find(x=>x.id===id); if(!b||b.status===status) return; const old=b.status; b.status=status; b.emailed=false; b.moved=false;
     const card=$$('#list .bk').find(c=>c.dataset.id===id);
-    if(card&&!isUndo){ card.dataset.s=status; card.querySelector('.sl').innerHTML=slHtml(status); card.querySelector('.next').innerHTML=nextHtml(b); renderStats();
-      if(!belongs(b,tab)&&status!=='Canceled') setTimeout(()=>{ if(b.status!==status) return; card.classList.add('leaving'); setTimeout(()=>{ if(openId===id) openId=null; render(); },230); },900); }
+    if(card&&!isUndo){ card.dataset.s=status; card.querySelector('.sl').innerHTML=slHtml(status); card.querySelector('.next').innerHTML=nextHtml(b); renderStats(); }
     else render();
     toast(isUndo?'Put back.':SAID[status]||'Saved.',isUndo?null:()=>setStatus(id,old,true));
     if(DEMO){ try{ if(b.sample){ const k='pw_demo_status_'+C, m=JSON.parse(localStorage.getItem(k)||'{}'); m[id]=status; localStorage.setItem(k,JSON.stringify(m)); }
@@ -515,7 +599,11 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   $('#list').addEventListener('click',e=>{
     const u=e.target.closest('[data-unblock]'); if(u){ unblock(u.dataset.unblock); return; }
     const card=e.target.closest('.bk'); if(!card||card.classList.contains('blkd')) return;
+    const pt=e.target.closest('.pt'); if(pt){ const im=pt.querySelector('img'); if(im){ $('#viewer img').src=im.src; $('#viewer').hidden=false; } return; }
     const sb=e.target.closest('[data-set]'); if(sb){ setStatus(card.dataset.id,sb.dataset.set); return; }
+    if(e.target.closest('[data-move]')){ openMove(card.dataset.id); return; }
+    const ob=e.target.closest('[data-out]'); if(ob){ setOutcome(card.dataset.id,ob.dataset.out); return; }
+    if(e.target.closest('[data-saveval]')){ const v=Math.round(Number(String(card.querySelector('.amtf input').value).replace(/[^\d.]/g,'')))||''; setOutcome(card.dataset.id,'Won',v,true); return; }
     if(e.target.closest('.sum')) toggle(card); });
   $$('.tabs button').forEach((t,i)=>t.addEventListener('click',()=>{ if(tab===t.dataset.t) return; tab=t.dataset.t; openId=null;
     $$('.tabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===t))); moveTab(); render(); }));
@@ -549,7 +637,7 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
     if(a.id==='subIos') setTimeout(()=>toast('Tap Subscribe, then Add. Bookings appear within a few minutes.'),400);
   }));
   function openConnect(){ renderSources(); setupSubs(); collapse(); $('#cGoogle').hidden=$('#cWarn').hidden=!(DEMO||CONNECT);
-    clearTimeout(closing); ['#sheetBg','#sheet','#cSheet'].forEach(q=>$(q).classList.remove('out')); $('#sheetBg').hidden=false; $('#cSheet').hidden=false; $('#fab').hidden=true; }
+    show('#cSheet'); }
   function collapse(){ $('#cSteps').hidden=true; $$('#cSheet .opt[data-k]').forEach(b=>b.setAttribute('aria-expanded','false')); }
   let stepKind='';
   $$('#cSheet .opt[data-k]').forEach(b=>b.addEventListener('click',()=>{ const open=b.getAttribute('aria-expanded')==='true'; collapse(); if(open) return;
@@ -583,6 +671,60 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   $('#cClose').addEventListener('click',()=>closeAll());
   function welcomeBack(){ if(!q.has('connected')) return; toast('Calendar connected. Jobs on it now block your booking page.');
     q.delete('connected'); try{ history.replaceState(null,'',location.pathname+'?'+q.toString()+location.hash); }catch(e){} }
+  /* ---------- sheets: one open at a time ---------- */
+  function show(id){ clearTimeout(closing); ['#sheetBg',...SHEETS].forEach(q=>$(q).classList.remove('out')); SHEETS.forEach(q=>$(q).hidden=q!==id); $('#sheetBg').hidden=false; $('#fab').hidden=true; $(id).scrollTop=0; }
+  $('#aClose').addEventListener('click',()=>closeAll()); $('#mCancel').addEventListener('click',()=>closeAll());
+  $('#aBlock').addEventListener('click',openSheet); $('#aBook').addEventListener('click',()=>openMove(null));
+  $('#vClose').addEventListener('click',()=>$('#viewer').hidden=true); $('#viewer').addEventListener('click',e=>{ if(e.target===$('#viewer')) $('#viewer').hidden=true; });
+  /* ---------- won or lost ---------- */
+  async function setOutcome(id,o,val,saved){ const b=B.find(x=>x.id===id); if(!b) return; const was={o:b.outcome||'',v:b.jobValue||''};
+    b.outcome=o; b.jobValue=o==='Won'?(val===undefined?b.jobValue||'':val):'';
+    const card=$$('#list .bk').find(c=>c.dataset.id===id); if(card) card.querySelector('.next').innerHTML=nextHtml(b); renderStats();
+    if(saved) toast(b.jobValue?'Saved. '+fmt(b.jobValue)+' added to this month.':'Saved.'); else if(o==='Won') toast('Marked as won.'); else if(o==='Lost') toast('Marked as not won.');
+    if(DEMO){ try{ if(b.sample){ const k='pw_demo_out_'+C, m=JSON.parse(localStorage.getItem(k)||'{}'); m[id]={o:b.outcome,v:b.jobValue}; localStorage.setItem(k,JSON.stringify(m)); }
+        else { const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.forEach(x=>{ if(x.id===id){ x.outcome=b.outcome; x.jobValue=b.jobValue; } }); localStorage.setItem(k,JSON.stringify(all)); } }catch(e){} return; }
+    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'outcome',client:C,key:KEY,id,outcome:b.outcome,jobValue:b.jobValue})}), j=await r.json(); if(!j.ok) throw 0; }
+    catch(e){ b.outcome=was.o; b.jobValue=was.v; render(); toast('That didn’t save. Check your signal and try again.'); } }
+  /* ---------- move a booking, or add one taken by phone (same day + time picker) ---------- */
+  const ms={id:null,days:[],di:0,start:''}; let mBusy=false;
+  async function getSlots(){
+    if(!DEMO){ const r=await fetch(API+'?action=slots&c='+encodeURIComponent(C)), j=await r.json(); if(!j.ok) throw 0; return j.days; }
+    const now=new Date(), taken=new Set(B.filter(b=>b.slotStart&&b.status!=='Canceled').map(b=>new Date(b.slotStart).getTime())), out=[];
+    for(let i=0;i<=14;i++){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i); if(d.getDay()===0) continue; const times=[];
+      for(let h=8;h<=16;h++){ const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),h), x=t.getTime(); if(x<now.getTime()+3600e3||taken.has(x)||BL.some(k=>new Date(k.start).getTime()<=x&&new Date(k.end).getTime()>x)) continue;
+        times.push({start:t.toISOString(),label:t.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}); }
+      if(times.length) out.push({label:d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).replace(',',''),times}); }
+    return out; }
+  const whenText=iso=>{ const d=new Date(iso); return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); };
+  function mTimes(){ const day=ms.days[ms.di]; ms.start='';
+    chips($('#mTimes'),day?day.times.map(t=>[t.start,t.label]):[],'',v=>{ ms.start=v; mBtn(); }); mBtn(); }
+  function mBtn(){ const s=$('#mSave'); s.disabled=!ms.start; s.textContent=!ms.start?'Pick a time':ms.id?'Move to '+whenText(ms.start):'Add for '+whenText(ms.start); }
+  async function openMove(id){ const b=id?B.find(x=>x.id===id):null; if(id&&!b) return; ms.id=id; ms.days=[]; ms.di=0; ms.start='';
+    $('#mT').textContent=b?(b.slotStart?'Move this booking':'Pick a time'):'Add a booking'; $('#mForm').hidden=!!b;
+    $('#mHelp').textContent=b?'Pick a new time for '+first(b)+'. '+(b.email&&!DEMO?'They get an email with the new time.':'You’ll get a text ready to send them.'):'For a job you took by phone or in person. It goes on your schedule and blocks that time online.';
+    if(!b) ['#mName','#mPhone','#mJob','#mAddr'].forEach(q=>$(q).value='');
+    $('#mDays').innerHTML='<p>Finding your open times…</p>'; $('#mTimes').innerHTML=''; mBtn(); show('#mSheet');
+    try{ ms.days=await getSlots(); }catch(e){ $('#mDays').innerHTML='<p>Couldn’t load your open times. Check your signal and try again.</p>'; return; }
+    if(!ms.days.length){ $('#mDays').innerHTML='<p>No open times in the next two weeks.</p>'; return; }
+    chips($('#mDays'),ms.days.map((d,i)=>{ const p=String(d.label).split(' '); return [i,p[0],p.slice(1).join(' ')]; }),0,v=>{ ms.di=+v; mTimes(); }); mTimes(); }
+  $('#mSave').addEventListener('click',async()=>{ if(mBusy||!ms.start) return; const start=ms.start, b=ms.id?B.find(x=>x.id===ms.id):null, post=o=>fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({client:C,key:KEY},o))}).then(r=>r.json());
+    const taken=()=>{ toast('That time just got taken. Pick another one.'); openMove(ms.id); };
+    if(b){   // move
+      const apply=(emailed,status)=>{ b.slotStart=start; b.slotLabel=whenText(start); b.urgent=''; b.status=status||((b.status==='New'||b.status==='Canceled'||b.status==='Done')?'Confirmed':b.status); b.moved=true; b.emailed=!!emailed; openId=b.id; closeAll(); render(); toast(emailed?'Moved. '+first(b)+' was emailed the new time.':'Moved to '+whenText(start)+'.'); };
+      if(DEMO){ apply(false); try{ if(b.sample){ const k='pw_demo_moves_'+C, m=JSON.parse(localStorage.getItem(k)||'{}'); m[b.id]=start; localStorage.setItem(k,JSON.stringify(m)); const k2='pw_demo_status_'+C, m2=JSON.parse(localStorage.getItem(k2)||'{}'); m2[b.id]=b.status; localStorage.setItem(k2,JSON.stringify(m2)); }
+          else { const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.forEach(x=>{ if(x.id===b.id){ x.slotStart=start; x.status=b.status; } }); localStorage.setItem(k,JSON.stringify(all)); } }catch(e){} return; }
+      mBusy=true; $('#mSave').disabled=true; $('#mSave').textContent='Moving…';
+      try{ const j=await post({action:'reschedule',id:b.id,slotStart:start}); if(j.ok) apply(j.emailed,j.status); else if(j.error==='slot_taken') taken(); else throw 0; }
+      catch(e){ toast('That didn’t save. Check your signal and try again.'); mBtn(); }
+      mBusy=false; return; }
+    const name=$('#mName').value.trim(); if(name.length<2){ toast('Add the customer’s name first.'); $('#mName').focus(); return; }
+    const nb={id:'M-'+Date.now().toString(36),created:new Date().toISOString(),client:C,status:'Confirmed',slotStart:start,slotLabel:whenText(start),service:$('#mJob').value.trim()||'Phone booking',details:'Added by you',estimateLow:'',estimateHigh:'',urgent:'',name,phone:$('#mPhone').value.trim(),email:'',address:$('#mAddr').value.trim(),notes:''};
+    const done=x=>{ B.push(x); tab='up'; $$('.tabs button').forEach(t=>t.setAttribute('aria-pressed',String(t.dataset.t==='up'))); openId=null; closeAll(); render(); toast('Added. That time is blocked online now.'); };
+    if(DEMO){ done(nb); try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push(nb); localStorage.setItem(k,JSON.stringify(all)); }catch(e){} return; }
+    mBusy=true; $('#mSave').disabled=true; $('#mSave').textContent='Adding…';
+    try{ const j=await post({action:'add',name:nb.name,phone:nb.phone,job:$('#mJob').value.trim(),address:nb.address,slotStart:start}); if(j.ok) done(j.booking); else if(j.error==='slot_taken') taken(); else throw 0; }
+    catch(e){ toast('That didn’t save. Check your signal and try again.'); mBtn(); }
+    mBusy=false; });
   /* ---------- Block time sheet ---------- */
   const bs={day:0,start:'all',len:2}; let busy=false;
   function chips(el,items,cur,cb){ el.innerHTML=items.map(([v,t,sm])=>'<button type="button" data-v="'+v+'" aria-pressed="'+(String(v)===String(cur))+'">'+t+(sm?'<small>'+sm+'</small>':'')+'</button>').join('');
@@ -594,15 +736,15 @@ body.ex .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
     chips($('#bStart'),starts,bs.start,v=>{ bs.start=v; $('#bLenWrap').hidden=v==='all'; });
     chips($('#bLen'),[[1,'1 hr'],[2,'2 hrs'],[3,'3 hrs'],[4,'4 hrs'],[6,'6 hrs']],bs.len,v=>bs.len=+v);
     $('#bLenWrap').hidden=bs.start==='all'; $('#bLabel').value='';
-    clearTimeout(closing); ['#sheetBg','#sheet','#cSheet'].forEach(q=>$(q).classList.remove('out')); $('#sheetBg').hidden=false; $('#sheet').hidden=false; $('#fab').hidden=true; }
+    show('#sheet'); }
   function closeSheet(){ closeAll(); }
   let closing=0;
-  function closeAll(){ const open=['#sheetBg','#sheet','#cSheet'].map(q=>$(q)).filter(el=>!el.hidden);
+  function closeAll(){ const open=['#sheetBg',...SHEETS].map(q=>$(q)).filter(el=>!el.hidden);
     $('#fab').hidden=false; if(!open.length) return;
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){ open.forEach(el=>el.hidden=true); return; }
     open.forEach(el=>el.classList.add('out')); clearTimeout(closing);
     closing=setTimeout(()=>open.forEach(el=>{ el.hidden=true; el.classList.remove('out'); }),200); }
-  $('#fab').addEventListener('click',openSheet); $('#bCancel').addEventListener('click',closeSheet); $('#sheetBg').addEventListener('click',closeSheet);
+  $('#fab').addEventListener('click',()=>show('#aSheet')); $('#bCancel').addEventListener('click',closeSheet); $('#sheetBg').addEventListener('click',closeSheet);
   addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
   $('#bSave').addEventListener('click',async()=>{ if(busy) return; const now=new Date(), d0=new Date(now.getFullYear(),now.getMonth(),now.getDate()+bs.day);
     const start=bs.start==='all'?d0:new Date(d0.getFullYear(),d0.getMonth(),d0.getDate(),+bs.start), end=bs.start==='all'?new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()+1):new Date(start.getTime()+bs.len*3600e3);
