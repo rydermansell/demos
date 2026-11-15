@@ -9,7 +9,7 @@
  * Deploy > Web app (Execute as: User accessing the web app, Who has access: Anyone with a Google account).
  * Paste the /exec URL into inbox/index.html as CONNECT.
  */
-const MAIN = 'PASTE_BOOKING_BACKEND_EXEC_URL';
+const MAIN = 'https://script.google.com/macros/s/AKfycbww8DaHkg0HBFO2qj8nyTtBNJ5dvN88JHFE4XZw2IWC4CAggCfk7-50oCYd2MLJjKm1rA/exec';
 const INBOX_BASE = 'https://app.getpricewink.com/inbox/';   // Cloudflare Pages (free, unlimited traffic), serving this repo
 
 function doGet(e) {
