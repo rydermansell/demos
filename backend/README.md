@@ -124,6 +124,10 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
 
+## Emails come from rj@getpricewink.com (Nov 15, 2026)
+
+All emails (sign-in codes, booking alerts, customer confirmations, reminders) are sent from `MAIL_FROM` (top of `Code.gs`) using Gmail's "Send mail as". The address must be listed in this Gmail account under Settings > Accounts > Send mail as. If it isn't, emails still go out from the Gmail address. After pasting, run `setup` once and click **Allow** (Gmail asks for send-as permission), then publish a new version.
+
 ## Hosting (Nov 15, 2026)
 
 - **app.getpricewink.com** = this repo on **Cloudflare Pages** (project `pricewink-app`, free: unlimited bandwidth and requests, commercial use OK). Every push to `main` publishes automatically. Owner inboxes live at `app.getpricewink.com/inbox/?c=<id>#start`; live client sites go here too (each client's own domain gets added to the `pricewink-app` project's Custom domains, with a CNAME at their DNS).

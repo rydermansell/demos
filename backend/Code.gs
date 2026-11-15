@@ -38,6 +38,9 @@ const TZ = 'America/New_York';
 const DAYS_AHEAD = 14;
 const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails', 'followupText'];
 const BLOCK_PREFIX = 'Blocked: ';
+/** Emails go out from your business address. It must be set up in this Gmail account under Settings > Accounts > "Send mail as".
+ *  If it isn't (or Gmail refuses), emails still go out from the Gmail address, so nothing is ever lost. */
+const MAIL_FROM = 'rj@getpricewink.com';
 const INBOX_BASE = 'https://app.getpricewink.com/inbox/';   // Cloudflare Pages (free, unlimited traffic), serving this repo
 const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
@@ -131,7 +134,7 @@ function prepare_(client, lock) {
     }
     if (!client.inboxKey) setClientField_(client.id, 'inboxKey', Utilities.getUuid().replace(/-/g, '').slice(0, 20));
     const ready = findClient_(client.id), me = Session.getEffectiveUser().getEmail();
-    if (me) MailApp.sendEmail({ to: me, subject: 'PriceWink: ' + ready.name + ' is set up',
+    if (me) sendMail_({ to: me, subject: 'PriceWink: ' + ready.name + ' is set up',
       body: ready.name + ' is ready to take bookings.\n\nOwner inbox link (they sign in with their email code or Google):\n' + ownerLink_(ready) +
         '\n\nOne-time setup link (signs one phone in without a code; expires in ' + INVITE_HOURS + ' hours, run inviteLink() for a new one):\n' + makeInvite_(ready.id) +
         '\n\nBookings calendar: ' + (shared ? 'created and shared with ' + ready.ownerEmail + '.' : 'created. Share it with the owner in Google Calendar (no owner email on the row, or sharing failed).') +
@@ -241,7 +244,7 @@ function loginCode_(d) {
   if (!bump_(cache, 'otpC_' + client.id, 20, 1800)) return { ok: true };
   const code = String(parseInt(Utilities.getUuid().replace(/-/g, '').slice(0, 12), 16) % 1000000).padStart(6, '0');
   cache.put(otpKey_(client.id, email), JSON.stringify({ h: sha_(code + '|' + client.id + '|' + email), n: 0 }), CODE_MINUTES * 60);
-  MailApp.sendEmail({
+  sendMail_({
     to: email, name: 'PriceWink', subject: code + ' is your ' + client.name + ' sign-in code',
     htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#0E1B2E"><p>Your code to open the ' + esc_(client.name) + ' bookings inbox:</p>' +
       '<p style="font-size:32px;font-weight:800;letter-spacing:6px;margin:12px 0">' + code + '</p>' +
@@ -427,15 +430,15 @@ function notifyOwner_(client, b, range) {
     rows.map(r => '<tr><td style="color:#5d6459">' + esc_(r[0]) + '</td><td><b>' + esc_(String(r[1])) + '</b></td></tr>').join('') + '</table>' +
     '<p><a href="tel:' + b.phone.replace(/[^\d+]/g, '') + '">Call ' + esc_(b.name) + '</a> &nbsp;·&nbsp; <a href="https://maps.google.com/?q=' + encodeURIComponent(b.address) + '">Directions</a> &nbsp;·&nbsp; <a href="' + inbox + '">Open your inbox</a></p>' +
     '<p style="color:#8a8f86;font-size:12px">Booking ' + b.id + ' · sent by PriceWink</p></div>';
-  if (client.ownerEmail) MailApp.sendEmail({ to: client.ownerEmail, subject: subject, htmlBody: html, replyTo: b.email || undefined, name: 'PriceWink bookings' });
-  if (client.ownerSms) MailApp.sendEmail({ to: client.ownerSms, subject: '', body: (b.urgent ? 'EMERGENCY: ' : 'New booking: ') + b.service + ', ' + b.slotLabel + '. ' + b.name + ' ' + b.phone + ', ' + b.address });
+  if (client.ownerEmail) sendMail_({ to: client.ownerEmail, subject: subject, htmlBody: html, replyTo: b.email || undefined, name: 'PriceWink bookings' });
+  if (client.ownerSms) sendMail_({ to: client.ownerSms, subject: '', body: (b.urgent ? 'EMERGENCY: ' : 'New booking: ') + b.service + ', ' + b.slotLabel + '. ' + b.name + ' ' + b.phone + ', ' + b.address });
 }
 
 function notifyCustomer_(client, b) {
   const byOwner = b.details === 'Added by you';
   const when = !b.slotStart ? 'We got your request and will reach out shortly to set a time.'
     : byOwner ? 'You’re on our schedule for <b>' + esc_(b.slotLabel) + '</b>.' : 'Your free estimate visit is booked for <b>' + esc_(b.slotLabel) + '</b>.';
-  MailApp.sendEmail({
+  sendMail_({
     to: b.email, name: client.name, replyTo: client.ownerEmail || undefined,
     subject: (b.slotStart ? 'You’re booked: ' + b.slotLabel : 'Request received') + ' - ' + client.name,
     htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(b.name.split(' ')[0]) + ',</p><p>' + when + '</p>' +
@@ -473,7 +476,7 @@ function notifyCanceled_(client, b) {
   const when = b.slotLabel ? 'your estimate visit on <b>' + esc_(String(b.slotLabel)) + '</b>' : 'your estimate visit';
   const rebook = client.site ? '<p><a href="' + esc_(String(client.site)) + '">Pick a new time here</a>' + (client.phone ? ', or call or text ' + esc_(String(client.phone)) + '.' : '.') + '</p>'
                              : (client.phone ? '<p>Call or text ' + esc_(String(client.phone)) + ' to pick a new time.</p>' : '');
-  MailApp.sendEmail({
+  sendMail_({
     to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
     subject: 'Your estimate visit was canceled - ' + client.name,
     htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(first) + ',</p>' +
@@ -535,7 +538,7 @@ function reschedule_(client, d) {
   let emailed = false;
   if (b.email) {
     try {
-      MailApp.sendEmail({
+      sendMail_({
         to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
         subject: 'New time for your estimate visit: ' + label_(start) + ' - ' + client.name,
         htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(String(b.name).split(' ')[0]) + ',</p>' +
@@ -656,7 +659,7 @@ function saveLead_(client, d) {
   }
   if (d.emailMe && fields.email && client.site && !keyOk) {   // "Save this price": email them their own link back (once per key)
     try {
-      MailApp.sendEmail({ to: fields.email, name: client.name, replyTo: client.ownerEmail || undefined,
+      sendMail_({ to: fields.email, name: client.name, replyTo: client.ownerEmail || undefined,
         subject: 'Your ' + (fields.service || 'quote') + ' price from ' + client.name,
         htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(name.split(' ')[0]) + ',</p>' +
           '<p>Here’s the ' + esc_((fields.service || 'quote').toLowerCase()) + ' price you saved' + (fields.estimateLow ? ': <b>$' + fmt_(fields.estimateLow) + (fields.estimateHigh && fields.estimateHigh !== fields.estimateLow ? ' to $' + fmt_(fields.estimateHigh) : '') + '</b>' : '') + '.</p>' +
@@ -1075,7 +1078,7 @@ function remind_(client) {
   bookingsFor_(client.id).forEach(b => {
     if (!b.email || b.reminded || b.status === 'Canceled' || b.status === 'Done' || !b.slotStart) return;
     const t = new Date(b.slotStart); if (t < dayStart || t >= dayEnd) return;
-    MailApp.sendEmail({
+    sendMail_({
       to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
       subject: 'Reminder: your estimate visit is tomorrow at ' + Utilities.formatDate(t, TZ, 'h:mm a') + ' - ' + client.name,
       htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(String(b.name).split(' ')[0]) + ',</p>' +
@@ -1100,7 +1103,7 @@ function digest_(client) {
     '<p style="margin:12px 0 4px"><b>Still open to customers</b></p><p style="margin:0">' + (open.length ? esc_(open.join(', ')) : 'Nothing, the day is full.') + '</p>' +
     '<p style="margin:16px 0"><a href="' + inbox + '" style="background:#f5b70f;color:#1a1203;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:700">Booked something by phone? Block it here</a></p>' +
     '<p style="color:#8a8f86;font-size:12px">PriceWink sends this every evening. Anything on your calendar is already blocked automatically.</p></div>';
-  MailApp.sendEmail({ to: client.ownerEmail, subject: 'Tomorrow: ' + booked.length + ' booked, ' + open.length + ' open', htmlBody: html, name: 'PriceWink bookings' });
+  sendMail_({ to: client.ownerEmail, subject: 'Tomorrow: ' + booked.length + ' booked, ' + open.length + ' open', htmlBody: html, name: 'PriceWink bookings' });
 }
 
 
@@ -1155,6 +1158,28 @@ function isOn_(v) { return v === true || String(v).toUpperCase() === 'TRUE' || v
 function clean_(v, n) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n); }
 function fmt_(n) { return Number(n).toLocaleString('en-US'); }
 function esc_(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+/** Sends an email from MAIL_FROM when Gmail allows it, otherwise from the Gmail account itself. o: { to, subject, htmlBody?, body?, name?, replyTo? } */
+function sendMail_(o) {
+  const body = o.body || String(o.htmlBody || '').replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
+  if (MAIL_FROM && typeof GmailApp !== 'undefined' && canSendAs_(MAIL_FROM)) {
+    try {
+      const opt = { from: MAIL_FROM, name: o.name || 'PriceWink' };
+      if (o.htmlBody) opt.htmlBody = o.htmlBody;
+      if (o.replyTo) opt.replyTo = o.replyTo;
+      GmailApp.sendEmail(o.to, o.subject || '', body, opt);
+      return;
+    } catch (err) { console.error('send-as failed, using the Gmail address: ' + err); }
+  }
+  MailApp.sendEmail(o);
+}
+function canSendAs_(addr) {
+  const cache = CacheService.getScriptCache(), hit = cache.get('sendas_' + addr);
+  if (hit) return hit === '1';
+  let ok = false;
+  try { ok = GmailApp.getAliases().map(a => String(a).toLowerCase()).indexOf(addr.toLowerCase()) >= 0; } catch (err) {}
+  cache.put('sendas_' + addr, ok ? '1' : '0', 21600);
+  return ok;
+}
 /** Text a customer typed can't become a spreadsheet formula (e.g. a "name" starting with =). */
 function cell_(v) { return typeof v === 'string' && /^[=+\-@\t\r]/.test(v) ? "'" + v : v; }
 function sha_(s) { return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8).map(b => ('0' + (b & 255).toString(16)).slice(-2)).join(''); }
