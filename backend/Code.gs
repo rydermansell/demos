@@ -15,7 +15,7 @@
  *
  * Owner actions: every one sends {token} and is checked by ownerAction_(). The business is taken from the
  * session, never from the request, so one owner can never reach another business's data.
- *   inbox, photo, status, block, unblock, connect, disconnect, reschedule, add, outcome, connectTicket, signout
+ *   inbox, photo, status, block, unblock, connect, disconnect, reschedule, add (+ New Job), outcome, connectTicket, signout
  *
  * Open times automatically skip anything on the owner's own calendars: Google calendars shared with this
  * account (free/busy is enough) and private calendar links (iPhone/iCloud, Outlook). See README.md.
@@ -32,7 +32,7 @@ const DAYS_AHEAD = 14;
 const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails'];
 const BLOCK_PREFIX = 'Blocked: ';
 const INBOX_BASE = 'https://getpricewink.com/inbox/';
-const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded'];
+const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
 const SESSION_COLS = ['tokenHash', 'client', 'email', 'method', 'device', 'created', 'lastSeen', 'expires', 'revoked'];
 const SESSION_DAYS = 180;      // a signed-in phone stays signed in this long after its last use
@@ -367,7 +367,7 @@ function book_(client, d) {
     id: id, created: new Date(), client: client.id, status: 'New', slotStart: start ? start.toISOString() : '', slotLabel: slotLabel,
     service: clean_(d.job, 60), details: clean_(d.details, 600), estimateLow: Number(d.estimateLow) || '', estimateHigh: Number(d.estimateHigh) || '',
     urgent: urgent ? 'Yes' : '', name: name, phone: phone, email: clean_(d.email, 120), address: address, notes: clean_(d.notes, 600), eventId: '',
-    photos: '', outcome: '', jobValue: '', reminded: ''
+    photos: '', outcome: '', jobValue: '', reminded: '', source: clean_(d.source, 40) || 'Website'
   };
   try { b.photos = savePhotos_(client, id, d.photos).join(','); } catch (err) { b.photos = ''; }   // a photo problem never blocks a booking
   const range = b.estimateLow ? '$' + fmt_(b.estimateLow) + ' to $' + fmt_(b.estimateHigh) : '';
@@ -382,7 +382,7 @@ function book_(client, d) {
       b.eventId = ev.getId();
     }
   }
-  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => cell_(b[k])));
+  appendBooking_(b);
   notifyOwner_(client, b, range);
   if (b.email) notifyCustomer_(client, b);
   return { ok: true, id: id, slotLabel: slotLabel };
@@ -403,7 +403,9 @@ function notifyOwner_(client, b, range) {
 }
 
 function notifyCustomer_(client, b) {
-  const when = b.slotStart ? 'Your free estimate visit is booked for <b>' + esc_(b.slotLabel) + '</b>.' : 'We got your request and will reach out shortly to set a time.';
+  const byOwner = b.details === 'Added by you';
+  const when = !b.slotStart ? 'We got your request and will reach out shortly to set a time.'
+    : byOwner ? 'You’re on our schedule for <b>' + esc_(b.slotLabel) + '</b>.' : 'Your free estimate visit is booked for <b>' + esc_(b.slotLabel) + '</b>.';
   MailApp.sendEmail({
     to: b.email, name: client.name, replyTo: client.ownerEmail || undefined,
     subject: (b.slotStart ? 'You’re booked: ' + b.slotLabel : 'Request received') + ' - ' + client.name,
@@ -517,20 +519,52 @@ function reschedule_(client, d) {
   return { ok: true, slotStart: start.toISOString(), slotLabel: label_(start), status: status, emailed: emailed };
 }
 
-/** Owner adds a booking they took by phone. It is already confirmed, holds the time, and nobody is emailed. */
+const SOURCES = ['Phone call', 'Text', 'Referral', 'Facebook', 'Website', 'Repeat customer', 'Google', 'Other'];
+
+/**
+ * + New Job: the owner enters a job a customer called or texted about. It's a normal booking from then on
+ * (call, text, directions, move, cancel, review request, won/lost). Confirmed right away, holds the time online.
+ * d: name, phone, email?, address, job, slotStart, anyTime? (a time outside their usual hours), force? (book over
+ *    something already on the calendar), price?, notes?, source, notify? (email the customer a confirmation)
+ */
 function addByOwner_(client, d) {
-  const name = clean_(d.name, 80); if (name.length < 2) return { ok: false, error: 'missing_fields' };
+  const name = clean_(d.name, 80), phone = clean_(d.phone, 30), address = clean_(d.address, 160), job = clean_(d.job, 60);
+  if (name.length < 2 || phone.replace(/\D/g, '').length < 10 || address.length < 3 || !job) return { ok: false, error: 'missing_fields' };
+  const email = clean_(d.email, 120);
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'bad_email' };
   const start = new Date(d.slotStart);
-  if (!ownerSlotOk_(client, start, '')) return { ok: false, error: 'slot_taken' };
+  const why = ownerTimeProblem_(client, start, '', !!d.anyTime, !!d.force);
+  if (why) return { ok: false, error: why };
+  const price = Math.round(Number(String(d.price == null ? '' : d.price).replace(/[^\d.]/g, '')));
+  const source = SOURCES.indexOf(String(d.source)) >= 0 ? String(d.source) : 'Phone call';
   const id = 'B' + Utilities.formatDate(new Date(), TZ, 'yyMMdd') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
   const b = { id: id, created: new Date(), client: client.id, status: 'Confirmed', slotStart: start.toISOString(), slotLabel: label_(start),
-    service: clean_(d.job, 60) || 'Phone booking', details: 'Added by you', estimateLow: '', estimateHigh: '', urgent: '', name: name, phone: clean_(d.phone, 30),
-    email: '', address: clean_(d.address, 160), notes: clean_(d.notes, 600), eventId: '', photos: '', outcome: '', jobValue: '', reminded: '' };
+    service: job, details: 'Added by you', estimateLow: price > 0 && price < 10000000 ? price : '', estimateHigh: price > 0 && price < 10000000 ? price : '',
+    urgent: '', name: name, phone: phone, email: email, address: address, notes: clean_(d.notes, 600), eventId: '', photos: '', outcome: '', jobValue: '', reminded: '', source: source };
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
-  if (cal) b.eventId = cal.createEvent('Estimate: ' + b.service + ' - ' + name, start, new Date(start.getTime() + Number(client.slotMinutes || 60) * 60000), { location: b.address, description: eventText_(b) }).getId();
-  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => cell_(b[k])));
+  if (cal) b.eventId = cal.createEvent(b.service + ' - ' + name, start, new Date(start.getTime() + Number(client.slotMinutes || 60) * 60000), { location: b.address, description: eventText_(b) }).getId();
+  appendBooking_(b);
+  let emailed = false;
+  if (email && d.notify) { try { notifyCustomer_(client, b); emailed = true; } catch (err) {} }
   const out = {}; BOOKING_COLS.forEach(k => { if (k !== 'eventId') out[k] = b[k] instanceof Date ? b[k].toISOString() : b[k]; });
-  return { ok: true, booking: out };
+  return { ok: true, booking: out, emailed: emailed };
+}
+/** '' if the owner may put a job at this time, else why not: bad_time (past or invalid), slot_taken (not one of their usual times), busy (something's on the calendar). */
+function ownerTimeProblem_(client, start, ignoreEventId, anyTime, force) {
+  if (isNaN(start) || start.getTime() <= Date.now() - 5 * 60000 || start.getTime() > Date.now() + 400 * 86400000) return 'bad_time';
+  if (!anyTime && !candidates_(client, new Date()).some(s => s.getTime() === start.getTime())) return 'slot_taken';
+  if (force) return '';
+  const a = start.getTime(), z = a + Number(client.slotMinutes || 60) * 60000, list = [];
+  const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
+  if (cal) cal.getEvents(new Date(a - 86400000), new Date(z + 86400000)).forEach(ev => { if (ev.getId() !== ignoreEventId) list.push([ev.getStartTime().getTime(), ev.getEndTime().getTime()]); });
+  const ext = googleBusy_(client, new Date(a - 86400000), new Date(z + 86400000)).concat(icsBusy_(client, new Date(a - 86400000), new Date(z + 86400000)));
+  return list.concat(ext).some(x => x[0] < z && x[1] > a) ? 'busy' : '';
+}
+/** Adds a booking row by column name, adding any missing column headers first (so older sheets never get misaligned). */
+function appendBooking_(b) {
+  const sh = sheet_().getSheetByName('Bookings'), H = sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn())).getValues()[0].map(String);
+  BOOKING_COLS.forEach(k => { if (H.indexOf(k) < 0) { sh.getRange(1, H.length + 1).setValue(k).setFontWeight('bold'); H.push(k); } });
+  sh.appendRow(H.map(k => b[k] === undefined || b[k] === null ? '' : cell_(b[k])));
 }
 
 /** Owner records how the estimate turned out: 'Won' (with what the job sold for, optional), 'Lost', or '' to clear it. */

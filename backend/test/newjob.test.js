@@ -1,0 +1,35 @@
+// + New Job (owner-entered bookings). Run: node backend/test/newjob.test.js
+const makeEnv=require('./harness'); const E=makeEnv(); let fails=0;
+const ok=(c,m)=>{ console.log((c?'PASS ':'FAIL ')+m); if(!c) fails++; };
+E.addClient('abc-fence','owner@abc.com');
+E.post({action:'login_code',client:'abc-fence',email:'owner@abc.com'});
+const T=E.post({action:'login_verify',client:'abc-fence',email:'owner@abc.com',code:E.mail[0].subject.slice(0,6)}).token; E.mail.length=0;
+const slots=E.get({action:'slots',c:'abc-fence'}).days, s0=slots[0].times[0].start, s1=slots[0].times[1].start;
+const base={action:'add',token:T,name:'Pat Smith',phone:'(865) 555-0100',address:'12 Main St, Kodak',job:'Gate repair',slotStart:s0,source:'Referral'};
+ok(E.post(Object.assign({},base,{phone:'555'})).error==='missing_fields','phone must be 10 digits');
+ok(E.post(Object.assign({},base,{address:''})).error==='missing_fields','address required');
+ok(E.post(Object.assign({},base,{job:''})).error==='missing_fields','service required');
+ok(E.post(Object.assign({},base,{email:'nope'})).error==='bad_email','bad email rejected');
+const r=E.post(Object.assign({},base,{email:'pat@x.com',price:'$1,250',notes:'Gate code 44',notify:true}));
+ok(r.ok&&r.booking.status==='Confirmed','job added, confirmed');
+ok(r.booking.source==='Referral'&&r.booking.estimateLow===1250&&r.booking.estimateHigh===1250,'source + price saved');
+ok(r.emailed&&E.mail.some(m=>m.to==='pat@x.com'&&/on our schedule/.test(m.htmlBody)),'optional confirmation email sent');
+ok(E.post(Object.assign({},base,{slotStart:s0})).error==='busy','same time again -> busy');
+ok(E.post(Object.assign({},base,{slotStart:s0,force:true})).ok,'owner can book over it on purpose');
+const odd=new Date(new Date(s1).getTime()+30*60000).toISOString();
+ok(E.post(Object.assign({},base,{slotStart:odd})).error==='slot_taken','odd time needs anyTime');
+const late=new Date(Date.now()+3*86400000); late.setUTCHours(23,30,0,0);
+ok(E.post(Object.assign({},base,{slotStart:late.toISOString(),anyTime:true})).ok,'"Other time" outside hours works');
+ok(E.post(Object.assign({},base,{slotStart:new Date(Date.now()-86400000).toISOString(),anyTime:true})).error==='bad_time','past time refused');
+ok(E.post(Object.assign({},base,{source:'Hacker',slotStart:new Date(late.getTime()+86400000).toISOString(),anyTime:true})).booking.source==='Phone call','unknown source -> Phone call');
+const ib=E.post({action:'inbox',token:T}); const mine=ib.bookings.find(b=>b.id===r.booking.id);
+ok(mine&&mine.source==='Referral'&&mine.email==='pat@x.com','shows in inbox with source');
+ok(E.post({action:'reschedule',token:T,id:r.booking.id,slotStart:slots[1].times[2].start}).ok,'reschedule works on manual job');
+ok(E.post({action:'status',token:T,id:r.booking.id,status:'Canceled'}).ok,'cancel works on manual job');
+const web=E.post({action:'book',client:'abc-fence',slotStart:slots[2].times[0].start,name:'Web Person',phone:'8655550111',address:'1 Oak St'});
+ok(E.post({action:'inbox',token:T}).bookings.find(b=>b.id===web.id).source==='Website','online bookings tagged Website');
+// old sheet without a source column stays aligned
+const E2=makeEnv(); E2.sheets.Bookings[0]=E2.sheets.Bookings[0].filter(h=>h!=='source'); E2.addClient('x','o@x.com');
+const w2=E2.post({action:'book',client:'x',slotStart:E2.get({action:'slots',c:'x'}).days[0].times[0].start,name:'Al',phone:'8655550123',address:'2 Elm'});
+const H=E2.sheets.Bookings[0], row=E2.sheets.Bookings[1]; ok(w2.ok&&H.indexOf('source')>0&&row[H.indexOf('name')]==='Al'&&row[H.indexOf('source')]==='Website','missing column added, row aligned');
+console.log(fails?fails+' FAILED':'ALL PASSED');

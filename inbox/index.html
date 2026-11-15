@@ -214,6 +214,15 @@ body.has-open .fab{transform:translateY(calc(100% + 40px))}
 .toast.on{transform:translate(-50%,0);visibility:visible}
 .toast button{flex:none;border:0;border-radius:10px;background:rgba(255,255,255,.14);color:var(--tag);font:700 15px var(--f);padding:9px 14px;margin:-3px -8px -3px 0;cursor:pointer}
 body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+/* ---------- New Job ---------- */
+.fab{font-size:16px;font-weight:700;padding:15px 20px 15px 17px}
+.two-in{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.money{display:flex;align-items:center;gap:6px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:600;color:var(--ink)}
+.money:focus-within{border-color:var(--ink)}.money input{flex:1;min-width:0;border:0;outline:none;background:none;padding:13px 0;font:inherit;font-size:16px;color:var(--ink)}
+.chk{display:flex;align-items:center;gap:10px;margin:12px 0 0;font-size:15px;color:var(--ink)}.chk input{width:22px;height:22px;accent-color:var(--ink)}
+.warn{margin:14px 0 0;padding:12px;border-radius:12px;background:var(--red-bg);color:var(--red);font-size:14.5px;line-height:1.4}
+.warn button{display:block;margin-top:8px;border:0;border-radius:10px;padding:10px 14px;background:var(--red);color:#fff;font:700 14.5px var(--f);cursor:pointer}
+textarea.inp{resize:vertical;min-height:76px;line-height:1.4}
 /* ---------- Sign in ---------- */
 body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,body.out #hint,body.out #list,body.out #upd,body.out #fab,body.out #acct{display:none!important}
 .login{margin:18px 16px 0}
@@ -279,9 +288,9 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <p class="upd" id="upd" hidden></p>
   <p class="acct" id="acct" hidden></p>
-  <p class="ver">PriceWink inbox · build 31</p>
+  <p class="ver">PriceWink inbox · build 32</p>
 </main>
-<button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Add</button>
+<button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> New Job</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shT" hidden>
   <i class="grab" aria-hidden="true"></i>
@@ -344,6 +353,31 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   <p class="sh-l">Time</p><div class="chips wrap" id="mTimes"></div>
   <button class="save" id="mSave" type="button" disabled>Pick a time</button>
   <button class="cancel" id="mCancel" type="button">Cancel</button>
+</section>
+<section class="sheet" id="jSheet" role="dialog" aria-modal="true" aria-labelledby="jT" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="jT">New job</h2>
+  <p class="sh-help">Customer called or texted? Add them here. It works just like an online booking.</p>
+  <label class="sh-l" for="jName">Customer’s name</label><input class="inp" id="jName" maxlength="80" autocomplete="off" autocapitalize="words" placeholder="Pat Smith" enterkeyhint="next">
+  <label class="sh-l" for="jPhone">Phone</label><input class="inp" id="jPhone" type="tel" inputmode="tel" maxlength="30" autocomplete="off" placeholder="(865) 555-0100" enterkeyhint="next">
+  <label class="sh-l" for="jAddr">Job address</label><input class="inp" id="jAddr" maxlength="160" autocomplete="off" placeholder="123 Main St, Kodak" enterkeyhint="next">
+  <label class="sh-l" for="jJob">What’s the job?</label><input class="inp" id="jJob" maxlength="60" autocomplete="off" list="jJobs" placeholder="Fence repair" enterkeyhint="next"><datalist id="jJobs"></datalist>
+  <p class="sh-l">When</p><div class="chips" id="jDays"></div>
+  <div class="chips wrap" id="jTimes" style="margin-top:8px"></div>
+  <div id="jOther" hidden><div class="two-in"><input class="inp" id="jDate" type="date" aria-label="Date"><input class="inp" id="jTime" type="time" step="900" aria-label="Time"></div></div>
+  <button class="alt" id="jOtherBtn" type="button">Need a different day or time?</button>
+  <label class="sh-l" for="jPrice">Estimated price <small>(optional)</small></label><div class="money">$<input id="jPrice" inputmode="decimal" maxlength="10" autocomplete="off" placeholder="1,200" enterkeyhint="done"></div>
+  <p class="sh-l">How did they find you?</p><div class="chips wrap" id="jSrc"></div>
+  <button class="alt" id="jMoreBtn" type="button">+ Add email or a note (optional)</button>
+  <div id="jMore" hidden>
+    <label class="sh-l" for="jEmail">Email <small>(optional)</small></label><input class="inp" id="jEmail" type="email" inputmode="email" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="pat@example.com">
+    <label class="chk" id="jNotifyL" hidden><input type="checkbox" id="jNotify" checked> Email them a confirmation</label>
+    <label class="sh-l" for="jNotes">Notes <small>(optional)</small></label><textarea class="inp" id="jNotes" maxlength="600" placeholder="Gate code, dog in the yard, what they asked about…"></textarea>
+  </div>
+  <div class="warn" id="jWarn" hidden></div>
+  <button class="save" id="jSave" type="button">Pick a time</button>
+  <button class="cancel" id="jCancel" type="button">Cancel</button>
+  <button class="alt" id="jBlock" type="button">Taking time off instead? Block time</button>
 </section>
 <div class="viewer" id="viewer" hidden><img alt="Photo from the customer"><button type="button" id="vClose">Close</button></div>
 <div class="toast" id="toast" role="status"></div>
@@ -465,7 +499,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
       return {id, sample:true, created:created.toISOString(), client:C, status:st[id]||x.status, slotStart:when?when.toISOString():'', service:x.service, details:x.details,
         outcome:out.o, jobValue:out.v, estimateLow:x.lo, estimateHigh:x.hi, urgent:x.urgent&&!moved?'Yes':'', name:x.name, phone:'(865) 555-01'+String(42+i*13).slice(-2), email:x.name.toLowerCase().replace(/\s+/g,'.')+'@example.com', address:x.addr, notes:x.notes||'', photoThumbs:x.pics||[]}; }); }
 
-  const SHEETS=['#sheet','#cSheet','#aSheet','#mSheet'];
+  const SHEETS=['#sheet','#cSheet','#aSheet','#mSheet','#jSheet'];
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function toast(t,undo){ const el=$('#toast'); el.textContent=t; el._undo=undo||null; if(undo){ const u=document.createElement('button'); u.type='button'; u.textContent='Undo'; el.appendChild(u); }
     el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),undo?6000:2600); }
@@ -591,6 +625,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg>',
     bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4"/></svg>',
     info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.2"/></svg>',
+    src:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
     clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'};
   const slHtml=s=>(s==='Confirmed'||s==='Done'?IC.check:'')+esc(s);
   let openId=null, firstPaint=true;
@@ -612,7 +647,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     moveTab(); $('#miniBiz').textContent=$('#biz').textContent; $('#miniNew').hidden=!nNew; $('#miniNew').textContent=nNew+' new'; }
   function bookingRow(b,k){
     const d=b.slotStart?new Date(b.slotStart):null, t=d?tmParts(d):null, tel=String(b.phone||'').replace(/[^\d+]/g,'');
-    const town=String(b.address||'').indexOf(',')<0?'':String(b.address).split(',').slice(-1)[0].trim(), est=b.estimateLow?fmt(b.estimateLow)+' – '+fmt(b.estimateHigh):'';
+    const town=String(b.address||'').indexOf(',')<0?'':String(b.address).split(',').slice(-1)[0].trim(), est=b.estimateLow?(+b.estimateHigh&&+b.estimateHigh!==+b.estimateLow?fmt(b.estimateLow)+' – '+fmt(b.estimateHigh):fmt(b.estimateLow)):'';
     const maps='https://maps.google.com/?q='+encodeURIComponent(b.address||''), si=Math.max(0,STS.indexOf(b.status)), open=openId===b.id;
     const row=(icon,label,val,href)=>href?'<a class="r" href="'+href+'"'+(href.indexOf('http')===0?' target="_blank" rel="noopener"':'')+'>'+icon+'<span><small>'+label+'</small><u>'+val+'</u></span></a>':'<div class="r">'+icon+'<span>'+(label?'<small>'+label+'</small>':'')+val+'</span></div>';
     return '<article class="bk'+(b.urgent?' urgent':'')+(open?' open':'')+'" data-id="'+esc(b.id)+'" data-s="'+esc(b.status)+'" style="--d:'+Math.round(70*Math.pow(Math.min(k,7),.7))+'ms">'+
@@ -623,13 +658,14 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
           '<span class="ft">'+(est?'<span class="amt">'+est+'</span>':'')+'<span class="open-l"><span>'+(open?'Close':'Details')+'</span>'+IC.chev+'</span></span></span>'+
       '</button>'+
       '<div class="more"><div><div class="in"><div class="rows">'+
-        (est?row(IC.tag,'Instant estimate','<span class="tag">'+est+'</span>'):'')+
+        (est?row(IC.tag,b.details==='Added by you'?'Estimated price':'Instant estimate','<span class="tag">'+est+'</span>'):'')+
         (b.details&&b.details!=='Added by you'?row(IC.job,'Job',esc(b.details)):'')+
-        (b.notes?row(IC.note,'Note from customer',esc(b.notes)):'')+
+        (b.notes?row(IC.note,b.details==='Added by you'?'Notes':'Note from customer',esc(b.notes)):'')+
         (photosHtml(b)?row(IC.cam,'Photos from customer',photosHtml(b)):'')+
         (b.address?row(IC.pin,'Address',esc(b.address),maps):'')+
         (b.phone?row(IC.phone,'Phone',esc(b.phone),'tel:'+esc(tel)):'')+
         (b.email&&b.slotStart&&tOf(b)>nowT()&&b.status!=='Canceled'&&b.status!=='Done'?row(IC.bell,'',b.reminded?'Reminder email sent':'They get a reminder email the evening before'):'')+
+        (b.source?row(IC.src,'How they found you',esc(b.source)):'')+
         row(IC.clock,'',(b.details==='Added by you'?'Added ':'Booked ')+esc(ago(b.created)))+
         '</div>'+
         (b.phone||b.address?'<div class="acts" style="grid-template-columns:repeat('+((b.phone?2:0)+(b.address?1:0))+',minmax(0,1fr))">'+(b.phone?'<a class="call" href="tel:'+esc(tel)+'">'+IC.call+'Call</a><a class="txt" href="sms:'+esc(tel)+'">'+IC.text+'Text</a>':'')+(b.address?'<a href="'+maps+'" target="_blank" rel="noopener">'+IC.nav+'Directions</a>':'')+'</div>':'')+
@@ -867,6 +903,62 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     try{ const j=await post({action:'add',name:nb.name,phone:nb.phone,job:$('#mJob').value.trim(),address:nb.address,slotStart:start}); if(j.ok) done(j.booking); else if(j.error==='slot_taken') taken(); else throw 0; }
     catch(e){ toast('That didn’t save. Check your signal and try again.'); mBtn(); }
     mBusy=false; });
+  /* ---------- + New Job: a customer called or texted. Saved like an online booking (call, text, directions, move, cancel, review). ---------- */
+  const SRCS=['Phone call','Text','Referral','Facebook','Google','Repeat customer','Website','Other'];
+  const js={days:[],di:0,start:'',other:false,src:'Phone call',force:false}; let jBusy=false;
+  const digits=v=>String(v||'').replace(/\D/g,'');
+  async function openJob(){ js.days=[]; js.di=0; js.start=''; js.other=false; js.src='Phone call'; js.force=false;
+    ['#jName','#jPhone','#jAddr','#jJob','#jPrice','#jEmail','#jNotes','#jDate','#jTime'].forEach(q=>$(q).value='');
+    $('#jMore').hidden=true; $('#jMoreBtn').hidden=false; $('#jNotifyL').hidden=true; $('#jNotify').checked=true; $('#jWarn').hidden=true;
+    $('#jOther').hidden=true; $('#jOtherBtn').textContent='Need a different day or time?';
+    const seen=[...new Set(B.map(b=>String(b.service||'').trim()).filter(x=>x&&x!=='Phone booking'))].slice(0,12);
+    $('#jJobs').innerHTML=seen.map(x=>'<option value="'+esc(x)+'">').join('');
+    chips($('#jSrc'),SRCS.map(x=>[x,x]),js.src,v=>{ js.src=v; });
+    $('#jDays').innerHTML='<p>Finding your open times…</p>'; $('#jTimes').innerHTML=''; jBtn(); show('#jSheet');
+    setTimeout(()=>{ if(!$('#jSheet').hidden) $('#jName').focus(); },350);
+    try{ js.days=await getSlots(); }catch(e){ $('#jDays').innerHTML='<p>Couldn’t load your open times. Use “different day or time” below.</p>'; return; }
+    if(!js.days.length){ $('#jDays').innerHTML='<p>No open times in the next two weeks. Use “different day or time” below.</p>'; return; }
+    chips($('#jDays'),js.days.map((d,i)=>{ const p=String(d.label).split(' '); return [i,p[0],p.slice(1).join(' ')]; }),0,v=>{ js.di=+v; jTimes(); }); jTimes(); }
+  function jTimes(){ const day=js.days[js.di]; if(!js.other) js.start=''; js.force=false; $('#jWarn').hidden=true;
+    chips($('#jTimes'),day?day.times.map(t=>[t.start,t.label]):[],'',v=>{ js.other=false; js.start=v; $('#jOther').hidden=true; js.force=false; $('#jWarn').hidden=true; jBtn(); }); jBtn(); }
+  function otherStart(){ const d=$('#jDate').value, t=$('#jTime').value; if(!d||!t) return ''; const x=new Date(d+'T'+t); return isNaN(x)?'':x.toISOString(); }
+  function jBtn(){ const st=js.other?otherStart():js.start, el=$('#jSave'); el.disabled=!st||jBusy; el.textContent=jBusy?'Adding…':!st?'Pick a time':(js.force?'Add anyway for ':'Add job for ')+whenText(st); }
+  $('#jOtherBtn').addEventListener('click',()=>{ js.other=$('#jOther').hidden; $('#jOther').hidden=!js.other; js.force=false; $('#jWarn').hidden=true;
+    $('#jOtherBtn').textContent=js.other?'Use one of my open times':'Need a different day or time?';
+    if(js.other){ [...$('#jTimes').children].forEach(x=>x.setAttribute('aria-pressed','false'));
+      if(!$('#jDate').value){ const n=new Date(); $('#jDate').value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()+1).padStart(2,'0'); }
+      const n=new Date(); $('#jDate').min=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); setTimeout(()=>$('#jTime').focus(),60); }
+    else jTimes(); jBtn(); });
+  ['#jDate','#jTime'].forEach(q=>$(q).addEventListener('input',()=>{ js.force=false; $('#jWarn').hidden=true; jBtn(); }));
+  $('#jMoreBtn').addEventListener('click',()=>{ $('#jMore').hidden=false; $('#jMoreBtn').hidden=true; setTimeout(()=>$('#jEmail').focus(),60); });
+  $('#jEmail').addEventListener('input',()=>{ $('#jNotifyL').hidden=!$('#jEmail').value.trim(); });
+  [['#jName','#jPhone'],['#jPhone','#jAddr'],['#jAddr','#jJob']].forEach(([a,b])=>$(a).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $(b).focus(); } }));
+  $('#jCancel').addEventListener('click',()=>closeAll()); $('#jBlock').addEventListener('click',openSheet);
+  function jNeed(q,msg){ toast(msg); $(q).focus(); return false; }
+  $('#jSave').addEventListener('click',async()=>{ if(jBusy) return;
+    const name=$('#jName').value.trim(), phone=$('#jPhone').value.trim(), address=$('#jAddr').value.trim(), job=$('#jJob').value.trim(), email=$('#jEmail').value.trim();
+    if(name.length<2) return jNeed('#jName','Add the customer’s name.');
+    if(digits(phone).length<10) return jNeed('#jPhone','Add their 10-digit phone number.');
+    if(address.length<3) return jNeed('#jAddr','Add the job address.');
+    if(!job) return jNeed('#jJob','Add what the job is.');
+    if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return jNeed('#jEmail','That email doesn’t look right.');
+    const start=js.other?otherStart():js.start; if(!start) return toast('Pick a time first.');
+    if(new Date(start).getTime()<Date.now()-5*60000) return toast('That time already passed. Pick a later one.');
+    const price=Math.round(Number(String($('#jPrice').value).replace(/[^\d.]/g,'')))||'';
+    const o={action:'add',name,phone,address,job,email,slotStart:start,anyTime:js.other,force:js.force,price,notes:$('#jNotes').value.trim(),source:js.src,notify:!!email&&$('#jNotify').checked};
+    const done=(x,emailed)=>{ B.push(x); tab='up'; $$('.tabs button').forEach(t=>t.setAttribute('aria-pressed',String(t.dataset.t==='up'))); openId=x.id; closeAll(); render();
+      toast(emailed?'Job added. '+first(x)+' was emailed a confirmation.':'Job added. That time is blocked online now.'); };
+    if(DEMO){ const nb={id:'M-'+Date.now().toString(36),created:new Date().toISOString(),client:C,status:'Confirmed',slotStart:start,slotLabel:whenText(start),service:job,details:'Added by you',
+        estimateLow:price,estimateHigh:price,urgent:'',name,phone,email,address,notes:o.notes,source:js.src};
+      if(!EX){ try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push(nb); localStorage.setItem(k,JSON.stringify(all)); }catch(e){} }
+      done(nb,false); return; }
+    jBusy=true; jBtn();
+    try{ const j=await call(o); jBusy=false;
+      if(j.ok) return done(j.booking,j.emailed);
+      if(j.error==='busy'){ js.force=true; $('#jWarn').hidden=false; $('#jWarn').innerHTML='Something’s already on your calendar at that time. Double-booking on purpose? Tap the button again to add it anyway.'; jBtn(); return; }
+      if(j.error==='slot_taken'){ toast('That time just got taken. Pick another one.'); openJob(); return; }
+      toast(j.error==='bad_time'?'That time doesn’t work. Pick a future time.':j.error==='bad_email'?'That email doesn’t look right.':'Check the name, phone, address and job, then try again.'); jBtn(); }
+    catch(e){ jBusy=false; jBtn(); if(e!=='auth') toast('That didn’t save. Check your signal and try again.'); } });
   /* ---------- Block time sheet ---------- */
   const bs={day:0,start:'all',len:2}; let busy=false;
   function chips(el,items,cur,cb){ el.innerHTML=items.map(([v,t,sm])=>'<button type="button" data-v="'+v+'" aria-pressed="'+(String(v)===String(cur))+'">'+t+(sm?'<small>'+sm+'</small>':'')+'</button>').join('');
@@ -886,7 +978,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){ open.forEach(el=>el.hidden=true); return; }
     open.forEach(el=>el.classList.add('out')); clearTimeout(closing);
     closing=setTimeout(()=>open.forEach(el=>{ el.hidden=true; el.classList.remove('out'); }),200); }
-  $('#fab').addEventListener('click',()=>show('#aSheet')); $('#bCancel').addEventListener('click',closeSheet); $('#sheetBg').addEventListener('click',closeSheet);
+  $('#fab').addEventListener('click',openJob); $('#bCancel').addEventListener('click',closeSheet); $('#sheetBg').addEventListener('click',closeSheet);
   addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
   $('#bSave').addEventListener('click',async()=>{ if(busy) return; const now=new Date(), d0=new Date(now.getFullYear(),now.getMonth(),now.getDate()+bs.day);
     const start=bs.start==='all'?d0:new Date(d0.getFullYear(),d0.getMonth(),d0.getDate(),+bs.start), end=bs.start==='all'?new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()+1):new Date(start.getTime()+bs.len*3600e3);
