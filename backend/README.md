@@ -124,6 +124,12 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
 
+## What's new: + New Job (Nov 15, 2026)
+
+The inbox's main button is now **+ New Job**, for customers who call or text instead of booking online. Owners enter the name, phone, address, job, a time (one of their open times, or any other day and time), an optional price, how the customer found them, and optionally an email (with a confirmation email) and notes. It's saved like an online booking, so call, text, directions, move, cancel, won/lost and review requests all work. If something's already on the calendar at that time, the owner is warned and can add it anyway. Every booking now records a `source` (online bookings say Website), which the lead tracking will build on.
+
+Paste the new `Code.gs`, then **Deploy > Manage deployments > edit > New version > Deploy**. The Bookings tab gets its `source` column automatically. Tests: `node backend/test/newjob.test.js`.
+
 ## What's new: secure sign-in (Nov 15, 2026)
 
 After pasting the new `Code.gs` (and the new `connect/Code.gs` into the Connect project):
@@ -141,5 +147,5 @@ After pasting the new `Code.gs`, run `setup` once more and click **Allow**. Goog
 - **reviewUrl**: paste the client's Google "write a review" link here. The inbox's **Ask for a review** text uses it.
 - **Reminders**: the 7 PM run now also emails customers with a visit the next day (only those who left an email, once per booking time).
 - **Cancel / move**: the customer is emailed when the owner cancels or moves their visit from the inbox.
-- **Owner-added bookings** (taken by phone) are confirmed right away, hold the time online, and email nobody.
+- **Owner-added bookings** (taken by phone) are confirmed right away and hold the time online. (Now the + New Job button; see above.)
 - **Photos**: up to 3 per booking, shrunk on the customer's phone first. Only the owner's inbox link can open them.
