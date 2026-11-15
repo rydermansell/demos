@@ -9,6 +9,7 @@ One Google Apps Script web app runs bookings for **every** PriceWink client. It 
 - saves the booking to a Google Sheet, puts it on the client's Google Calendar, and emails the owner (plus an optional text)
 - emails the customer a confirmation if they gave an email
 - powers the owner inbox (`/demos/inbox/`), where owners call, text, get directions, mark jobs Confirmed / Done / Canceled (canceling frees the time again) and tap **Block time** for anything not on a calendar
+- signs owners in securely (email code or Google), one revocable session per phone, and only ever shows a business its own data
 - emails each owner a 7 PM "tomorrow" summary (booked jobs, blocked time, open times) with a one-tap link to block anything they forgot
 
 ## One-time setup (about 10 minutes)
@@ -25,6 +26,7 @@ One Google Apps Script web app runs bookings for **every** PriceWink client. It 
 6. Paste that URL into:
    - each client site: `const BOOKING_ENDPOINT='...'` near the top of the quote tool script
    - `inbox/index.html`: `const API='...'`
+7. Owner sign-in is on by default (email codes). For the **Sign in with Google** button, see *Owner sign-in* below.
 
 ## Adding a client (no script editor needed)
 
@@ -42,18 +44,45 @@ Add one row to the **Clients** tab (by hand, or Claude does it through the Googl
 | digest | TRUE | 7 PM summary email |
 | phone / site | | shown in emails |
 
-Leave `calendarId` and `inboxKey` blank (or pre-fill a 20-character key). Within 10 minutes, or the first time the site loads, the backend:
+Optional column `loginEmails`: other emails that may sign in to this inbox (comma-separated), e.g. a spouse who handles the phone.
+
+Leave `calendarId` and `inboxKey` blank. Within 10 minutes, or the first time the site loads, the backend:
 - creates "[name] bookings" calendar and shares it with the owner (they can add jobs to it, which block times too)
-- creates the inbox key
-- emails **you** the owner's inbox link
+- creates the internal key behind the calendar-feed link (it is not a login)
+- emails **you** the owner's inbox link (`https://getpricewink.com/inbox/?c=<id>#start`) and a one-time setup link
 
 Then set `CLIENT_ID` (= id) and `BOOKING_ENDPOINT` in the client's site. Hours, emails and calendars can be changed on the row any time, no redeploy.
 
 (`addClient` in the editor still works if you prefer it.)
 
+## Owner sign-in
+
+The inbox link by itself opens nothing. Each phone signs in once and stays signed in (180 days, renewed every time it's used).
+
+- **Email code (always on):** the owner types their email and gets a 6-digit code (10 minutes, 5 tries). Only `ownerEmail` and `loginEmails` on their row can get one. The page gives the same answer for any email, so nobody can test which emails are on file.
+- **Sign in with Google (optional):** owners tap the Google button. The backend checks the Google token with Google and that the email is on their row.
+- **One-time setup link (for setting up a phone in person):** sent to you when a client is set up, or run `inviteLink()` in the editor (set the id inside it). It works once, for 72 hours. On an iPhone it first shows how to add Bookings to the Home Screen, then signs in from the Home Screen icon, because iPhones keep Home Screen apps signed in separately from Safari.
+- **Sign out:** at the bottom of the inbox (this phone, or every other phone).
+- **Cut off a device yourself:** on the **Sessions** tab, type anything in its `revoked` cell. It stops working within 5 minutes. To lock out every phone for a business, revoke all its rows.
+- No passwords are stored anywhere. The Sessions tab stores only a scrambled fingerprint of each phone's token, so the sheet itself can't be used to sign in.
+- Every owner request is checked on the server, and the business is taken from the sign-in, never from the link or the request.
+
+### Turning on the Google button (one time, about 10 minutes)
+
+1. [console.cloud.google.com](https://console.cloud.google.com), signed in as the PriceWink Google account. Create a project (or use the one Apps Script made), then **APIs & Services > OAuth consent screen**: External, app name **PriceWink**, support email, and `getpricewink.com` as an authorized domain. Only the basic scopes (email, profile, openid) are used, so no Google review is needed.
+2. **APIs & Services > Credentials > Create credentials > OAuth client ID**, type **Web application**. Under **Authorized JavaScript origins** add `https://getpricewink.com`. Create, then copy the **Client ID** (ends in `.apps.googleusercontent.com`).
+3. Apps Script editor > **Project Settings > Script properties > Add**: `GOOGLE_CLIENT_ID` = that Client ID.
+4. `inbox/index.html`: paste the same Client ID into `const GOOGLE_ID='...'`.
+
+Google sign-in inside an iPhone Home Screen app can be fussy (it opens a pop-up). If it ever fails for an owner, the email code right below it always works.
+
+### Tests
+
+`node backend/test/auth.test.js` runs the backend in a fake Apps Script environment and checks the security rules (wrong codes, other businesses, forged and expired tokens, setup links, sign-out, formula-safe cells). Run it after any change to `Code.gs`.
+
 ## Bookings in the owner's calendar app (iPhone, Outlook, anything)
 
-Gmail owners see the "[name] bookings" Google Calendar automatically (it's shared with them). Everyone else opens **Connect your calendar** in their inbox and taps **iPhone** or **Outlook** under "See bookings in your phone's calendar" (or **Copy link** for any other app). That subscribes their calendar app to a private, read-only feed (`?action=ics&c=<id>&t=<token>`) with every booking and blocked time, plus a 1-hour reminder before each estimate. iPhone checks for changes about every 15 minutes (owners can set this under Settings > Calendar > Accounts > Fetch); Outlook every few hours. The feed token is separate from the inbox key, so a leaked calendar link can't open the inbox. Changing a client's `inboxKey` resets both.
+Gmail owners see the "[name] bookings" Google Calendar automatically (it's shared with them). Everyone else opens **Connect your calendar** in their inbox and taps **iPhone** or **Outlook** under "See bookings in your phone's calendar" (or **Copy link** for any other app). That subscribes their calendar app to a private, read-only feed (`?action=ics&c=<id>&t=<token>`) with every booking and blocked time, plus a 1-hour reminder before each estimate. iPhone checks for changes about every 15 minutes (owners can set this under Settings > Calendar > Accounts > Fetch); Outlook every few hours. The feed link can't open the inbox. Changing a client's `inboxKey` gives them a new feed link (the old one stops working).
 
 ## Connecting the owner's calendar (auto-blocking)
 
@@ -94,6 +123,15 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Free Gmail accounts can send about 100 emails a day through Apps Script; Google Workspace accounts get 1,500. Each booking sends 1 to 3 emails.
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
+
+## What's new: secure sign-in (Nov 15, 2026)
+
+After pasting the new `Code.gs` (and the new `connect/Code.gs` into the Connect project):
+1. Run `setup` once (adds the **Sessions** tab and the `loginEmails` column).
+2. **Deploy > Manage deployments > edit > Version: New version > Deploy**, for both projects. The URLs stay the same.
+3. Optional: turn on the Google button (above).
+
+What changed: old `#key` inbox links no longer sign anyone in (they now show the sign-in screen), owner emails link to `getpricewink.com/inbox/?c=<id>#start` with no secret in them, error replies no longer include internal details, and anything a customer types is stored so Sheets can't run it as a formula.
 
 ## What's new (Nov 2026)
 

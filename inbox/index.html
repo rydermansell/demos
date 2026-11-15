@@ -214,6 +214,25 @@ body.has-open .fab{transform:translateY(calc(100% + 40px))}
 .toast.on{transform:translate(-50%,0);visibility:visible}
 .toast button{flex:none;border:0;border-radius:10px;background:rgba(255,255,255,.14);color:var(--tag);font:700 15px var(--f);padding:9px 14px;margin:-3px -8px -3px 0;cursor:pointer}
 body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+/* ---------- Sign in ---------- */
+body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,body.out #hint,body.out #list,body.out #upd,body.out #fab,body.out #acct{display:none!important}
+.login{margin:18px 16px 0}
+.lg-card{background:var(--card);border-radius:20px;padding:22px 18px 18px;box-shadow:0 0 0 1px var(--line),0 20px 40px -28px rgba(14,27,46,.45);animation:in .45s var(--ease) both}
+.lg-card h2{margin:0;font:800 24px/1.15 var(--disp);letter-spacing:-.02em;color:var(--ink)}
+.lg-help{margin:6px 0 16px;font-size:15px;line-height:1.45;color:var(--muted)}
+.lg-help.err{color:var(--red)}
+.gbtn{display:flex;justify-content:center;min-height:44px}
+.lg-or{display:flex;align-items:center;gap:12px;margin:16px 0 2px;font-size:13px;font-weight:600;color:var(--muted)}
+.lg-or::before,.lg-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.inp.code{font:800 28px/1 var(--disp);letter-spacing:.4em;text-align:center;padding:14px 0 14px .4em;font-variant-numeric:tabular-nums}
+.lg-sent{margin:0 0 4px;font-size:15px;color:var(--body)}.lg-sent b{color:var(--ink)}
+.lg-steps{margin:4px 0 6px;padding-left:22px;font-size:15.5px;line-height:1.5;color:var(--ink)}.lg-steps li{margin-bottom:8px}.lg-steps li::marker{font-weight:800}
+.lg-steps svg{width:18px;height:18px;vertical-align:-3px;color:#0A84FF}
+.lg-fine{margin:14px 2px 0;font-size:13px;line-height:1.45;color:var(--muted);text-align:center}
+.save.busy{opacity:.7;pointer-events:none}
+.acct{margin:22px 20px 0;text-align:center;font-size:13.5px;line-height:1.6;color:var(--muted)}
+.acct b{color:var(--body);font-weight:600}
+.acct button{border:0;background:none;padding:4px 2px;font:600 13.5px var(--f);color:var(--ink);text-decoration:underline;text-decoration-color:#C3B9A4;text-underline-offset:3px;cursor:pointer}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:1ms!important;animation-delay:0s!important;transition-property:opacity,color,background-color,border-color!important}.more{transition:none}}
 </style></head><body>
 <header class="top" id="top"><div class="row"><div><small id="sub">Bookings</small><h1 id="biz">Loading…</h1></div>
@@ -225,12 +244,42 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
 <div class="mini" id="mini" aria-hidden="true"><div class="row"><b id="miniBiz"></b><span class="pill" id="miniNew" hidden></span>
   <button class="ref" id="ref2" aria-label="Refresh" tabindex="-1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div></div>
 <main>
+  <section class="login" id="login" hidden aria-labelledby="lgT">
+    <div class="lg-card">
+      <h2 id="lgT">Sign in to your bookings</h2>
+      <p class="lg-help" id="lgHelp">Use the email you gave PriceWink.</p>
+      <div id="lgStep1">
+        <div class="gbtn" id="gBtn"></div>
+        <p class="lg-or" id="lgOr"><span>or get a code by email</span></p>
+        <label class="sh-l" for="lgEmail">Email</label>
+        <input class="inp" id="lgEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="you@example.com" enterkeyhint="send">
+        <button class="save" id="lgSend" type="button">Email me a code</button>
+      </div>
+      <div id="lgStep2" hidden>
+        <p class="lg-sent">We sent a 6-digit code to <b id="lgTo"></b>.</p>
+        <label class="sh-l" for="lgCode">Code</label>
+        <input class="inp code" id="lgCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="······" enterkeyhint="go">
+        <button class="save" id="lgVerify" type="button">Sign in</button>
+        <div class="alts"><button class="alt" id="lgResend" type="button">Send a new code</button><button class="alt" id="lgBack" type="button">Different email</button></div>
+      </div>
+      <div id="lgInvite" hidden>
+        <ol class="lg-steps">
+          <li>Tap the <b>Share</b> button <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> at the bottom of Safari.</li>
+          <li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li>
+          <li>Open <b>Bookings</b> from your Home Screen. You’re signed in automatically.</li>
+        </ol>
+        <button class="alt" id="lgHere" type="button">Skip and open it here instead</button>
+      </div>
+      <p class="lg-fine" id="lgFine">You stay signed in on this phone. Only people on your account can open it.</p>
+    </div>
+  </section>
   <div class="tabs" role="tablist" id="tabs"><i aria-hidden="true"></i><button aria-pressed="true" data-t="up">Upcoming<em id="cUp"></em></button><button aria-pressed="false" data-t="new">New<em id="cNew"></em></button><button aria-pressed="false" data-t="past">Past</button></div>
   <p class="demo" id="demo" hidden></p>
   <p class="hint" id="hint" hidden>Tap a booking to see the details and call or text your customer.</p>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <p class="upd" id="upd" hidden></p>
-  <p class="ver">PriceWink inbox · build 30</p>
+  <p class="acct" id="acct" hidden></p>
+  <p class="ver">PriceWink inbox · build 31</p>
 </main>
 <button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> Add</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -304,10 +353,19 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
   const API='';
   /* Paste the PriceWink Connect web-app URL (backend/connect) here to show the Google Calendar button. */
   const CONNECT='';
-  const q=new URLSearchParams(location.search), C=q.get('c')||'', KEY=location.hash.slice(1), FORCE_DEMO=q.has('demo')||(!API&&!KEY);
-  /* EX: an owner's real link (it carries a key) opened before their site is connected. They see clearly labelled example bookings,
-     which disappear on their own the first time the backend answers for this client. */
-  let EX=!API&&!!KEY&&!FORCE_DEMO, DEMO=FORCE_DEMO||EX;
+  /* Google Sign-In: the OAuth "Web application" client ID (ends in .apps.googleusercontent.com). Empty = email codes only. */
+  const GOOGLE_ID='';
+  /* Owner links look like /inbox/?c=<client>#start. Anything after # just marks "this is the owner's link" (old #key links still count);
+     #invite=<token> is a one-time setup link. Nothing in the link signs anyone in by itself: a sign-in gives this phone its own token. */
+  const q=new URLSearchParams(location.search), C=q.get('c')||'', HASH=location.hash.slice(1);
+  const INVITE=HASH.indexOf('invite=')===0?HASH.slice(7):'', OWNER=!!HASH||q.has('o'), FORCE_DEMO=q.has('demo')||(!API&&!OWNER);
+  /* EX: an owner's link opened before their business is connected. They see clearly labelled example bookings. */
+  let EX=!API&&OWNER&&!FORCE_DEMO, DEMO=FORCE_DEMO||EX;
+  const UA=navigator.userAgent, IOS=/iPhone|iPad|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const STANDALONE=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  const DEVICE=(IOS?'iPhone':/Android/.test(UA)?'Android':'Computer')+(STANDALONE?' app':' browser');
+  const SK='pw_sess_'+C; let TOKEN=''; try{ TOKEN=localStorage.getItem(SK)||''; }catch(e){}
+  let SIGNED_OUT=false, ME='';
   const CL=()=>CLIENTS[C]||CLIENTS[C.replace(/-/g,'')]||{};
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
@@ -413,16 +471,98 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),undo?6000:2600); }
   $('#toast').addEventListener('click',e=>{ const el=$('#toast'); if(e.target.closest('button')&&el._undo){ const f=el._undo; el._undo=null; el.classList.remove('on'); f(); } });
   $('#sub').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  /* ---------- Owner sign-in ----------
+     Every owner request carries this phone's token. The backend works out the business from the token, so the link alone opens nothing. */
+  async function call(o,keep){
+    const r=await fetch(API,{method:'POST',keepalive:!!keep,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({client:C,token:TOKEN},o))}), j=await r.json();
+    if(j&&j.error==='auth'){ signedOut('You were signed out. Sign in again to see your bookings.'); throw 'auth'; }
+    return j; }
+  const raw=o=>fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({client:C,device:DEVICE},o))}).then(r=>r.json());
+  function setToken(t){ TOKEN=t||''; try{ if(TOKEN) localStorage.setItem(SK,TOKEN); else localStorage.removeItem(SK); }catch(e){} }
+  function signedOut(msg){ setToken(''); B=[]; closeAll(); showLogin(msg||''); }
+  async function authFlow(){
+    let info=null;
+    if(C){ try{ info=await (await fetch(API+'?action=auth&c='+encodeURIComponent(C))).json(); }
+      catch(e){ $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; } }
+    if(info&&!info.ok&&info.error==='unknown_client'){
+      if(OWNER){ EX=DEMO=true; load(); return; }   // their business isn't connected yet: example bookings
+      $('#biz').textContent='Can’t open this inbox'; $('#list').innerHTML='<p class="msg">Check that you opened the whole link you were sent.</p>'; return; }
+    if(info&&info.name) $('#biz').textContent=info.name;
+    if(INVITE){ if(IOS&&!STANDALONE){ showLogin('','invite'); return; } redeem(); return; }
+    showLogin(''); }
+  async function redeem(){ showLogin('','busy');
+    try{ const j=await raw({action:'login_invite',invite:INVITE}); try{ history.replaceState(null,'',location.pathname+location.search+'#start'); }catch(e){}
+      if(j.ok) return signedIn(j);
+      showLogin(j.error==='invite_used'?'That setup link was already used. Sign in with your email below.':'That setup link didn’t work. Sign in with your email below.'); }
+    catch(e){ showLogin('Can’t connect right now. Check your signal and try again.','invite'); } }
+  function showLogin(msg,mode,err){ SIGNED_OUT=true; document.body.classList.add('out'); $('#login').hidden=false;
+    const help=$('#lgHelp'); help.classList.toggle('err',!!err);
+    $('#lgStep1').hidden=mode==='invite'||mode==='busy'||mode==='code'; $('#lgStep2').hidden=mode!=='code'; $('#lgInvite').hidden=mode!=='invite';
+    $('#lgT').textContent=mode==='invite'?'Put Bookings on your Home Screen':mode==='busy'?'Signing you in…':'Sign in to your bookings';
+    help.textContent=msg||(mode==='invite'?'Then it opens like an app, already signed in.':mode==='busy'?'One moment.':'Use the email you gave PriceWink.');
+    $('#lgFine').hidden=mode==='busy';
+    if(mode!=='invite'&&mode!=='busy'&&mode!=='code'){ try{ if(!$('#lgEmail').value) $('#lgEmail').value=localStorage.getItem('pw_last_email')||''; }catch(e){} loadGoogle(); } }
+  function signedIn(j){
+    setToken(j.token);
+    if(j.client&&j.client!==C){ try{ localStorage.setItem('pw_sess_'+j.client,j.token); }catch(e){} location.replace(location.pathname+'?c='+encodeURIComponent(j.client)+'#start'); return; }
+    SIGNED_OUT=false; document.body.classList.remove('out'); $('#login').hidden=true; $('#lgCode').value=''; $('#lgStep2').hidden=true;
+    toast('Signed in. You’ll stay signed in on this phone.'); load(); }
+  const LOGIN_ERR={bad_email:'That email doesn’t look right. Check it and try again.',slow_down:'Too many codes asked for. Wait a few minutes, then try again.',
+    bad_code:'That code isn’t right. Check the email and try again.',expired:'That code expired. Tap “Send a new code”.',too_many:'Too many wrong tries. Tap “Send a new code”.',
+    google_failed:'Google sign-in didn’t work. Try again, or use a code by email.',not_allowed:'That Google account isn’t set up for this business. Use the email you gave PriceWink, or ask Ryder to add this one.'};
+  function busyBtn(el,on,label){ el.classList.toggle('busy',on); if(label) el.textContent=label; }
+  let lgEmail='';
+  async function sendCode(){ const email=$('#lgEmail').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showLogin(LOGIN_ERR.bad_email,'',1); $('#lgEmail').focus(); return; }
+    busyBtn($('#lgSend'),true,'Sending…');
+    try{ const j=await raw({action:'login_code',email}); busyBtn($('#lgSend'),false,'Email me a code');
+      if(!j.ok){ showLogin(LOGIN_ERR[j.error]||'Something went wrong. Try again.','',1); return; }
+      lgEmail=email; try{ localStorage.setItem('pw_last_email',email); }catch(e){}
+      $('#lgTo').textContent=email; showLogin('If that email is on this account, the code is on its way. Check spam if you don’t see it in a minute.','code'); setTimeout(()=>$('#lgCode').focus(),80); }
+    catch(e){ busyBtn($('#lgSend'),false,'Email me a code'); showLogin('Can’t connect right now. Check your signal and try again.','',1); } }
+  async function verifyCode(){ const code=$('#lgCode').value.replace(/\D/g,''); if(code.length!==6){ $('#lgCode').focus(); return; }
+    busyBtn($('#lgVerify'),true,'Checking…');
+    try{ const j=await raw({action:'login_verify',email:lgEmail,code}); busyBtn($('#lgVerify'),false,'Sign in');
+      if(j.ok) return signedIn(j);
+      $('#lgCode').value=''; showLogin(LOGIN_ERR[j.error]||'Something went wrong. Try again.','code',1); $('#lgCode').focus(); }
+    catch(e){ busyBtn($('#lgVerify'),false,'Sign in'); showLogin('Can’t connect right now. Check your signal and try again.','code',1); } }
+  $('#lgSend').addEventListener('click',sendCode); $('#lgEmail').addEventListener('keydown',e=>{ if(e.key==='Enter') sendCode(); });
+  $('#lgVerify').addEventListener('click',verifyCode);
+  $('#lgCode').addEventListener('input',e=>{ const v=e.target.value.replace(/\D/g,'').slice(0,6); e.target.value=v; if(v.length===6) verifyCode(); });
+  $('#lgResend').addEventListener('click',()=>{ $('#lgEmail').value=lgEmail; showLogin(''); sendCode(); });
+  $('#lgBack').addEventListener('click',()=>{ showLogin(''); setTimeout(()=>$('#lgEmail').focus(),60); });
+  $('#lgHere').addEventListener('click',redeem);
+  addEventListener('hashchange',()=>{ if(location.hash.indexOf('#invite=')===0) location.reload(); });   // a setup link tapped while the inbox is already open
+  /* Google Sign-In (Google Identity Services). The backend checks the ID token with Google and that the email is on this account. */
+  let gReady=false;
+  function loadGoogle(){ if(!GOOGLE_ID){ $('#gBtn').hidden=$('#lgOr').hidden=true; return; }
+    if(gReady) return; if(window.google&&google.accounts&&google.accounts.id) return initGoogle();
+    if(document.getElementById('gsi')) return; const sc=document.createElement('script'); sc.id='gsi'; sc.src='https://accounts.google.com/gsi/client'; sc.async=true;
+    sc.onload=initGoogle; sc.onerror=()=>{ $('#gBtn').hidden=$('#lgOr').hidden=true; }; document.head.appendChild(sc); }
+  function initGoogle(){ gReady=true;
+    google.accounts.id.initialize({client_id:GOOGLE_ID,callback:onGoogle,ux_mode:'popup',auto_select:false,itp_support:true,cancel_on_tap_outside:true});
+    google.accounts.id.renderButton($('#gBtn'),{theme:'outline',size:'large',shape:'pill',text:'continue_with',logo_alignment:'center',width:Math.min(360,Math.max(240,$('#gBtn').clientWidth||300))}); }
+  async function onGoogle(resp){ showLogin('','busy');
+    try{ const j=await raw({action:'login_google',credential:resp.credential}); if(j.ok) return signedIn(j); showLogin(LOGIN_ERR[j.error]||'Something went wrong. Try again.','',1); }
+    catch(e){ showLogin('Can’t connect right now. Check your signal and try again.','',1); } }
+  function renderAcct(){ const a=$('#acct'); if(DEMO||!TOKEN){ a.hidden=true; return; } a.hidden=false;
+    a.innerHTML=(ME?'Signed in as <b>'+esc(ME)+'</b><br>':'')+'<button type="button" data-so="me">Sign out</button> · <button type="button" data-so="others">Sign out other phones</button>'; }
+  $('#acct').addEventListener('click',async e=>{ const b=e.target.closest('[data-so]'); if(!b) return;
+    try{ const j=await call({action:'signout',others:b.dataset.so==='others'}); if(!j.ok) throw 0;
+      if(b.dataset.so==='me') signedOut('You’re signed out.'); else toast(j.signedOut?'Signed out '+j.signedOut+(j.signedOut===1?' other device.':' other devices.'):'No other devices were signed in.'); }
+    catch(e){ if(e!=='auth') toast('That didn’t work. Check your signal and try again.'); } });
+
   async function load(){
+    if(SIGNED_OUT) return;
     const ae=document.activeElement; if((ae&&ae.tagName==='INPUT'&&$('#list').contains(ae))||SHEETS.some(q=>!$(q).hidden)) return;   // don't redraw while they are typing or picking
     const keep={}; B.forEach(b=>{ if(b.moved||b.emailed) keep[b.id]={moved:b.moved,emailed:b.emailed}; });
     $('#ref').classList.add('spin'); setTimeout(()=>$('#ref').classList.remove('spin'),600);
-    if(API&&!FORCE_DEMO){
-      try{ const r=await fetch(API+'?action=inbox&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)), j=await r.json();
-        if(j.ok){ EX=DEMO=false; document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; REVIEW=j.reviewUrl||''; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
-        if(j.error==='unknown_client'&&KEY){ EX=DEMO=true; }
-        else { $('#biz').textContent='Can’t open this inbox'; $('#list').innerHTML='<p class="msg">'+(j.error==='bad_key'?'This link is missing its key. Use the full link you were sent.':'Something went wrong. Try again in a minute.')+'</p>'; return; }
-      }catch(e){ if(!EX){ $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; } }
+    if(API&&!FORCE_DEMO&&!EX){
+      if(!TOKEN){ authFlow(); return; }
+      try{ const j=await call({action:'inbox'});
+        if(j.ok){ document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; ME=j.me||''; renderAcct(); REVIEW=j.reviewUrl||''; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
+        $('#list').innerHTML='<p class="msg">Something went wrong. Try again in a minute.</p>'; return;
+      }catch(e){ if(e!=='auth') $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; }
     }
     document.body.classList.toggle('ex',EX); $('#demo').hidden=false;
     $('#demo').innerHTML=IC.info+(EX?'<span><b>Example bookings.</b> Tap one to try it out. They go away when your site goes live.</span>'
@@ -517,9 +657,9 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     if(th.length) return '<span class="phs">'+th.map((u,i)=>'<button type="button" class="pt" aria-label="Open photo '+(i+1)+'"><img src="'+esc(u)+'" alt=""></button>').join('')+'</span>';
     if(!ids.length) return '';
     return '<span class="phs">'+ids.map((id,i)=>'<button type="button" class="pt" data-pid="'+esc(id)+'" aria-label="Open photo '+(i+1)+'">'+(PH[id]?'<img src="'+PH[id]+'" alt="">':'<i></i>')+'</button>').join('')+'</span>'; }
-  /* Photos stay private: each one is fetched with the owner's key the first time its booking is opened. */
+  /* Photos stay private: each one is fetched with the owner's sign-in the first time its booking is opened. */
   function loadPhotos(card){ if(DEMO||!card) return; card.querySelectorAll('.pt[data-pid]').forEach(async el=>{ const id=el.dataset.pid; if(PH[id]||el.dataset.busy) return; el.dataset.busy='1';
-    try{ const r=await fetch(API+'?action=photo&c='+encodeURIComponent(C)+'&key='+encodeURIComponent(KEY)+'&id='+encodeURIComponent(id)), j=await r.json(); if(!j.ok) throw 0; PH[id]=j.data;
+    try{ const j=await call({action:'photo',id}); if(!j.ok) throw 0; PH[id]=j.data;
       $$('.pt[data-pid]').forEach(x=>{ if(x.dataset.pid===id) x.innerHTML='<img src="'+j.data+'" alt="">'; }); }catch(e){ el.dataset.busy=''; } }); }
   const first=b=>String(b.name||'').trim().split(/\s+/)[0]||'your customer';
   function blockRow(x,k){ const s0=new Date(x.start), e0=new Date(x.end), allDay=e0-s0>=20*3600e3, t=tmParts(s0), tm=d=>d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
@@ -579,9 +719,9 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
   /* Saving a cancel waits for the Undo window to pass, because the backend emails the customer when a booking is canceled. */
   const pend={};
   async function save(id,status,old){ delete pend[id]; const b=B.find(x=>x.id===id);
-    try{ const r=await fetch(API,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'status',client:C,key:KEY,id,status})}), j=await r.json(); if(!j.ok) throw 0;
+    try{ const j=await call({action:'status',id,status},true); if(!j.ok) throw 0;
       if(b&&status==='Canceled'&&j.emailed&&b.status==='Canceled'){ b.emailed=true; const card=$$('#list .bk').find(c=>c.dataset.id===id); if(card) card.querySelector('.next').innerHTML=nextHtml(b); } }
-    catch(e){ if(b){ b.status=old; render(); } toast('That didn’t save. Check your signal and try again.'); } }
+    catch(e){ if(e==='auth') return; if(b){ b.status=old; render(); } toast('That didn’t save. Check your signal and try again.'); } }
   function flush(){ Object.keys(pend).forEach(id=>{ const p=pend[id]; clearTimeout(p.t); save(id,p.status,p.old); }); }
   addEventListener('pagehide',flush); addEventListener('visibilitychange',()=>{ if(document.hidden) flush(); });
   function setStatus(id,status,isUndo){
@@ -651,7 +791,7 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     if(!/^(webcal|https?):\/\/\S+$/i.test(url)){ toast('Paste the whole link first.'); $('#cUrl').focus(); return; }
     if(DEMO){ SRC.push({type:'ics',id:url,label:srcLabel(url),detail:''}); saveDemoSources(); afterConnect(); return; }
     cBusy=true; $('#cLink').disabled=true; $('#cLink').textContent='Checking the link…';
-    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'connect',client:C,key:KEY,ics:url})}), j=await r.json();
+    try{ const j=await call({action:'connect',ics:url});
       if(j.ok){ SRC=j.sources; afterConnect(); } else toast(j.error==='bad_link'?'That link didn’t work. Copy it again and paste the whole thing.':'Couldn’t connect. Try again.'); }
     catch(e){ toast('Couldn’t connect. Check your signal and try again.'); }
     cBusy=false; $('#cLink').disabled=false; $('#cLink').textContent='Connect this calendar'; });
@@ -659,12 +799,14 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     if(DEMO){ b.classList.add('busy'); b.querySelector('small').textContent='Connecting';
       setTimeout(()=>{ b.classList.remove('busy'); b.querySelector('small').textContent='Sign in and tap Allow';
         if(!SRC.some(x=>x.type==='google')) SRC.push({type:'google',id:'owner@gmail.com',label:'Google Calendar',detail:'owner@gmail.com (demo)'}); saveDemoSources(); afterConnect(); },1300); return; }
-    location.href=CONNECT+'?c='+encodeURIComponent(C)+'&k='+encodeURIComponent(KEY); });
+    b.classList.add('busy');
+    call({action:'connectTicket'}).then(j=>{ if(!j.ok) throw 0; location.href=CONNECT+'?c='+encodeURIComponent(C)+'&k='+encodeURIComponent(j.ticket); })
+      .catch(e=>{ b.classList.remove('busy'); if(e!=='auth') toast('Couldn’t open Google. Try again.'); }); });
   function afterConnect(){ closeAll(); render(); toast('Calendar connected. Jobs on it now block your booking page.'); }
   $('#cList').addEventListener('click',async e=>{ const b=e.target.closest('[data-dis]'); if(!b) return; const x=SRC[+b.dataset.dis]; if(!x) return;
     if(DEMO){ SRC=SRC.filter(y=>y!==x); saveDemoSources(); renderSources(); render(); toast('Disconnected.'); return; }
     b.disabled=true; b.textContent='…';
-    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'disconnect',client:C,key:KEY,type:x.type,id:x.id})}), j=await r.json();
+    try{ const j=await call({action:'disconnect',type:x.type,id:x.id});
       if(!j.ok) throw 0; SRC=j.sources; renderSources(); render(); toast('Disconnected.'); }
     catch(e){ b.disabled=false; b.textContent='Disconnect'; toast('Couldn’t disconnect. Try again.'); } });
   $('#sync').addEventListener('click',e=>{ if(e.target.closest('[data-open-connect]')) openConnect(); });
@@ -683,7 +825,7 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     if(saved) toast(b.jobValue?'Saved. '+fmt(b.jobValue)+' added to this month.':'Saved.'); else if(o==='Won') toast('Marked as won.'); else if(o==='Lost') toast('Marked as not won.');
     if(DEMO){ try{ if(b.sample){ const k='pw_demo_out_'+C, m=JSON.parse(localStorage.getItem(k)||'{}'); m[id]={o:b.outcome,v:b.jobValue}; localStorage.setItem(k,JSON.stringify(m)); }
         else { const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.forEach(x=>{ if(x.id===id){ x.outcome=b.outcome; x.jobValue=b.jobValue; } }); localStorage.setItem(k,JSON.stringify(all)); } }catch(e){} return; }
-    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'outcome',client:C,key:KEY,id,outcome:b.outcome,jobValue:b.jobValue})}), j=await r.json(); if(!j.ok) throw 0; }
+    try{ const j=await call({action:'outcome',id,outcome:b.outcome,jobValue:b.jobValue}); if(!j.ok) throw 0; }
     catch(e){ b.outcome=was.o; b.jobValue=was.v; render(); toast('That didn’t save. Check your signal and try again.'); } }
   /* ---------- move a booking, or add one taken by phone (same day + time picker) ---------- */
   const ms={id:null,days:[],di:0,start:''}; let mBusy=false;
@@ -707,7 +849,7 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     try{ ms.days=await getSlots(); }catch(e){ $('#mDays').innerHTML='<p>Couldn’t load your open times. Check your signal and try again.</p>'; return; }
     if(!ms.days.length){ $('#mDays').innerHTML='<p>No open times in the next two weeks.</p>'; return; }
     chips($('#mDays'),ms.days.map((d,i)=>{ const p=String(d.label).split(' '); return [i,p[0],p.slice(1).join(' ')]; }),0,v=>{ ms.di=+v; mTimes(); }); mTimes(); }
-  $('#mSave').addEventListener('click',async()=>{ if(mBusy||!ms.start) return; const start=ms.start, b=ms.id?B.find(x=>x.id===ms.id):null, post=o=>fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({client:C,key:KEY},o))}).then(r=>r.json());
+  $('#mSave').addEventListener('click',async()=>{ if(mBusy||!ms.start) return; const start=ms.start, b=ms.id?B.find(x=>x.id===ms.id):null, post=o=>call(o);
     const taken=()=>{ toast('That time just got taken. Pick another one.'); openMove(ms.id); };
     if(b){   // move
       const apply=(emailed,status)=>{ b.slotStart=start; b.slotLabel=whenText(start); b.urgent=''; b.status=status||((b.status==='New'||b.status==='Canceled'||b.status==='Done')?'Confirmed':b.status); b.moved=true; b.emailed=!!emailed; openId=b.id; closeAll(); render(); toast(emailed?'Moved. '+first(b)+' was emailed the new time.':'Moved to '+whenText(start)+'.'); };
@@ -751,13 +893,13 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
     const label=$('#bLabel').value.trim()||(bs.start==='all'?'Day off':'Phone job');
     if(DEMO){ BL.push({id:'MB-'+Date.now().toString(36),label,start:start.toISOString(),end:end.toISOString()}); saveDemoBlocks(); closeSheet(); render(); toast('Blocked. Customers can’t book that time.'); return; }
     busy=true; $('#bSave').disabled=true; $('#bSave').textContent='Blocking…';
-    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'block',client:C,key:KEY,start:start.toISOString(),end:end.toISOString(),label})}), j=await r.json();
+    try{ const j=await call({action:'block',start:start.toISOString(),end:end.toISOString(),label});
       if(!j.ok) throw 0; BL.push({id:j.id,label,start:start.toISOString(),end:end.toISOString()}); closeSheet(); render(); toast('Blocked. Customers can’t book that time.'); }
     catch(e){ toast('Couldn’t block that. Try again.'); }
     busy=false; $('#bSave').disabled=false; $('#bSave').textContent='Block it'; });
   async function unblock(id){ const x=BL.find(b=>b.id===id); if(!x) return; BL=BL.filter(b=>b!==x); render(); toast('Removed. That time is open again.');
     if(DEMO){ if(x.sample){ try{ const k='pw_demo_blocks_'+C+'_removed', g=JSON.parse(localStorage.getItem(k)||'[]'); g.push(id); localStorage.setItem(k,JSON.stringify(g)); }catch(e){} } else saveDemoBlocks(); return; }
-    try{ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'unblock',client:C,key:KEY,eventId:id})}), j=await r.json(); if(!j.ok) throw 0; }
+    try{ const j=await call({action:'unblock',eventId:id}); if(!j.ok) throw 0; }
     catch(e){ BL.push(x); render(); toast('Couldn’t remove that. Try again.'); } }
   addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
   setInterval(()=>{ if(!document.hidden) load(); },60000);

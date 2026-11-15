@@ -10,30 +10,31 @@
  * Paste the /exec URL into inbox/index.html as CONNECT.
  */
 const MAIN = 'PASTE_BOOKING_BACKEND_EXEC_URL';
-const INBOX_BASE = 'https://rydermansell.github.io/demos/inbox/';
+const INBOX_BASE = 'https://getpricewink.com/inbox/';
 
 function doGet(e) {
+  // k is a 15-minute ticket the inbox gets for the signed-in owner (never their sign-in token).
   const p = (e && e.parameter) || {}, c = String(p.c || ''), k = String(p.k || '');
-  const back = INBOX_BASE + '?c=' + encodeURIComponent(c);
-  if (!c || !k) return page_('This link is missing a piece', 'Open Connect from your PriceWink bookings page instead.', back, false);
+  const back = INBOX_BASE + '?c=' + encodeURIComponent(c), home = back + '#start';
+  if (!c || !k) return page_('This link is missing a piece', 'Open Connect from your PriceWink bookings page instead.', home, false);
   try {
-    const info = JSON.parse(UrlFetchApp.fetch(MAIN + '?action=connectInfo&c=' + encodeURIComponent(c) + '&key=' + encodeURIComponent(k), { muteHttpExceptions: true }).getContentText());
-    if (!info.ok) return page_('This link has expired', 'Open Connect from your PriceWink bookings page instead.', back, false);
+    const info = JSON.parse(UrlFetchApp.fetch(MAIN + '?action=connectInfo&c=' + encodeURIComponent(c) + '&ticket=' + encodeURIComponent(k), { muteHttpExceptions: true }).getContentText());
+    if (!info.ok) return page_('This link has expired', 'Open Connect from your PriceWink bookings page instead.', home, false);
     const me = Session.getActiveUser().getEmail();   // a Google account's main calendar id is its email address
-    if (!me) return page_('Couldn’t read your Google account', 'Try again, and tap Allow when Google asks.', back + '#' + k, false);
+    if (!me) return page_('Couldn’t read your Google account', 'Try again, and tap Allow when Google asks.', home, false);
     if (p.undo) {
       try { Calendar.Acl.remove('primary', 'user:' + info.shareWith); } catch (err) {}
-      return page_('Sharing turned off', 'PriceWink no longer sees when you’re busy.', back + '#' + k, true);
+      return page_('Sharing turned off', 'PriceWink no longer sees when you’re busy.', home, true);
     }
     try {
       Calendar.Acl.insert({ role: 'freeBusyReader', scope: { type: 'user', value: info.shareWith } }, 'primary', { sendNotifications: false });
     } catch (err) { /* already shared is fine; the backend check below is the real test */ }
     const res = JSON.parse(UrlFetchApp.fetch(MAIN, { method: 'post', contentType: 'text/plain', muteHttpExceptions: true,
-      payload: JSON.stringify({ action: 'connect', client: c, key: k, calendarId: me }) }).getContentText());
-    if (!res.ok) return page_('Almost there', 'Google is still setting up the share. Wait a minute, then tap Connect again.', back + '#' + k, false);
-    return page_('Calendar connected', 'Anything on ' + me + ' now blocks that time on your booking page. PriceWink only sees when you’re busy, never what the event is.', back + '&connected=1#' + k, true);
+      payload: JSON.stringify({ action: 'connect', client: c, ticket: k, calendarId: me }) }).getContentText());
+    if (!res.ok) return page_('Almost there', 'Google is still setting up the share. Wait a minute, then tap Connect again.', home, false);
+    return page_('Calendar connected', 'Anything on ' + me + ' now blocks that time on your booking page. PriceWink only sees when you’re busy, never what the event is.', back + '&connected=1#start', true);
   } catch (err) {
-    return page_('Something went wrong', 'Try again in a minute. If it keeps happening, text Ryder.', back + '#' + k, false);
+    return page_('Something went wrong', 'Try again in a minute. If it keeps happening, text Ryder.', home, false);
   }
 }
 

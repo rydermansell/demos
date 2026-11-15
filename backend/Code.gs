@@ -2,16 +2,20 @@
  * PriceWink booking backend (Google Apps Script web app).
  * One deployment serves every PriceWink client. Each client is a row on the "Clients" tab.
  *
- *   GET  ?action=slots&c=<client>            open times for the next two weeks
- *   GET  ?action=inbox&c=<client>&key=<key>  that client's bookings (owner inbox)
- *   POST {action:"book", client, slotStart, ...}       books a time (re-checks it is still free)
- *   POST {action:"status", client, key, id, status}    owner updates a booking from the inbox
- *   POST {action:"block", client, key, start, end, label}  owner blocks time (phone job, day off)
- *   POST {action:"unblock", client, key, eventId}       owner removes a block
- *   POST {action:"reschedule", client, key, id, slotStart}  owner moves a booking to another open time
- *   POST {action:"add", client, key, name, phone, slotStart, ...}  owner adds a booking they took by phone
- *   POST {action:"outcome", client, key, id, outcome, jobValue}    owner records whether they won the job
- *   GET  ?action=photo&c=<client>&key=<key>&id=<file>   one of the photos a customer attached (owner only)
+ * Public (customers):
+ *   GET  ?action=slots&c=<client>                    open times for the next two weeks
+ *   GET  ?action=auth&c=<client>                     business name for the sign-in screen (nothing private)
+ *   POST {action:"book", client, slotStart, ...}     books a time (re-checks it is still free)
+ *
+ * Owner sign-in (no password is ever stored):
+ *   POST {action:"login_code", client, email}             emails a 6-digit code (same answer whether or not the email is on file)
+ *   POST {action:"login_verify", client, email, code}     code -> device session token
+ *   POST {action:"login_google", client, credential}      Google ID token -> device session token
+ *   POST {action:"login_invite", client, invite}          one-time setup link -> device session token
+ *
+ * Owner actions: every one sends {token} and is checked by ownerAction_(). The business is taken from the
+ * session, never from the request, so one owner can never reach another business's data.
+ *   inbox, photo, status, block, unblock, connect, disconnect, reschedule, add, outcome, connectTicket, signout
  *
  * Open times automatically skip anything on the owner's own calendars: Google calendars shared with this
  * account (free/busy is enough) and private calendar links (iPhone/iCloud, Outlook). See README.md.
@@ -25,11 +29,15 @@
 
 const TZ = 'America/New_York';
 const DAYS_AHEAD = 14;
-const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl'];
+const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails'];
 const BLOCK_PREFIX = 'Blocked: ';
-const INBOX_BASE = 'https://rydermansell.github.io/demos/inbox/';
+const INBOX_BASE = 'https://getpricewink.com/inbox/';
 const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
+const SESSION_COLS = ['tokenHash', 'client', 'email', 'method', 'device', 'created', 'lastSeen', 'expires', 'revoked'];
+const SESSION_DAYS = 180;      // a signed-in phone stays signed in this long after its last use
+const INVITE_HOURS = 72;       // one-time setup links expire after this
+const CODE_MINUTES = 10;       // emailed sign-in codes expire after this
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 /* ------------------------------------------------------------------ one-time setup (run from the editor) */
@@ -46,6 +54,7 @@ function setup() {
   props.setProperty('SHEET_ID', ss.getId());
   ensureSheet_(ss, 'Clients', CLIENT_COLS);
   ensureSheet_(ss, 'Bookings', BOOKING_COLS);
+  ensureSheet_(ss, 'Sessions', SESSION_COLS);
   const first = ss.getSheetByName('Sheet1'); if (first && ss.getSheets().length > 1) ss.deleteSheet(first);
   installTriggers();   // nightly summary emails + auto-setup of new client rows
   Logger.log('Spreadsheet ready: ' + ss.getUrl());
@@ -75,9 +84,9 @@ function addClient() {
   const ss = sheet_();
   if (findClient_(c.id)) throw new Error('A client with id "' + c.id + '" already exists. Edit their row on the Clients tab instead.');
   c.active = true;
-  ss.getSheetByName('Clients').appendRow(CLIENT_COLS.map(k => c[k] === undefined ? '' : c[k]));
+  ss.getSheetByName('Clients').appendRow(CLIENT_COLS.map(k => c[k] === undefined ? '' : cell_(c[k])));
   const done = prepare_(findClient_(c.id), false);
-  Logger.log('Added ' + c.name + '.\nOwner inbox link: ' + INBOX_BASE + '?c=' + c.id + '#' + done.inboxKey);
+  Logger.log('Added ' + c.name + '.\nOwner inbox link: ' + ownerLink_(done) + '\nOne-time setup link (signs their phone in, ' + INVITE_HOURS + ' hours): ' + makeInvite_(done.id));
 }
 
 /**
@@ -108,7 +117,8 @@ function prepare_(client, lock) {
     if (!client.inboxKey) setClientField_(client.id, 'inboxKey', Utilities.getUuid().replace(/-/g, '').slice(0, 20));
     const ready = findClient_(client.id), me = Session.getEffectiveUser().getEmail();
     if (me) MailApp.sendEmail({ to: me, subject: 'PriceWink: ' + ready.name + ' is set up',
-      body: ready.name + ' is ready to take bookings.\n\nOwner inbox link (send this to them):\n' + INBOX_BASE + '?c=' + ready.id + '#' + ready.inboxKey +
+      body: ready.name + ' is ready to take bookings.\n\nOwner inbox link (they sign in with their email code or Google):\n' + ownerLink_(ready) +
+        '\n\nOne-time setup link (signs one phone in without a code; expires in ' + INVITE_HOURS + ' hours, run inviteLink() for a new one):\n' + makeInvite_(ready.id) +
         '\n\nBookings calendar: ' + (shared ? 'created and shared with ' + ready.ownerEmail + '.' : 'created. Share it with the owner in Google Calendar (no owner email on the row, or sharing failed).') +
         '\nSite: ' + (ready.site || '(not set)') + '\nClient id for the site: ' + ready.id });
     return ready;
@@ -120,52 +130,223 @@ function prepare_(client, lock) {
 function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
+    if (p.action === 'connectInfo') {   // used by the Connect app (connect/Code.gs), with a short-lived ticket from the inbox
+      const t = ticketAuth_(p.ticket);
+      if (!t || t.client !== String(p.c || '')) return json_({ ok: false, error: 'auth' });
+      const tc = findClient_(t.client);
+      return json_({ ok: true, name: tc ? tc.name : '', shareWith: Session.getEffectiveUser().getEmail() });
+    }
     let client = findClient_(p.c);
     if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
     client = prepare_(client, true);
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
+    if (p.action === 'auth') return json_({ ok: true, name: client.name });
     if (p.action === 'ics') {   // calendar subscription for owners on iPhone / Outlook (read-only, its own token)
-      if (!p.t || p.t !== feedToken_(client)) return ContentService.createTextOutput('Not found').setMimeType(ContentService.MimeType.TEXT);
+      if (!p.t || !safeEq_(String(p.t), feedToken_(client))) return ContentService.createTextOutput('Not found').setMimeType(ContentService.MimeType.TEXT);
       return ContentService.createTextOutput(feed_(client)).setMimeType(ContentService.MimeType.ICAL);
     }
-    if (p.action === 'inbox') {
-      if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_({ ok: true, name: client.name, reviewUrl: String(client.reviewUrl || ''), bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client) });
-    }
-    if (p.action === 'photo') {         // a customer's job photo, as a data URL, for the owner only
-      if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_(photo_(client, String(p.id || '')));
-    }
-    if (p.action === 'connectInfo') {   // used by the Connect app (connect/Code.gs) before it shares the owner's calendar
-      if (!p.key || p.key !== String(client.inboxKey)) return json_({ ok: false, error: 'bad_key' });
-      return json_({ ok: true, name: client.name, shareWith: Session.getEffectiveUser().getEmail() });
-    }
     return json_({ ok: false, error: 'unknown_action' });
-  } catch (err) { return json_({ ok: false, error: 'server', detail: String(err) }); }
+  } catch (err) { console.error(err); return json_({ ok: false, error: 'server' }); }
 }
+
+const LOGIN_ACTIONS = { login_code: loginCode_, login_verify: loginVerify_, login_google: loginGoogle_, login_invite: loginInvite_ };
+const OWNER_READS = ['inbox', 'photo', 'connectTicket', 'signout'];
+const OWNER_WRITES = ['status', 'block', 'unblock', 'connect', 'disconnect', 'reschedule', 'add', 'outcome'];
 
 function doPost(e) {
   let d;
   try { d = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return json_({ ok: false, error: 'bad_json' }); }
-  const lock = LockService.getScriptLock();
   try {
-    lock.waitLock(15000);
-    let client = findClient_(d.client);
-    if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
-    client = prepare_(client, false);   // already holding the script lock
-    if (d.action === 'status') return json_(setStatus_(client, d));
-    if (d.action === 'block') return json_(block_(client, d));
-    if (d.action === 'unblock') return json_(unblock_(client, d));
-    if (d.action === 'connect') return json_(connect_(client, d));
-    if (d.action === 'disconnect') return json_(disconnect_(client, d));
-    if (d.action === 'reschedule') return json_(reschedule_(client, d));
-    if (d.action === 'add') return json_(addByOwner_(client, d));
-    if (d.action === 'outcome') return json_(outcome_(client, d));
-    return json_(book_(client, d));
-  } catch (err) {
-    return json_({ ok: false, error: 'server', detail: String(err) });
-  } finally { try { lock.releaseLock(); } catch (err) {} }
+    const a = String(d.action || 'book');
+    if (LOGIN_ACTIONS[a]) return json_(LOGIN_ACTIONS[a](d));
+    if (OWNER_READS.indexOf(a) >= 0 || OWNER_WRITES.indexOf(a) >= 0) return json_(ownerAction_(a, d));
+    if (a !== 'book') return json_({ ok: false, error: 'unknown_action' });
+    return json_(locked_(() => {
+      let client = findClient_(d.client);
+      if (!client || !isOn_(client.active)) return { ok: false, error: 'unknown_client' };
+      return book_(prepare_(client, false), d);
+    }));
+  } catch (err) { console.error(err); return json_({ ok: false, error: 'server' }); }
 }
+
+/** The one gate for owner actions: a valid session (or, for the Connect app only, a connect ticket) decides the business. */
+function ownerAction_(a, d) {
+  const auth = (a === 'connect' && d.ticket) ? ticketAuth_(d.ticket) : authOwner_(d.token);
+  if (!auth) return { ok: false, error: 'auth' };
+  if (d.client && String(d.client) !== auth.client) return { ok: false, error: 'auth' };   // never switch businesses on the browser's word
+  let client = findClient_(auth.client);
+  if (!client || !isOn_(client.active)) return { ok: false, error: 'auth' };
+  client = prepare_(client, true);
+  if (a === 'inbox') return { ok: true, name: client.name, me: auth.email || '', reviewUrl: String(client.reviewUrl || ''), bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client) };
+  if (a === 'photo') return photo_(client, String(d.id || ''));
+  if (a === 'connectTicket') return { ok: true, ticket: makeTicket_(client.id) };
+  if (a === 'signout') return signout_(auth, !!d.others);
+  return locked_(() => {
+    const fresh = findClient_(client.id);   // re-read inside the lock
+    if (a === 'status') return setStatus_(fresh, d);
+    if (a === 'block') return block_(fresh, d);
+    if (a === 'unblock') return unblock_(fresh, d);
+    if (a === 'connect') return connect_(fresh, d);
+    if (a === 'disconnect') return disconnect_(fresh, d);
+    if (a === 'reschedule') return reschedule_(fresh, d);
+    if (a === 'add') return addByOwner_(fresh, d);
+    if (a === 'outcome') return outcome_(fresh, d);
+    return { ok: false, error: 'unknown_action' };
+  });
+}
+function locked_(fn) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try { return fn(); } finally { try { lock.releaseLock(); } catch (err) {} }
+}
+
+/* ------------------------------------------------------------------ owner sign-in */
+
+/** Email a 6-digit code. Always answers the same way, so nobody can test which emails are on file. */
+function loginCode_(d) {
+  const email = normEmail_(d.email);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'bad_email' };
+  const cache = CacheService.getScriptCache();
+  if (!bump_(cache, 'otpN_' + sha_(email), 5, 1800)) return { ok: false, error: 'slow_down' };
+  const client = loginClient_(d.client, email);
+  if (!client) return { ok: true };
+  if (!bump_(cache, 'otpC_' + client.id, 20, 1800)) return { ok: true };
+  const code = String(parseInt(Utilities.getUuid().replace(/-/g, '').slice(0, 12), 16) % 1000000).padStart(6, '0');
+  cache.put(otpKey_(client.id, email), JSON.stringify({ h: sha_(code + '|' + client.id + '|' + email), n: 0 }), CODE_MINUTES * 60);
+  MailApp.sendEmail({
+    to: email, name: 'PriceWink', subject: code + ' is your ' + client.name + ' sign-in code',
+    htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#0E1B2E"><p>Your code to open the ' + esc_(client.name) + ' bookings inbox:</p>' +
+      '<p style="font-size:32px;font-weight:800;letter-spacing:6px;margin:12px 0">' + code + '</p>' +
+      '<p style="color:#5F6675">It works for ' + CODE_MINUTES + ' minutes. If you didn’t ask for it, ignore this email. Nobody can sign in without the code.</p></div>'
+  });
+  return { ok: true };
+}
+function loginVerify_(d) {
+  const email = normEmail_(d.email), code = String(d.code || '').replace(/\D/g, '');
+  const client = loginClient_(d.client, email);
+  if (!client || code.length !== 6) return { ok: false, error: 'bad_code' };
+  const cache = CacheService.getScriptCache(), key = otpKey_(client.id, email), raw = cache.get(key);
+  if (!raw) return { ok: false, error: 'expired' };
+  const o = JSON.parse(raw);
+  if (!safeEq_(o.h, sha_(code + '|' + client.id + '|' + email))) {
+    o.n++;
+    if (o.n >= 5) { cache.remove(key); return { ok: false, error: 'too_many' }; }
+    cache.put(key, JSON.stringify(o), CODE_MINUTES * 60);
+    return { ok: false, error: 'bad_code' };
+  }
+  cache.remove(key);
+  return { ok: true, token: createSession_(client.id, email, 'code', d.device), client: client.id, name: client.name };
+}
+function loginGoogle_(d) {
+  const email = verifyGoogle_(String(d.credential || ''));
+  if (!email) return { ok: false, error: 'google_failed' };
+  const client = loginClient_(d.client, email);
+  if (!client) return { ok: false, error: 'not_allowed' };
+  return { ok: true, token: createSession_(client.id, email, 'google', d.device), client: client.id, name: client.name };
+}
+/** One-time setup link (for setting up an owner's phone in person). Used once, then it's dead. */
+function loginInvite_(d) {
+  const inv = String(d.invite || ''); if (inv.length < 40) return { ok: false, error: 'invite_bad' };
+  const h = sha_(inv), sh = sheet_().getSheetByName('Sessions'), rows = sh.getDataRange().getValues(), H = rows[0], now = new Date();
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (o.method !== 'invite' || !safeEq_(String(o.tokenHash), h)) continue;
+    if (d.client && String(d.client) !== String(o.client)) return { ok: false, error: 'invite_bad' };
+    if (o.revoked) return { ok: false, error: 'invite_used' };
+    if (new Date(o.expires) < now) return { ok: false, error: 'invite_used' };
+    sh.getRange(r + 1, H.indexOf('revoked') + 1).setValue('used ' + Utilities.formatDate(now, TZ, 'yyyy-MM-dd HH:mm'));
+    const c = findClient_(o.client); if (!c || !isOn_(c.active)) return { ok: false, error: 'invite_bad' };
+    return { ok: true, token: createSession_(c.id, String(o.email || c.ownerEmail || ''), 'setup-link', d.device), client: c.id, name: c.name };
+  }
+  return { ok: false, error: 'invite_bad' };
+}
+
+/** Which business this email may open: the one asked for (if the email is allowed there), or the first business it's allowed on. */
+function loginClient_(clientId, email) {
+  if (!email) return null;
+  if (clientId) { const c = findClient_(clientId); return c && isOn_(c.active) && allowedEmails_(c).indexOf(email) >= 0 ? c : null; }
+  const rows = sheet_().getSheetByName('Clients').getDataRange().getValues(), H = rows[0];
+  for (let r = 1; r < rows.length; r++) { const c = rowObj_(H, rows[r]); if (isOn_(c.active) && allowedEmails_(c).indexOf(email) >= 0) return c; }
+  return null;
+}
+/** ownerEmail, plus anyone in loginEmails (comma-separated), for example a spouse who answers the phone. */
+function allowedEmails_(c) { return [c.ownerEmail].concat(String(c.loginEmails || '').split(',')).map(normEmail_).filter(String); }
+
+function createSession_(clientId, email, method, device) {
+  const token = randToken_(), now = new Date();
+  const row = { tokenHash: sha_(token), client: clientId, email: email, method: method, device: clean_(device, 40), created: now, lastSeen: now, expires: new Date(now.getTime() + SESSION_DAYS * 86400000), revoked: '' };
+  sheet_().getSheetByName('Sessions').appendRow(SESSION_COLS.map(k => cell_(row[k])));
+  return token;
+}
+/** Checks a device token. Returns { client, email, hash } or null. Cached for 5 minutes; lastSeen is written at most twice a day. */
+function authOwner_(token) {
+  token = String(token || ''); if (token.length < 40) return null;
+  const h = sha_(token), cache = CacheService.getScriptCache(), hit = cache.get('sess_' + h), now = Date.now();
+  if (hit) { const o = JSON.parse(hit); if (o.exp > now) return { client: o.c, email: o.e, hash: h }; }
+  const sh = sheet_().getSheetByName('Sessions'), rows = sh.getDataRange().getValues(), H = rows[0];
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (String(o.tokenHash) !== h || o.method === 'invite') continue;
+    if (o.revoked || new Date(o.expires).getTime() < now) return null;
+    let exp = new Date(o.expires).getTime();
+    if (now - new Date(o.lastSeen).getTime() > 12 * 3600000) {   // rolling: each use pushes the expiry out again
+      exp = now + SESSION_DAYS * 86400000;
+      sh.getRange(r + 1, H.indexOf('lastSeen') + 1, 1, 2).setValues([[new Date(now), new Date(exp)]]);
+    }
+    cache.put('sess_' + h, JSON.stringify({ c: String(o.client), e: String(o.email || ''), exp: exp }), 300);
+    return { client: String(o.client), email: String(o.email || ''), hash: h };
+  }
+  return null;
+}
+/** Sign out this device, or (others) every other device for this business. */
+function signout_(auth, others) {
+  const sh = sheet_().getSheetByName('Sessions'), rows = sh.getDataRange().getValues(), H = rows[0], cache = CacheService.getScriptCache();
+  const iR = H.indexOf('revoked') + 1, stamp = 'signed out ' + Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm');
+  let n = 0;
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (String(o.client) !== auth.client || o.revoked || o.method === 'invite') continue;
+    const mine = String(o.tokenHash) === auth.hash;
+    if (others ? mine : !mine) continue;
+    sh.getRange(r + 1, iR).setValue(stamp); cache.remove('sess_' + o.tokenHash); n++;
+  }
+  return { ok: true, signedOut: n };
+}
+/** Run from the editor: makes a one-time setup link for the client id below (for setting up an owner's phone in person). */
+function inviteLink() {
+  const id = 'abc-fence';   // <- client id
+  Logger.log(makeInvite_(id));
+}
+function makeInvite_(clientId) {
+  const c = findClient_(clientId); if (!c) throw new Error('No client with id ' + clientId);
+  const token = randToken_(), now = new Date();
+  const row = { tokenHash: sha_(token), client: c.id, email: normEmail_(c.ownerEmail), method: 'invite', device: '', created: now, lastSeen: '', expires: new Date(now.getTime() + INVITE_HOURS * 3600000), revoked: '' };
+  sheet_().getSheetByName('Sessions').appendRow(SESSION_COLS.map(k => cell_(row[k])));
+  return INBOX_BASE + '?c=' + encodeURIComponent(c.id) + '#invite=' + token;
+}
+/** Short-lived ticket the inbox hands to the Connect app, so the owner's session token never goes in a link. */
+function makeTicket_(clientId) {
+  const t = randToken_(); CacheService.getScriptCache().put('tkt_' + sha_(t), clientId, 900); return t;
+}
+function ticketAuth_(t) {
+  t = String(t || ''); if (t.length < 40) return null;
+  const c = CacheService.getScriptCache().get('tkt_' + sha_(t)); return c ? { client: c, email: '', hash: '' } : null;
+}
+/** Verifies a Google Sign-In ID token (signature, audience, expiry) with Google, and returns the verified email. */
+function verifyGoogle_(cred) {
+  const cid = PropertiesService.getScriptProperties().getProperty('GOOGLE_CLIENT_ID');
+  if (!cid || cred.length < 100) return null;
+  const r = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(cred), { muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) return null;
+  const t = JSON.parse(r.getContentText());
+  if (t.aud !== cid || ['accounts.google.com', 'https://accounts.google.com'].indexOf(t.iss) < 0) return null;
+  if (String(t.email_verified) !== 'true' || Number(t.exp) * 1000 < Date.now()) return null;
+  return normEmail_(t.email);
+}
+function ownerLink_(c) { return INBOX_BASE + '?c=' + encodeURIComponent(c.id) + '#start'; }
+function otpKey_(clientId, email) { return 'otp_' + sha_(clientId + '|' + email); }
+/** Counts an attempt; false once there have been max of them within the window. */
+function bump_(cache, key, max, secs) { const n = Number(cache.get(key) || 0); if (n >= max) return false; cache.put(key, String(n + 1), secs); return true; }
 
 /* ------------------------------------------------------------------ booking */
 
@@ -201,14 +382,14 @@ function book_(client, d) {
       b.eventId = ev.getId();
     }
   }
-  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => b[k]));
+  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => cell_(b[k])));
   notifyOwner_(client, b, range);
   if (b.email) notifyCustomer_(client, b);
   return { ok: true, id: id, slotLabel: slotLabel };
 }
 
 function notifyOwner_(client, b, range) {
-  const inbox = INBOX_BASE + '?c=' + client.id + '#' + client.inboxKey;
+  const inbox = ownerLink_(client);
   const subject = (b.urgent ? 'EMERGENCY request: ' : 'New booking: ') + b.service + ' - ' + b.slotLabel;
   const nPhotos = String(b.photos || '').split(',').filter(String).length;
   const rows = [['When', b.slotLabel], ['Job', b.service], ['Estimate', range], ['Details', b.details], ['Name', b.name], ['Phone', b.phone], ['Email', b.email], ['Address', b.address], ['Notes', b.notes], ['Photos', nPhotos ? nPhotos + ' attached. Open your inbox to see them.' : '']].filter(r => r[1]);
@@ -233,7 +414,6 @@ function notifyCustomer_(client, b) {
 }
 
 function setStatus_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   if (STATUSES.indexOf(d.status) < 0) return { ok: false, error: 'bad_status' };
   const sh = sheet_().getSheetByName('Bookings'), rows = sh.getDataRange().getValues(), H = rows[0];
   const iId = H.indexOf('id'), iC = H.indexOf('client'), iS = H.indexOf('status'), iE = H.indexOf('eventId');
@@ -287,7 +467,7 @@ function setCells_(row, values) {
   Object.keys(values).forEach(k => {
     let c = row.H.indexOf(k);
     if (c < 0) { c = row.H.length; row.H.push(k); row.sh.getRange(1, c + 1).setValue(k).setFontWeight('bold'); }
-    row.sh.getRange(row.r + 1, c + 1).setValue(values[k]);
+    row.sh.getRange(row.r + 1, c + 1).setValue(cell_(values[k]));
   });
 }
 /** A time the owner may put a booking on: one of their normal start times, in the future, with nothing else on it. No minimum notice (it is their own schedule). */
@@ -308,7 +488,6 @@ function eventText_(b) {
 
 /** Owner moves a booking to another open time. The calendar event moves with it and the customer is emailed the new time. */
 function reschedule_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   const row = bookingRow_(client, d.id); if (!row) return { ok: false, error: 'not_found' };
   const b = row.b, start = new Date(d.slotStart);
   if (!ownerSlotOk_(client, start, String(b.eventId || ''))) return { ok: false, error: 'slot_taken' };
@@ -340,7 +519,6 @@ function reschedule_(client, d) {
 
 /** Owner adds a booking they took by phone. It is already confirmed, holds the time, and nobody is emailed. */
 function addByOwner_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   const name = clean_(d.name, 80); if (name.length < 2) return { ok: false, error: 'missing_fields' };
   const start = new Date(d.slotStart);
   if (!ownerSlotOk_(client, start, '')) return { ok: false, error: 'slot_taken' };
@@ -350,14 +528,13 @@ function addByOwner_(client, d) {
     email: '', address: clean_(d.address, 160), notes: clean_(d.notes, 600), eventId: '', photos: '', outcome: '', jobValue: '', reminded: '' };
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
   if (cal) b.eventId = cal.createEvent('Estimate: ' + b.service + ' - ' + name, start, new Date(start.getTime() + Number(client.slotMinutes || 60) * 60000), { location: b.address, description: eventText_(b) }).getId();
-  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => b[k]));
+  sheet_().getSheetByName('Bookings').appendRow(BOOKING_COLS.map(k => cell_(b[k])));
   const out = {}; BOOKING_COLS.forEach(k => { if (k !== 'eventId') out[k] = b[k] instanceof Date ? b[k].toISOString() : b[k]; });
   return { ok: true, booking: out };
 }
 
 /** Owner records how the estimate turned out: 'Won' (with what the job sold for, optional), 'Lost', or '' to clear it. */
 function outcome_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   const o = String(d.outcome || ''); if (['Won', 'Lost', ''].indexOf(o) < 0) return { ok: false, error: 'bad_outcome' };
   const row = bookingRow_(client, d.id); if (!row) return { ok: false, error: 'not_found' };
   const v = Math.round(Number(String(d.jobValue == null ? '' : d.jobValue).replace(/[^\d.]/g, '')));
@@ -520,7 +697,7 @@ function syncedSources_(client) {
 
 /* ------------------------------------------------------------------ bookings in the owner's own calendar app */
 
-/** Read-only token for the calendar feed: derived from the inbox key, but a leaked feed link can't open the inbox. Changing inboxKey changes both. */
+/** Read-only token for the calendar feed, derived from the client's internal inboxKey (no longer a login). Changing inboxKey changes the feed link. */
 function feedToken_(client) {
   const d = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, 'feed:' + client.inboxKey);
   return d.map(b => ('0' + (b & 255).toString(16)).slice(-2)).join('').slice(0, 24);
@@ -558,7 +735,6 @@ function sources_(client) {
 }
 /** Google: the Connect app has already shared the owner's calendar (free/busy) with this account; check we can really read it, then save it. iPhone/Outlook: check the link is a real calendar, then save it. */
 function connect_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   if (d.calendarId) {
     const id = clean_(d.calendarId, 200).toLowerCase();
     if (!/^[^\s@,]+@[^\s@,]+$/.test(id)) return { ok: false, error: 'bad_calendar' };
@@ -581,7 +757,6 @@ function connect_(client, d) {
   return { ok: true, synced: syncedSources_(fresh), sources: sources_(fresh) };
 }
 function disconnect_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   const col = d.type === 'google' ? 'busyCalendars' : d.type === 'ics' ? 'busyIcs' : '';
   if (!col) return { ok: false, error: 'missing' };
   const list = String(client[col] || '').split(/[\s,]+/).filter(String), keep = list.filter(x => x.toLowerCase() !== String(d.id || '').toLowerCase());
@@ -599,7 +774,7 @@ function setClientField_(id, col, value) {
   const sh = sheet_().getSheetByName('Clients'), rows = sh.getDataRange().getValues(), H = rows[0];
   let c = H.indexOf(col);
   if (c < 0) { c = H.length; sh.getRange(1, c + 1).setValue(col); }
-  for (let r = 1; r < rows.length; r++) if (String(rows[r][0]) === String(id)) { sh.getRange(r + 1, c + 1).setValue(value); break; }
+  for (let r = 1; r < rows.length; r++) if (String(rows[r][0]) === String(id)) { sh.getRange(r + 1, c + 1).setValue(cell_(value)); break; }
   const p = PropertiesService.getScriptProperties();   // new version number = the 5-minute busy cache starts fresh
   p.setProperty('sync_' + id, String(Number(p.getProperty('sync_' + id) || 0) + 1));
 }
@@ -608,7 +783,6 @@ function syncVer_(client) { return PropertiesService.getScriptProperties().getPr
 /* ------------------------------------------------------------------ owner blocks (phone jobs, days off) */
 
 function block_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   const start = new Date(d.start), end = new Date(d.end);
   if (isNaN(start) || isNaN(end) || end <= start || end - start > 14 * 86400000) return { ok: false, error: 'bad_time' };
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId); if (!cal) return { ok: false, error: 'no_calendar' };
@@ -616,7 +790,6 @@ function block_(client, d) {
   return { ok: true, id: ev.getId() };
 }
 function unblock_(client, d) {
-  if (!d.key || d.key !== String(client.inboxKey)) return { ok: false, error: 'bad_key' };
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId), ev = cal && cal.getEventById(String(d.eventId || ''));
   if (!ev || ev.getTitle().indexOf(BLOCK_PREFIX) !== 0) return { ok: false, error: 'not_found' };
   ev.deleteEvent(); return { ok: true };
@@ -669,7 +842,7 @@ function digest_(client) {
     .sort((x, y) => new Date(x.slotStart) - new Date(y.slotStart));
   const blocks = blocksFor_(client).filter(b => new Date(b.start) < dayEnd && new Date(b.end) > dayStart);
   const open = (openSlots_(client).filter(d => d.date === tomorrow)[0] || { times: [] }).times.map(t => t.label);
-  const label = Utilities.formatDate(dayStart, TZ, 'EEEE, MMM d'), inbox = INBOX_BASE + '?c=' + client.id + '#' + client.inboxKey;
+  const label = Utilities.formatDate(dayStart, TZ, 'EEEE, MMM d'), inbox = ownerLink_(client);
   const li = (t, x) => '<li style="margin:4px 0"><b>' + esc_(t) + '</b> ' + esc_(x) + '</li>';
   const html = '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><h2 style="margin:0 0 6px">Tomorrow: ' + esc_(label) + '</h2>' +
     (booked.length ? '<p style="margin:12px 0 4px"><b>Booked estimates</b></p><ul style="padding-left:18px;margin:0">' + booked.map(b => li(Utilities.formatDate(new Date(b.slotStart), TZ, 'h:mm a'), b.name + ', ' + b.service + ', ' + b.address)).join('') + '</ul>' : '<p>No estimates booked yet.</p>') +
@@ -732,4 +905,12 @@ function isOn_(v) { return v === true || String(v).toUpperCase() === 'TRUE' || v
 function clean_(v, n) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n); }
 function fmt_(n) { return Number(n).toLocaleString('en-US'); }
 function esc_(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+/** Text a customer typed can't become a spreadsheet formula (e.g. a "name" starting with =). */
+function cell_(v) { return typeof v === 'string' && /^[=+\-@\t\r]/.test(v) ? "'" + v : v; }
+function sha_(s) { return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8).map(b => ('0' + (b & 255).toString(16)).slice(-2)).join(''); }
+/** 64 hex characters from two random UUIDs (about 244 random bits). */
+function randToken_() { return (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, ''); }
+function safeEq_(a, b) { a = String(a); b = String(b); if (a.length !== b.length) return false; let x = 0; for (let i = 0; i < a.length; i++) x |= a.charCodeAt(i) ^ b.charCodeAt(i); return x === 0; }
+function normEmail_(e) { return String(e == null ? '' : e).trim().toLowerCase(); }
+function rowObj_(H, row) { const o = {}; H.forEach((h, i) => o[h] = row[i]); return o; }
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
