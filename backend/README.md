@@ -124,6 +124,13 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
 
+## Hosting (Nov 15, 2026)
+
+- **app.getpricewink.com** = this repo on **Cloudflare Pages** (project `pricewink-app`, free: unlimited bandwidth and requests, commercial use OK). Every push to `main` publishes automatically. Owner inboxes live at `app.getpricewink.com/inbox/?c=<id>#start`; live client sites go here too (each client's own domain gets added to the `pricewink-app` project's Custom domains, with a CNAME at their DNS).
+- **rydermansell.github.io/demos** = the same repo on GitHub Pages, for prospect demos only (GitHub Pages doesn't allow running a business on it).
+- **getpricewink.com** = the marketing site on **Netlify** (repo `pricewink`). Each publish costs 15 Netlify credits (300 free a month), so only publish it when the marketing site itself changes, batched. Never put client sites or new projects on Netlify.
+- DNS for getpricewink.com is at **Porkbun** (`app` is a CNAME to `pricewink-app.pages.dev`).
+
 ## Fix: "Page Not Found" from the backend (Nov 15, 2026)
 
 Apps Script reserves the URL parameter names `c` and `sid`; using them makes Google answer "Sorry, unable to open the file at this time" (Page Not Found). Every request now uses `?client=` instead (the backend still accepts old `?c=` links as a fallback). After pasting the new `Code.gs` (and `connect/Code.gs`), publish a new version. Rule for future code: never name a web-app parameter `c` or `sid`.

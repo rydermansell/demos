@@ -10,7 +10,7 @@
  * Paste the /exec URL into inbox/index.html as CONNECT.
  */
 const MAIN = 'PASTE_BOOKING_BACKEND_EXEC_URL';
-const INBOX_BASE = 'https://getpricewink.com/inbox/';
+const INBOX_BASE = 'https://app.getpricewink.com/inbox/';   // Cloudflare Pages (free, unlimited traffic), serving this repo
 
 function doGet(e) {
   // k is a 15-minute ticket the inbox gets for the signed-in owner (never their sign-in token).
