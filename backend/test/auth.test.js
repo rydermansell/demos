@@ -3,7 +3,9 @@ const ok=(c,m)=>{ console.log((c?'PASS ':'FAIL ')+m); if(!c) fails++; };
 E.addClient('abc-fence','owner@abc.com',{loginEmails:'Wife@ABC.com'}); E.addClient('gonzalez','g@tree.com');
 E.sheets.Bookings.push(E.sheets.Bookings[0].map(h=>({id:'B1',client:'gonzalez',status:'New',name:'Secret Customer'}[h]||'')));
 // public
-ok(E.get({action:'auth',c:'abc-fence'}).name==='ABC-FENCE','auth GET returns name');
+ok(E.get({action:'auth',c:'abc-fence'}).name==='ABC-FENCE','auth GET returns name (old ?c= fallback)');
+ok(E.get({action:'auth',client:'abc-fence'}).name==='ABC-FENCE','auth GET with ?client= (c is reserved by Apps Script)');
+ok(E.get({action:'slots',client:'abc-fence'}).ok===true,'slots GET with ?client=');
 ok(E.get({action:'inbox',c:'abc-fence',key:'kabc-fence'}).error==='unknown_action','old ?action=inbox&key is gone');
 ok(E.post({action:'inbox',client:'abc-fence',key:'kabc-fence'}).error==='auth','old inbox key no longer logs in');
 // code login

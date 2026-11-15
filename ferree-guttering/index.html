@@ -857,7 +857,7 @@ footer a[href^="tel"]{white-space:nowrap}
     return out; }
   function loadSlots(){ SL=null; slotsErr=false; renderSlots();
     if(!BOOKING_ENDPOINT){ setTimeout(()=>{ SL=previewSlots(); renderSlots(); },350); return; }
-    fetch(BOOKING_ENDPOINT+'?action=slots&c='+encodeURIComponent(CLIENT_ID)).then(r=>r.json()).then(j=>{ if(!j.ok) throw 0; SL=j.days; renderSlots(); }).catch(()=>{ slotsErr=true; SL=[]; renderSlots(); }); }
+    fetch(BOOKING_ENDPOINT+'?action=slots&client='+encodeURIComponent(CLIENT_ID)).then(r=>r.json()).then(j=>{ if(!j.ok) throw 0; SL=j.days; renderSlots(); }).catch(()=>{ slotsErr=true; SL=[]; renderSlots(); }); }
   function renderSlots(){ const dbox=$('#days'), tbox=$('#times'), msg=$('#slotMsg');
     if(!SL){ dbox.innerHTML='<span class="day sk">.</span>'.repeat(5); tbox.innerHTML='<span class="time sk">.</span>'.repeat(6); msg.hidden=true; return; }
     if(!SL.length){ dbox.innerHTML=''; tbox.innerHTML=''; msg.hidden=false; msg.textContent=slotsErr?'The calendar didn’t load. Tap below and Chris will call you to set a time.':'No open times in the next two weeks. Tap below and Chris will call you.'; $('#asapBtn span').textContent='Call me to set a time'; return; }

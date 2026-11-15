@@ -818,7 +818,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
     return out; }
   function loadSlots(){ SL=null; slotsErr=false; renderSlots();
     if(!BOOKING_ENDPOINT){ setTimeout(()=>{ SL=previewSlots(); renderSlots(); }, 350); return; }
-    fetch(BOOKING_ENDPOINT+'?action=slots&c='+encodeURIComponent(CLIENT_ID)).then(r=>r.json()).then(j=>{ if(!j.ok) throw 0; SL=j.days; renderSlots(); })
+    fetch(BOOKING_ENDPOINT+'?action=slots&client='+encodeURIComponent(CLIENT_ID)).then(r=>r.json()).then(j=>{ if(!j.ok) throw 0; SL=j.days; renderSlots(); })
       .catch(()=>{ slotsErr=true; SL=[]; renderSlots(); }); }
   function renderSlots(){ const dbox=$('#days'), tbox=$('#times'), msg=$('#slotMsg');
     if(!SL){ dbox.innerHTML='<span class="day sk">.</span>'.repeat(5); tbox.innerHTML='<span class="time sk">.</span>'.repeat(6); msg.hidden=true; return; }

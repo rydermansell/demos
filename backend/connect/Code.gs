@@ -14,11 +14,11 @@ const INBOX_BASE = 'https://getpricewink.com/inbox/';
 
 function doGet(e) {
   // k is a 15-minute ticket the inbox gets for the signed-in owner (never their sign-in token).
-  const p = (e && e.parameter) || {}, c = String(p.c || ''), k = String(p.k || '');
+  const p = (e && e.parameter) || {}, c = String(p.client || p.c || ''), k = String(p.k || '');
   const back = INBOX_BASE + '?c=' + encodeURIComponent(c), home = back + '#start';
   if (!c || !k) return page_('This link is missing a piece', 'Open Connect from your PriceWink bookings page instead.', home, false);
   try {
-    const info = JSON.parse(UrlFetchApp.fetch(MAIN + '?action=connectInfo&c=' + encodeURIComponent(c) + '&ticket=' + encodeURIComponent(k), { muteHttpExceptions: true }).getContentText());
+    const info = JSON.parse(UrlFetchApp.fetch(MAIN + '?action=connectInfo&client=' + encodeURIComponent(c) + '&ticket=' + encodeURIComponent(k), { muteHttpExceptions: true }).getContentText());
     if (!info.ok) return page_('This link has expired', 'Open Connect from your PriceWink bookings page instead.', home, false);
     const me = Session.getActiveUser().getEmail();   // a Google account's main calendar id is its email address
     if (!me) return page_('Couldn’t read your Google account', 'Try again, and tap Allow when Google asks.', home, false);

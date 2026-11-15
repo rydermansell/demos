@@ -3,13 +3,14 @@
  * One deployment serves every PriceWink client. Each client is a row on the "Clients" tab.
  *
  * Public (customers):
- *   GET  ?action=slots&c=<client>                    open times for the next two weeks
- *   GET  ?action=auth&c=<client>                     business name for the sign-in screen (nothing private)
+ *   GET  ?action=slots&client=<id>                   open times for the next two weeks
+ *   (Never name a URL parameter "c" or "sid": Apps Script reserves them and answers "Page Not Found". Old ?c= links still work as a fallback.)
+ *   GET  ?action=auth&client=<id>                    business name for the sign-in screen (nothing private)
  *   POST {action:"book", client, slotStart, ...}     books a time (re-checks it is still free)
  *
  *   POST {action:"track", client, event, source}     quote-tool counts: visit / start / contact (no personal info)
  *   POST {action:"save_lead", client, name, phone, ...}  saves an unfinished quote (after the customer gives name + phone)
- *   GET  ?action=resume&c=<client>&t=<token>          the customer's own saved quote, for their "pick up where you left off" link
+ *   GET  ?action=resume&client=<id>&t=<token>        the customer's own saved quote, for their "pick up where you left off" link
  *   POST {action:"forget_lead", client, t}           the customer deletes their saved quote
  *
  * Owner sign-in (no password is ever stored):
@@ -142,15 +143,15 @@ function prepare_(client, lock) {
 /* ------------------------------------------------------------------ web endpoints */
 
 function doGet(e) {
-  const p = (e && e.parameter) || {};
+  const p = (e && e.parameter) || {}, cid = String(p.client || p.c || '');
   try {
     if (p.action === 'connectInfo') {   // used by the Connect app (connect/Code.gs), with a short-lived ticket from the inbox
       const t = ticketAuth_(p.ticket);
-      if (!t || t.client !== String(p.c || '')) return json_({ ok: false, error: 'auth' });
+      if (!t || t.client !== cid) return json_({ ok: false, error: 'auth' });
       const tc = findClient_(t.client);
       return json_({ ok: true, name: tc ? tc.name : '', shareWith: Session.getEffectiveUser().getEmail() });
     }
-    let client = findClient_(p.c);
+    let client = findClient_(cid);
     if (!client || !isOn_(client.active)) return json_({ ok: false, error: 'unknown_client' });
     client = prepare_(client, true);
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
