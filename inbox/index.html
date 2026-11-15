@@ -1023,7 +1023,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
       {id:'SL-2',name:'Mike Dunn',phone:'(865) 555-0163',email:'',service:pick(2).service,estimateLow:pick(2).lo,estimateHigh:pick(2).hi,step:'Contact info',source:'Google',created:new Date(now-26*h).toISOString(),updated:new Date(now-26*h).toISOString(),contactedAt:new Date(now-20*h).toISOString()},
       {id:'SL-3',name:'Jen Carter',phone:'(865) 555-0148',email:'jen.carter@example.com',service:pick(4).service,estimateLow:pick(4).lo,estimateHigh:pick(4).hi,step:'Saved price',source:'Website',created:new Date(now-74*h).toISOString(),updated:new Date(now-74*h).toISOString()}].map(l=>Object.assign(l,{sample:true}));
     return [...mine.map(l=>Object.assign({},l,{mine:true})),...sample].map(l=>Object.assign(l,ops[l.id]||{})).filter(l=>!l.deleted); }
-  function renderLeadBn(){ const n=LEADS.filter(l=>!l.optOut&&!l.contactedAt).length, all=LEADS.filter(l=>!l.optOut).length, el=$('#leadBn');
+  function renderLeadBn(){ const n=LEADS.filter(l=>!l.optOut&&!l.contactedAt&&!l.textedAt).length, all=LEADS.filter(l=>!l.optOut).length, el=$('#leadBn');
     el.hidden=!all||EX; if(!all) return;
     el.innerHTML='<i>'+all+'</i><span><b>'+(all===1?'1 person':all+' people')+' got a price but didn’t book</b>'+(n?n+' not contacted yet':'All contacted')+'</span><em>Follow up ›</em>'; }
   $('#leadBn').addEventListener('click',openLeads);
@@ -1033,7 +1033,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     if(l.optOut) return '<div class="ld off" data-lid="'+esc(l.id)+'"><div class="hd"><b>'+esc(l.name||'Someone')+'</b></div><p>Asked not to be contacted.</p><div class="alts"><button class="alt" type="button" data-lop="delete">Delete</button></div></div>';
     return '<div class="ld" data-lid="'+esc(l.id)+'"><div class="hd"><b>'+esc(l.name)+(l.mine?' <i class="you">You</i>':'')+'</b>'+(est?'<span class="amt">'+est+'</span>':'')+'</div>'+
       '<p>'+esc(l.service||'Quote')+'</p><p>Started '+esc(whenAgo(l.created||l.updated))+' · Stopped at <b>'+esc(l.step||'the quote')+'</b></p>'+
-      '<span class="chip">From '+esc(l.source||'Website')+'</span>'+(l.contactedAt?'<span class="chip ok">Contacted '+esc(ago(l.contactedAt))+'</span>':'')+
+      '<span class="chip">From '+esc(l.source||'Website')+'</span>'+(l.contactedAt?'<span class="chip ok">Contacted '+esc(ago(l.contactedAt))+'</span>':'')+(l.textedAt?'<span class="chip ok">Auto-texted '+esc(ago(l.textedAt))+'</span>':'')+
       '<div class="acts" style="grid-template-columns:repeat('+(l.email?3:2)+',minmax(0,1fr))"><a class="call" href="tel:'+esc(tel)+'" data-lact="call">'+IC.call+'Call</a><a href="#" data-lact="text">'+IC.text+'Text</a>'+(l.email?'<a href="#" data-lact="email">'+IC.note+'Email</a>':'')+'</div>'+
       '<div class="alts"><button class="alt" type="button" data-lop="contacted">'+(l.contactedAt?'Contacted again':'Mark contacted')+'</button><button class="alt" type="button" data-lop="dnc">Don’t contact</button><button class="alt" type="button" data-lop="delete">Delete</button></div></div>'; }
   function openLeads(){ $('#ldTpl').hidden=true; $('#ldTxt').value=FOLLOW||DEFAULT_FOLLOW; drawLeads(); show('#ldSheet'); }

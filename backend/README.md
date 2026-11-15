@@ -189,3 +189,30 @@ After pasting the new `Code.gs`, run `setup` once more and click **Allow**. Goog
 - **Cancel / move**: the customer is emailed when the owner cancels or moves their visit from the inbox.
 - **Owner-added bookings** (taken by phone) are confirmed right away and hold the time online. (Now the + New Job button; see above.)
 - **Photos**: up to 3 per booking, shrunk on the customer's phone first. Only the owner's inbox link can open them.
+
+## What's new: automatic texts through Twilio (Nov 15, 2026)
+
+Four texting features, all **off** until Twilio is set up and approved. Nothing changes for any client until you turn it on for them. Tests: `node backend/test/texting.test.js`.
+
+| feature (`autoTexts` value) | what happens |
+|---|---|
+| `alerts` | The owner gets a text for every new booking, voicemail and customer reply (to `ownerCell`). This replaces the old `ownerSms` email-to-text for that client. |
+| `missed` | Unanswered calls forward from the owner's phone to the client's Twilio number. The caller immediately gets a text with the quote link (at most once per 12 hours per caller), hears a short greeting, and can leave a voicemail. The voicemail is emailed to the owner as an audio file. |
+| `incomplete` | A customer who checked **"Text me about my quote"** and stopped before booking gets the owner's follow-up message (`followupText`) once, 30+ minutes later, with a fresh "pick up where you left off" link. The inbox shows "Auto-texted". |
+| `review` | A customer who checked the box gets a review request 2 hours after the owner marks the job **Done** (`reviewText`, or the default; uses `reviewUrl`). |
+
+Customer texts (incomplete, review) only go out 9 AM to 8 PM Eastern. Replies to the business number are forwarded to the owner (email, plus a text if `alerts` is on). Twilio handles STOP / HELP itself. If Twilio reports a customer unsubscribed, their lead is marked Don't contact. Every text is logged on the **Texts** tab (last 4 digits of the number only).
+
+**Consent:** the checkbox is unchecked by default and optional, as carriers require. Missed-call texts reply to someone who just called, so they need no checkbox. ABC Fence has the checkbox. Copy it to other sites (`#fSms` and `#sSms`, sent as `smsOk`).
+
+### Turning it on
+
+1. Paste the new `Code.gs`, run `setup` once (adds the Texts tab, new columns and the 15-minute text trigger), then **Deploy > Manage deployments > edit > New version > Deploy**. With no Twilio settings, everything still works exactly as before.
+2. Twilio (paid account, PriceWink's business profile approved, the client's brand and campaign approved, a number bought for the client).
+3. Apps Script > Project Settings > **Script properties**: `TWILIO_SID` = the Account SID, `TWILIO_TOKEN` = the Auth Token. Optional while testing: `TEXT_TEST_TO` = your own cell (every text goes to you instead, labeled with who it was for).
+4. Run `textingSetup`. It creates the webhook key and logs two links per client. In Twilio > the client's number > **Voice: A call comes in** and **Messaging: A message comes in**, choose Webhook / HTTP POST and paste them.
+5. On the client's row: `smsNumber` (their Twilio number), `ownerCell`, `autoTexts` (e.g. `alerts, missed, incomplete, review`). Optional: `missedText`, `reviewText` (same `{first} {business} {service} {price} {link}` fill-ins).
+6. Script property `TEXTING` = `on`. Run `testText` to send one test text. Delete `TEXT_TEST_TO` when you're ready for real customers.
+7. Set up call forwarding on the owner's phone: unanswered calls go to the client's Twilio number (Verizon `*71` + number, AT&T/T-Mobile `**61*` + number `#`; test with one call).
+
+To pause everything at once: `TEXTING` = `off`. To pause one client: clear their `autoTexts`.

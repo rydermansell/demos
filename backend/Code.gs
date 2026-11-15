@@ -31,22 +31,25 @@
  * Bookings land on the "Bookings" tab, on the client's Google Calendar (which the owner sees on
  * their phone), and in the owner's email. The customer gets a confirmation email if they gave one,
  * an email if the owner cancels or moves the visit, and a reminder the evening before (sendDigests).
+ * Automatic texts through Twilio (owner alerts, missed-call text-back, incomplete-quote and review texts) are off until
+ * set up: see "automatic texts" below and README.md. Twilio's webhooks POST ?action=voice / sms_in (form fields, not JSON).
  * Setup steps: see README.md next to this file.
  */
 
 const TZ = 'America/New_York';
 const DAYS_AHEAD = 14;
-const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails', 'followupText'];
+const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails', 'followupText', 'smsNumber', 'ownerCell', 'autoTexts', 'missedText', 'reviewText'];
 const BLOCK_PREFIX = 'Blocked: ';
 /** Emails go out from your business address. It must be set up in this Gmail account under Settings > Accounts > "Send mail as".
  *  If it isn't (or Gmail refuses), emails still go out from the Gmail address, so nothing is ever lost. */
 const MAIL_FROM = 'rj@getpricewink.com';
 const INBOX_BASE = 'https://app.getpricewink.com/inbox/';   // Cloudflare Pages (free, unlimited traffic), serving this repo
-const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source'];
+const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source', 'smsOk', 'doneAt', 'reviewTexted'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
 const SESSION_COLS = ['tokenHash', 'client', 'email', 'method', 'device', 'created', 'lastSeen', 'expires', 'revoked'];
-const LEAD_COLS = ['id', 'client', 'created', 'updated', 'status', 'step', 'name', 'phone', 'email', 'address', 'service', 'details', 'estimateLow', 'estimateHigh', 'slotLabel', 'source', 'state', 'resumeHash', 'resumeExpires', 'bookingId', 'contactedAt', 'optOut'];
+const LEAD_COLS = ['id', 'client', 'created', 'updated', 'status', 'step', 'name', 'phone', 'email', 'address', 'service', 'details', 'estimateLow', 'estimateHigh', 'slotLabel', 'source', 'state', 'resumeHash', 'resumeExpires', 'bookingId', 'contactedAt', 'optOut', 'smsOk', 'textedAt'];
 const EVENT_COLS = ['date', 'client', 'event', 'source'];
+const TEXT_COLS = ['date', 'client', 'to', 'kind', 'status', 'detail'];   // log of every automatic text (only the last 4 digits of each number)
 const ABANDON_MINUTES = 30;    // an unfinished quote counts as an incomplete lead after this long with no activity
 const LEAD_DAYS = 30;          // incomplete leads (and their contact info) are deleted after this many days without activity
 const RESUME_DAYS = 7;         // "pick up where you left off" links work this long
@@ -73,6 +76,7 @@ function setup() {
   ensureSheet_(ss, 'Sessions', SESSION_COLS);
   ensureSheet_(ss, 'Leads', LEAD_COLS);
   ensureSheet_(ss, 'Events', EVENT_COLS);
+  ensureSheet_(ss, 'Texts', TEXT_COLS);
   const first = ss.getSheetByName('Sheet1'); if (first && ss.getSheets().length > 1) ss.deleteSheet(first);
   installTriggers();   // nightly summary emails + auto-setup of new client rows
   Logger.log('Spreadsheet ready: ' + ss.getUrl());
@@ -174,6 +178,8 @@ const OWNER_WRITES = ['status', 'block', 'unblock', 'connect', 'disconnect', 're
 const PUBLIC_ACTIONS = { track: track_, save_lead: saveLead_, forget_lead: forgetLead_ };
 
 function doPost(e) {
+  const tp = (e && e.parameter) || {};
+  if (TWILIO_HOOKS.indexOf(String(tp.action || '')) >= 0) return twilioHook_(tp);   // Twilio posts form fields, not JSON
   let d;
   try { d = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return json_({ ok: false, error: 'bad_json' }); }
   try {
@@ -400,7 +406,7 @@ function book_(client, d) {
     id: id, created: new Date(), client: client.id, status: 'New', slotStart: start ? start.toISOString() : '', slotLabel: slotLabel,
     service: clean_(d.job, 60), details: clean_(d.details, 600), estimateLow: Number(d.estimateLow) || '', estimateHigh: Number(d.estimateHigh) || '',
     urgent: urgent ? 'Yes' : '', name: name, phone: phone, email: clean_(d.email, 120), address: address, notes: clean_(d.notes, 600), eventId: '',
-    photos: '', outcome: '', jobValue: '', reminded: '', source: clean_(d.source, 40) || 'Website'
+    photos: '', outcome: '', jobValue: '', reminded: '', source: clean_(d.source, 40) || 'Website', smsOk: d.smsOk === true ? 'Yes' : ''
   };
   try { b.photos = savePhotos_(client, id, d.photos).join(','); } catch (err) { b.photos = ''; }   // a photo problem never blocks a booking
   const range = b.estimateLow ? '$' + fmt_(b.estimateLow) + ' to $' + fmt_(b.estimateHigh) : '';
@@ -433,7 +439,9 @@ function notifyOwner_(client, b, range) {
     '<p><a href="tel:' + b.phone.replace(/[^\d+]/g, '') + '">Call ' + esc_(b.name) + '</a> &nbsp;·&nbsp; <a href="https://maps.google.com/?q=' + encodeURIComponent(b.address) + '">Directions</a> &nbsp;·&nbsp; <a href="' + inbox + '">Open your inbox</a></p>' +
     '<p style="color:#8a8f86;font-size:12px">Booking ' + b.id + ' · sent by PriceWink</p></div>';
   if (client.ownerEmail) sendMail_({ to: client.ownerEmail, subject: subject, htmlBody: html, replyTo: b.email || undefined, name: 'PriceWink bookings' });
-  if (client.ownerSms) sendMail_({ to: client.ownerSms, subject: '', body: (b.urgent ? 'EMERGENCY: ' : 'New booking: ') + b.service + ', ' + b.slotLabel + '. ' + b.name + ' ' + b.phone + ', ' + b.address });
+  const short = (b.urgent ? 'EMERGENCY: ' : 'New booking: ') + b.service + ', ' + b.slotLabel + '. ' + b.name + ' ' + b.phone + ', ' + b.address;
+  if (textOn_(client, 'alerts') && client.ownerCell) { try { sendSms_(client, client.ownerCell, short + '\nOpen: ' + inbox, 'alert'); } catch (err) { console.error(err); } }
+  else if (client.ownerSms) sendMail_({ to: client.ownerSms, subject: '', body: short });
 }
 
 function notifyCustomer_(client, b) {
@@ -457,6 +465,7 @@ function setStatus_(client, d) {
     if (rows[r][iId] === d.id && rows[r][iC] === client.id) {
       const was = String(rows[r][iS]);
       sh.getRange(r + 1, iS + 1).setValue(d.status);
+      if (d.status === 'Done' && was !== 'Done') { const row = bookingRow_(client, d.id); if (row) setCells_(row, { doneAt: new Date().toISOString() }); }   // review text timing
       let emailed = false;
       if (d.status === 'Canceled' && rows[r][iE] && client.calendarId) {        // free the slot
         const cal = CalendarApp.getCalendarById(client.calendarId), ev = cal && cal.getEventById(rows[r][iE]);
@@ -636,7 +645,7 @@ function saveLead_(client, d) {
   const email = clean_(d.email, 120), now = new Date();
   const fields = { updated: now, status: 'Open', step: clean_(d.step, 40), name: name, phone: phone, email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '',
     address: clean_(d.address, 160), service: clean_(d.service, 60), details: clean_(d.details, 600), estimateLow: Number(d.estimateLow) || '', estimateHigh: Number(d.estimateHigh) || '',
-    slotLabel: clean_(d.slotLabel, 60), source: cleanSource_(d.source), state: d.state ? clean_(typeof d.state === 'string' ? d.state : JSON.stringify(d.state), 2000) : '' };
+    slotLabel: clean_(d.slotLabel, 60), source: cleanSource_(d.source), smsOk: d.smsOk === true ? 'Yes' : d.smsOk === false ? 'No' : '', state: d.state ? clean_(typeof d.state === 'string' ? d.state : JSON.stringify(d.state), 2000) : '' };
   const sh = tab_('Leads', LEAD_COLS), rows = sh.getDataRange().getValues(), H = rows[0];
   let found = -1, keyOk = false;
   const kh = d.key ? sha_(String(d.key)) : '';
@@ -720,7 +729,7 @@ function leadsFor_(clientId) {
     if (String(o.client) !== clientId || o.status !== 'Open' || new Date(o.updated).getTime() > cut) continue;
     out.push({ id: o.id, created: iso_(o.created), updated: iso_(o.updated), step: o.step, name: o.name, phone: String(o.optOut) === 'Yes' ? '' : o.phone, email: String(o.optOut) === 'Yes' ? '' : o.email,
       address: o.address, service: o.service, details: o.details, estimateLow: o.estimateLow, estimateHigh: o.estimateHigh, slotLabel: o.slotLabel, source: o.source,
-      contactedAt: iso_(o.contactedAt), optOut: String(o.optOut) === 'Yes' });
+      contactedAt: iso_(o.contactedAt), textedAt: iso_(o.textedAt), optOut: String(o.optOut) === 'Yes' });
   }
   return out.sort((a, b) => new Date(b.updated) - new Date(a.updated));
 }
@@ -1060,8 +1069,9 @@ function blocksFor_(client) {
 
 /** Run once from the editor. Every evening at 7pm Eastern: customers with a visit tomorrow get a reminder, and each owner gets tomorrow's schedule. */
 function installTriggers() {
-  ScriptApp.getProjectTriggers().filter(t => ['sendDigests', 'setupNewClients'].indexOf(t.getHandlerFunction()) >= 0).forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.getProjectTriggers().filter(t => ['sendDigests', 'setupNewClients', 'runAutoTexts'].indexOf(t.getHandlerFunction()) >= 0).forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('setupNewClients').timeBased().everyMinutes(10).create();
+  ScriptApp.newTrigger('runAutoTexts').timeBased().everyMinutes(15).create();   // does nothing until texting is turned on
   ScriptApp.newTrigger('sendDigests').timeBased().atHour(19).everyDays(1).inTimezone(TZ).create();
 }
 function sendDigests() {
@@ -1112,6 +1122,215 @@ function digest_(client) {
 function overlaps_(s, client, busy) {
   const a = s.getTime(), b = a + Number(client.slotMinutes || 60) * 60000;
   return busy.some(x => x[0] < b && x[1] > a);
+}
+
+/* ------------------------------------------------------------------ automatic texts (Twilio) */
+/*
+ * Everything here stays OFF until all of these are true:
+ *   1. Script properties TWILIO_SID and TWILIO_TOKEN are set, and TEXTING = on   (run textingSetup() for the rest)
+ *   2. The client's row has smsNumber (their own Twilio number, approved for texting)
+ *   3. The client's autoTexts column lists the feature: alerts, missed, incomplete, review (comma-separated)
+ * Optional script property TEXT_TEST_TO: every text goes to that number instead (marked with who it was for). Use it while testing.
+ *
+ *   alerts      text the owner (ownerCell) for every new booking, voicemail and customer reply
+ *   missed      a call that rings out on the owner's phone forwards to the Twilio number: the caller gets a text with the quote link,
+ *               then hears a short voicemail greeting; the voicemail is emailed to the owner
+ *   incomplete  a customer who ticked "text me about my quote" and stopped before booking gets the follow-up message once, 30+ min later
+ *   review      a customer who ticked the box gets the review request 2 hours after the owner marks the job Done
+ * Customers' replies to the Twilio number are forwarded to the owner. Twilio handles STOP / HELP itself.
+ * Customer texts (incomplete, review) only go out 9 AM to 8 PM Eastern.
+ */
+const TWILIO_HOOKS = ['voice', 'voice_done', 'recording', 'sms_in'];
+const TEXT_FEATURES = ['alerts', 'missed', 'incomplete', 'review'];
+const REVIEW_DELAY_HOURS = 2;
+const MISSED_REPEAT_HOURS = 12;   // the same caller gets the missed-call text at most once in this window
+const DEFAULT_MISSED = 'Hi, this is {business}. Sorry we missed your call! We’ll call you back soon. Want a price now? Get one here: {link}  (Reply STOP to opt out.)';
+const DEFAULT_REVIEW = 'Hi {first}, thanks for choosing {business}! If you were happy with the work, would you leave us a quick Google review? It really helps: {link}  (Reply STOP to opt out.)';
+
+function smsCfg_() {
+  const p = PropertiesService.getScriptProperties();
+  const sid = p.getProperty('TWILIO_SID'), token = p.getProperty('TWILIO_TOKEN');
+  if (!sid || !token || String(p.getProperty('TEXTING') || '').toLowerCase() !== 'on') return null;
+  return { sid: sid, token: token, testTo: e164_(p.getProperty('TEXT_TEST_TO') || ''), hookKey: p.getProperty('TWILIO_HOOK_KEY') || '' };
+}
+function textOn_(client, feature) {
+  if (!smsCfg_() || !e164_(client.smsNumber)) return false;
+  return String(client.autoTexts || '').toLowerCase().split(/[\s,]+/).indexOf(feature) >= 0;
+}
+/** US numbers only: "(865) 555-0123" -> "+18655550123". Anything else -> ''. */
+function e164_(v) { const d = String(v || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, ''); return d.length === 10 ? '+1' + d : ''; }
+function last4_(v) { const d = String(v || '').replace(/\D/g, ''); return d ? '…' + d.slice(-4) : ''; }
+function prettyPhone_(v) { const d = String(v || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, ''); return d.length === 10 ? '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6) : String(v || ''); }
+
+/** Sends one text from the client's own number. Never throws for Twilio errors; returns { ok, sid?, error? } and logs it on the Texts tab. */
+function sendSms_(client, to, body, kind) {
+  const cfg = smsCfg_(), dest = e164_(to), from = e164_(client.smsNumber);
+  const log = (status, detail) => { try { tab_('Texts', TEXT_COLS).appendRow([new Date(), client.id, last4_(dest || to), kind, status, cell_(clean_(detail, 200))]); } catch (err) {} };
+  if (!cfg || !from) { log('skipped', 'texting is off'); return { ok: false, error: 'off' }; }
+  if (!dest) { log('skipped', 'not a US mobile number'); return { ok: false, error: 'bad_number' }; }
+  const text = (cfg.testTo ? '[TEST for ' + prettyPhone_(dest) + '] ' : '') + String(body).slice(0, 640);
+  const res = UrlFetchApp.fetch('https://api.twilio.com/2010-04-01/Accounts/' + cfg.sid + '/Messages.json', {
+    method: 'post', muteHttpExceptions: true, payload: { To: cfg.testTo || dest, From: from, Body: text },
+    headers: { Authorization: 'Basic ' + Utilities.base64Encode(cfg.sid + ':' + cfg.token) }
+  });
+  let j = {}; try { j = JSON.parse(res.getContentText()); } catch (err) {}
+  if (res.getResponseCode() >= 300) { log('failed', (j.code ? j.code + ': ' : '') + (j.message || res.getResponseCode())); return { ok: false, error: j.code === 21610 ? 'opted_out' : 'twilio', code: j.code }; }
+  log('sent', j.sid || ''); return { ok: true, sid: j.sid };
+}
+
+/** Fills {first} {business} {service} {price} {link} in a message template. */
+function fillText_(tpl, client, o, link) {
+  const lo = Number(o.estimateLow) || 0, hi = Number(o.estimateHigh) || 0;
+  const price = lo ? '$' + fmt_(lo) + (hi && hi !== lo ? ' to $' + fmt_(hi) : '') : '';
+  return String(tpl).replace(/\{first\}/g, String(o.name || '').trim().split(' ')[0] || 'there').replace(/\{business\}/g, String(client.name || ''))
+    .replace(/\{service\}/g, String(o.service || 'your project').toLowerCase()).replace(/\{price\}/g, price).replace(/\{link\}/g, link || String(client.site || ''))
+    .replace(/\s+\(Reply/, ' (Reply').replace(/[ \t]{2,}/g, ' ').trim();
+}
+function siteLink_(client, src) { const s = String(client.site || ''); return s ? s + (s.indexOf('?') < 0 ? '?' : '&') + 'src=' + src : ''; }
+
+/* ---------- Twilio webhooks: missed calls, voicemail, customer replies ---------- */
+
+function twiml_(xml) { return ContentService.createTextOutput('<?xml version="1.0" encoding="UTF-8"?><Response>' + xml + '</Response>').setMimeType(ContentService.MimeType.XML); }
+function hookUrl_(action, client, extra) {
+  const cfg = smsCfg_(); let url = ScriptApp.getService().getUrl() + '?action=' + action + '&client=' + encodeURIComponent(client.id) + '&k=' + encodeURIComponent(cfg ? cfg.hookKey : '');
+  Object.keys(extra || {}).forEach(k => url += '&' + k + '=' + encodeURIComponent(extra[k]));
+  return url;
+}
+
+function twilioHook_(p) {
+  try {
+    const cfg = smsCfg_(), client = findClient_(String(p.client || ''));
+    if (!cfg || !cfg.hookKey || !safeEq_(String(p.k || ''), cfg.hookKey) || !client || !isOn_(client.active)) return twiml_('');
+    if (p.action === 'voice') return missedCall_(client, p);
+    if (p.action === 'voice_done') return twiml_('<Hangup/>');
+    if (p.action === 'recording') { voicemail_(client, p); return twiml_(''); }
+    if (p.action === 'sms_in') { reply_(client, p); return twiml_(''); }
+  } catch (err) { console.error(err); }
+  return twiml_('');
+}
+
+/** A call the owner didn't pick up (his phone forwards unanswered calls here). Text the caller first, then take a voicemail. */
+function missedCall_(client, p) {
+  const caller = e164_(p.From), owner = e164_(client.ownerCell);
+  let texted = false;
+  if (caller && caller !== owner && textOn_(client, 'missed')) {
+    const cache = CacheService.getScriptCache(), key = 'missed_' + client.id + '_' + caller;
+    if (!cache.get(key)) {
+      cache.put(key, '1', MISSED_REPEAT_HOURS * 3600);
+      texted = sendSms_(client, caller, fillText_(client.missedText || DEFAULT_MISSED, client, {}, siteLink_(client, 'missed')), 'missed').ok;
+    } else texted = true;   // already texted them recently
+  }
+  const say = 'Thanks for calling ' + client.name + '. Sorry we missed you. Please leave your name and what you need after the tone, and we will call you back.' +
+    (texted ? ' We also just sent you a text with a link to get a price.' : '');
+  return twiml_('<Say voice="Polly.Joanna">' + esc_(say) + '</Say>' +
+    '<Record maxLength="120" timeout="5" playBeep="true" trim="trim-silence" action="' + esc_(hookUrl_('voice_done', client)) + '"' +
+    ' recordingStatusCallback="' + esc_(hookUrl_('recording', client, { from: caller || String(p.From || '') })) + '" recordingStatusCallbackEvent="completed"/>');
+}
+
+/** Voicemail finished: email it to the owner as an audio file (and a heads-up text if alerts are on). */
+function voicemail_(client, p) {
+  if (!p.RecordingUrl || Number(p.RecordingDuration || 0) < 2) return;
+  const cfg = smsCfg_(), from = prettyPhone_(p.from), secs = Number(p.RecordingDuration || 0), len = Math.floor(secs / 60) + ':' + ('0' + secs % 60).slice(-2);
+  let audio = null;
+  try {
+    const r = UrlFetchApp.fetch(String(p.RecordingUrl) + '.mp3', { muteHttpExceptions: true, headers: { Authorization: 'Basic ' + Utilities.base64Encode(cfg.sid + ':' + cfg.token) } });
+    if (r.getResponseCode() === 200) audio = r.getBlob().setName('voicemail-' + String(p.from || '').replace(/\D/g, '').slice(-10) + '.mp3');
+  } catch (err) { console.error(err); }
+  const tel = String(p.from || '').replace(/[^\d+]/g, '');
+  if (client.ownerEmail) {
+    const o = { to: client.ownerEmail, name: 'PriceWink bookings', subject: 'Voicemail from ' + from + ' (' + len + ')',
+      htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><h2 style="margin:0 0 12px">New voicemail from ' + esc_(from) + '</h2>' +
+        '<p>' + (audio ? 'The message is attached. Tap it to listen.' : 'Couldn’t attach the recording. Call them back.') + '</p>' +
+        '<p><a href="tel:' + esc_(tel) + '">Call ' + esc_(from) + '</a></p><p style="color:#8a8f86;font-size:12px">Missed call to ' + esc_(client.name) + ' · sent by PriceWink</p></div>' };
+    if (audio) o.attachments = [audio];
+    sendMail_(o);
+  }
+  if (textOn_(client, 'alerts') && client.ownerCell) sendSms_(client, client.ownerCell, 'Voicemail from ' + from + ' (' + len + '). It’s in your email. Call back: ' + from, 'alert');
+}
+
+/** A customer texted the business number (usually replying to one of our texts): pass it on to the owner. */
+function reply_(client, p) {
+  const body = clean_(p.Body, 1000), from = prettyPhone_(p.From);
+  if (!body || /^(stop|stopall|unsubscribe|cancel|end|quit|start|unstop|yes|help|info)$/i.test(body)) return;   // Twilio answers these itself
+  if (e164_(p.From) === e164_(client.ownerCell)) return;
+  if (client.ownerEmail) sendMail_({ to: client.ownerEmail, name: 'PriceWink bookings', subject: 'Text from ' + from,
+    htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p><b>' + esc_(from) + '</b> texted ' + esc_(client.name) + ':</p>' +
+      '<p style="padding:12px 14px;background:#f3f4f1;border-radius:12px">' + esc_(body) + '</p>' +
+      '<p><a href="sms:' + esc_(String(p.From || '').replace(/[^\d+]/g, '')) + '">Text back</a> · <a href="tel:' + esc_(String(p.From || '').replace(/[^\d+]/g, '')) + '">Call</a></p></div>' });
+  if (textOn_(client, 'alerts') && client.ownerCell) sendSms_(client, client.ownerCell, 'Text from ' + from + ': ' + body.slice(0, 300), 'alert');
+}
+
+/* ---------- scheduled texts (every 15 minutes) ---------- */
+
+function runAutoTexts() {
+  if (!smsCfg_()) return;
+  const h = Number(Utilities.formatDate(new Date(), TZ, 'H'));
+  if (h < 9 || h >= 20) return;                                     // customers only get texts 9 AM to 8 PM Eastern
+  const rows = sheet_().getSheetByName('Clients').getDataRange().getValues(), H = rows[0];
+  for (let r = 1; r < rows.length; r++) {
+    const c = rowObj_(H, rows[r]); if (!isOn_(c.active)) continue;
+    try { if (textOn_(c, 'incomplete')) locked_(() => incompleteTexts_(c)); } catch (err) { console.error(err); }
+    try { if (textOn_(c, 'review')) locked_(() => reviewTexts_(c)); } catch (err) { console.error(err); }
+  }
+}
+
+/** One follow-up text per unfinished quote, for customers who ticked "text me about my quote". */
+function incompleteTexts_(client) {
+  const sh = tab_('Leads', LEAD_COLS), rows = sh.getDataRange().getValues(), H = rows[0], now = Date.now();
+  const col = k => { let i = H.indexOf(k); if (i < 0) { i = H.length; H.push(k); sh.getRange(1, i + 1).setValue(k).setFontWeight('bold'); } return i + 1; };
+  let sent = 0;
+  for (let r = 1; r < rows.length && sent < 20; r++) {
+    const o = rowObj_(H, rows[r]), age = now - new Date(o.updated).getTime();
+    if (String(o.client) !== client.id || o.status !== 'Open' || o.smsOk !== 'Yes' || String(o.optOut) === 'Yes' || o.textedAt) continue;
+    if (age < ABANDON_MINUTES * 60000 || age > 24 * 3600000) continue;
+    let link = String(client.site || '');
+    if (link) { const key = randToken_(); sh.getRange(r + 1, col('resumeHash')).setValue(sha_(key)); sh.getRange(r + 1, col('resumeExpires')).setValue(new Date(now + RESUME_DAYS * 86400000)); link = resumeUrl_(client, key); }
+    sh.getRange(r + 1, col('textedAt')).setValue(new Date());      // marked first, so a Twilio hiccup never means a second text
+    const res = sendSms_(client, o.phone, fillText_(followupText_(client), client, o, link), 'incomplete');
+    if (res.error === 'opted_out') sh.getRange(r + 1, col('optOut')).setValue('Yes');
+    sent++;
+  }
+}
+
+/** Review request, REVIEW_DELAY_HOURS after the owner marks a job Done (customers who ticked the box only). */
+function reviewTexts_(client) {
+  const now = Date.now(), link = reviewUrl_(client) || 'https://www.google.com/search?q=' + encodeURIComponent(client.name + ' reviews');
+  bookingsFor_(client.id).forEach(b => {
+    if (b.status !== 'Done' || b.smsOk !== 'Yes' || b.reviewTexted || !b.doneAt) return;
+    const age = now - new Date(b.doneAt).getTime(); if (age < REVIEW_DELAY_HOURS * 3600000 || age > 3 * 86400000) return;
+    const row = bookingRow_(client, b.id); if (!row) return;
+    setCells_(row, { reviewTexted: new Date().toISOString() });
+    sendSms_(client, b.phone, fillText_(client.reviewText || DEFAULT_REVIEW, client, b, link), 'review');
+  });
+}
+
+/* ---------- editor helpers ---------- */
+
+/**
+ * Run once after adding TWILIO_SID and TWILIO_TOKEN in Project Settings > Script properties.
+ * Makes the webhook key, then logs the two links to paste into each client's Twilio number
+ * ("A call comes in" and "A message comes in"). Texting is still off until you set TEXTING = on.
+ */
+function textingSetup() {
+  const p = PropertiesService.getScriptProperties();
+  if (!p.getProperty('TWILIO_HOOK_KEY')) p.setProperty('TWILIO_HOOK_KEY', randToken_());
+  if (!p.getProperty('TEXTING')) p.setProperty('TEXTING', 'off');
+  ensureSheet_(sheet_(), 'Texts', TEXT_COLS);
+  const key = p.getProperty('TWILIO_HOOK_KEY'), base = ScriptApp.getService().getUrl();
+  const rows = sheet_().getSheetByName('Clients').getDataRange().getValues(), H = rows[0], out = [];
+  for (let r = 1; r < rows.length; r++) {
+    const c = rowObj_(H, rows[r]); if (!isOn_(c.active)) continue;
+    const q = '&client=' + encodeURIComponent(c.id) + '&k=' + key;
+    out.push(c.name + (c.smsNumber ? ' (' + c.smsNumber + ')' : ' (no smsNumber yet)') + '\n  A call comes in (Webhook, HTTP POST):    ' + base + '?action=voice' + q + '\n  A message comes in (Webhook, HTTP POST): ' + base + '?action=sms_in' + q);
+  }
+  Logger.log('Texting is ' + (p.getProperty('TEXTING') || 'off') + (p.getProperty('TEXT_TEST_TO') ? ', test mode: every text goes to ' + p.getProperty('TEXT_TEST_TO') : '') + '.\n\n' + out.join('\n\n'));
+}
+
+/** Sends one test text from a client's number. Set the id below, then Run. */
+function testText() {
+  const c = findClient_('abc-fence'); if (!c) throw new Error('No client with that id.');
+  const to = PropertiesService.getScriptProperties().getProperty('TEXT_TEST_TO') || c.ownerCell;
+  Logger.log(JSON.stringify(sendSms_(c, to, 'PriceWink test from ' + c.name + '. If you got this, texting works.', 'test')));
 }
 
 /* ------------------------------------------------------------------ helpers */

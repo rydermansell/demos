@@ -269,6 +269,7 @@ header.top.solid{background:#16181b;box-shadow:0 1px 0 rgba(255,255,255,.06)}
 .savebox .btn{width:100%;margin:2px 0 8px}
 .saved{margin-top:10px;padding:12px 13px;border-radius:12px;background:#e9f4ec;color:#1d5a35;font-size:14px;line-height:1.4;font-weight:600}
 .legal{margin:2px 0 8px;font-size:12px;line-height:1.45;opacity:.72}.legal a{color:inherit}
+.smsok{display:flex;gap:10px;align-items:flex-start;margin:2px 0 12px;font-size:13px;line-height:1.4;cursor:pointer}.smsok input{flex:none;width:20px;height:20px;margin:0;accent-color:currentColor;cursor:pointer}.smsok span{opacity:.82}
 .back-bn{margin:0 0 12px;padding:11px 12px;border-radius:12px;background:#f8f1e4;font-size:14px;line-height:1.4}.back-bn b{display:block;font-size:15px}
 .back-bn button{border:0;background:none;padding:6px 0 0;font:inherit;font-size:12.5px;text-decoration:underline;color:inherit;opacity:.75;cursor:pointer}
 .msg{margin:10px 0 0;font-size:14.5px;color:var(--mulch);font-weight:600}
@@ -503,8 +504,9 @@ footer b{color:var(--paper)}
                 <label class="field"><span>Name</span><input id="sName" autocomplete="name" enterkeyhint="next" placeholder="First and last"></label>
                 <label class="field"><span>Mobile phone</span><input id="sPhone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="(865) 555-0123"></label>
                 <label class="field"><span>Email <small style="font-weight:500;opacity:.7">(optional, we’ll send you the link)</small></span><input id="sEmail" type="email" inputmode="email" autocomplete="email" enterkeyhint="done"></label>
+                <label class="smsok"><input type="checkbox" id="sSms"><span><b>Text me about my quote.</b> Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span></label>
                 <button type="button" class="btn go2" id="sSave">Save my price</button>
-                <p class="legal">We save what you enter so ABC Fence can follow up about this quote by call, text or email. Reply STOP to opt out. <a href="https://app.getpricewink.com/privacy/" target="_blank" rel="noopener">Privacy</a></p>
+                <p class="legal">We save what you enter so ABC Fence can follow up about this quote. We only text you if you check the box. <a href="https://app.getpricewink.com/privacy/" target="_blank" rel="noopener">Privacy</a></p>
               </div>
               <p class="saved" id="savedMsg" hidden></p>
             </div>
@@ -515,6 +517,7 @@ footer b{color:var(--paper)}
               <label class="field"><span>Name</span><input id="fName" autocomplete="name" enterkeyhint="next" placeholder="First and last"></label>
               <label class="field"><span>Mobile phone</span><input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="(865) 555-0123"></label>
               <label class="field"><span>Address</span><input id="fAddr" autocomplete="street-address" enterkeyhint="done" placeholder="Street and town"></label>
+              <label class="smsok"><input type="checkbox" id="fSms"><span><b>Text me about my quote.</b> Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span></label>
               <button type="button" class="more" id="moreBtn" aria-expanded="false">+ Add a photo, email or a note (optional)</button>
               <div id="moreBox" hidden>
                 <label class="field"><span>Email</span><input id="fEmail" type="email" inputmode="email" autocomplete="email" enterkeyhint="next"></label>
@@ -523,7 +526,7 @@ footer b{color:var(--paper)}
                   <div class="phrow" id="phRow"><label class="phadd" id="phAdd"><input id="fPhotos" type="file" accept="image/*" multiple style="position:absolute;width:1px;height:1px;opacity:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg>Add a photo</label></div>
                 </div>
               </div>
-              <p class="legal">We save what you type so ABC Fence can follow up about this quote by call, text or email, even if you don’t finish. Reply STOP to opt out. <a href="https://app.getpricewink.com/privacy/" target="_blank" rel="noopener">Privacy</a></p>
+              <p class="legal">We save what you type so ABC Fence can follow up about this quote, even if you don’t finish. We only text you if you check the box. <a href="https://app.getpricewink.com/privacy/" target="_blank" rel="noopener">Privacy</a></p>
               <label class="hp" aria-hidden="true">Website<input id="fWeb" tabindex="-1" autocomplete="off"></label>
             </div>
 
@@ -689,8 +692,8 @@ footer b{color:var(--paper)}
   function leadData(stepName,o){ const {lo,hi,L:lines}=price();
     return Object.assign({step:stepName,service:NAMES[S.svc]||'',estimateLow:S.svc?lo:'',estimateHigh:S.svc?hi:'',slotLabel:S.when||'',
       details:S.svc?lines.map(([n,a,b])=>n+': $'+fmt(r5(a))+'–$'+fmt(r5(b))).join('; '):'',state:{svc:S.svc,size:S.size,ex:S.ex},website:$('#fWeb').value},o); }
-  function autosave(){ if(!L||step!==4) return; L.save(leadData('Contact info',{name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),address:$('#fAddr').value.trim(),email:$('#fEmail').value.trim()})); }
-  ['#fName','#fPhone','#fAddr','#fEmail'].forEach(q=>$(q).addEventListener('input',autosave));
+  function autosave(){ if(!L||step!==4) return; L.save(leadData('Contact info',{name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),address:$('#fAddr').value.trim(),email:$('#fEmail').value.trim(),smsOk:$('#fSms').checked})); }
+  ['#fName','#fPhone','#fAddr','#fEmail'].forEach(q=>$(q).addEventListener('input',autosave)); $('#fSms').addEventListener('change',autosave);
   function phoneFmt(e){ const d=e.target.value.replace(/\D/g,'').replace(/^1/,'').slice(0,10); let o=d; if(d.length>6) o='('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6); else if(d.length>3) o='('+d.slice(0,3)+') '+d.slice(3); e.target.value=o; }
   $('#sPhone').addEventListener('input',phoneFmt);
   $('#saveQ').addEventListener('click',()=>{ const open=$('#saveBox').hidden; $('#saveBox').hidden=!open; $('#saveQ').setAttribute('aria-expanded',String(open)); if(open){ $('#savedMsg').hidden=true; setTimeout(()=>$('#sName').focus(),60); } });
@@ -700,10 +703,10 @@ footer b{color:var(--paper)}
     if(name.length<2){ $('#sName').focus(); return; } if(phone.replace(/\D/g,'').length!==10){ $('#sPhone').focus(); return; }
     if(!L){ $('#savedMsg').hidden=false; $('#savedMsg').textContent='Couldn’t save right now. Call (865) 933-0937 and we’ll hold your price.'; return; }
     b.classList.add('busy'); b.textContent='Saving…';
-    const j=await L.saveNow(leadData('Saved price',{name,phone,email,emailMe:!!email}));
+    const j=await L.saveNow(leadData('Saved price',{name,phone,email,emailMe:!!email,smsOk:$('#sSms').checked}));
     b.classList.remove('busy'); b.textContent='Save my price';
     if(!j||!j.ok){ $('#savedMsg').hidden=false; $('#savedMsg').textContent='That didn’t save. Please call (865) 933-0937.'; return; }
-    $('#fName').value=name; $('#fPhone').value=phone; if(email){ $('#fEmail').value=email; $('#moreBox').hidden=false; $('#moreBtn').hidden=true; }
+    $('#fName').value=name; $('#fPhone').value=phone; $('#fSms').checked=$('#sSms').checked; if(email){ $('#fEmail').value=email; $('#moreBox').hidden=false; $('#moreBtn').hidden=true; }
     $('#saveBox').hidden=true; $('#saveQ').hidden=true; $('#savedMsg').hidden=false;
     $('#savedMsg').textContent='Saved, '+name.split(' ')[0]+'. '+(email?'We emailed you a link to come back and book. ':'')+'ABC Fence may reach out about it. Want to book now? Pick a time above.'; });
   /* Back from a "pick up where you left off" link: their answers come back, they pick a time. */
@@ -755,7 +758,7 @@ footer b{color:var(--paper)}
   async function submit(){ if(sending) return; sending=true; const btn=$('#next'); btn.classList.add('busy'); btn.textContent=S.slot?'Booking…':'Sending…';
     const {lo,hi,L}=price(), note=$('#fNote').value.trim();
     const data={action:'book',client:CLIENT_ID,job:NAMES[S.svc],estimateLow:lo,estimateHigh:hi,slotStart:S.slot?S.slot.start:null,when:S.when,urgent:false,
-      name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),email:$('#fEmail').value.trim(),address:$('#fAddr').value.trim(),notes:note,website:$('#fWeb').value,photos:PHOTOS.map(p=>p.full),
+      name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),email:$('#fEmail').value.trim(),address:$('#fAddr').value.trim(),notes:note,smsOk:$('#fSms').checked,website:$('#fWeb').value,photos:PHOTOS.map(p=>p.full),
       details:L.map(([n,a,b])=>n+': $'+fmt(r5(a))+'–$'+fmt(r5(b))).join('; ')};
     if(window.PWL) Object.assign(data,window.PWL.bookingExtras());
     let res;
