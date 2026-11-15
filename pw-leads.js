@@ -94,7 +94,7 @@
       if (!x) return Promise.resolve({ expired: true });
       ss(k('id'), x.id); ss(k('key'), x.key); return Promise.resolve({ lead: x });
     }
-    return fetch(cfg.endpoint + '?action=resume&c=' + encodeURIComponent(cfg.client) + '&t=' + encodeURIComponent(t)).then(function (r) { return r.json(); })
+    return fetch(cfg.endpoint + '?action=resume&client=' + encodeURIComponent(cfg.client) + '&t=' + encodeURIComponent(t)).then(function (r) { return r.json(); })
       .then(function (j) { if (!j.ok) return { expired: true }; ss(k('id'), j.lead.id); ss(k('key'), t); return { lead: j.lead }; })
       .catch(function () { return null; });
   }

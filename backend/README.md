@@ -82,7 +82,7 @@ Google sign-in inside an iPhone Home Screen app can be fussy (it opens a pop-up)
 
 ## Bookings in the owner's calendar app (iPhone, Outlook, anything)
 
-Gmail owners see the "[name] bookings" Google Calendar automatically (it's shared with them). Everyone else opens **Connect your calendar** in their inbox and taps **iPhone** or **Outlook** under "See bookings in your phone's calendar" (or **Copy link** for any other app). That subscribes their calendar app to a private, read-only feed (`?action=ics&c=<id>&t=<token>`) with every booking and blocked time, plus a 1-hour reminder before each estimate. iPhone checks for changes about every 15 minutes (owners can set this under Settings > Calendar > Accounts > Fetch); Outlook every few hours. The feed link can't open the inbox. Changing a client's `inboxKey` gives them a new feed link (the old one stops working).
+Gmail owners see the "[name] bookings" Google Calendar automatically (it's shared with them). Everyone else opens **Connect your calendar** in their inbox and taps **iPhone** or **Outlook** under "See bookings in your phone's calendar" (or **Copy link** for any other app). That subscribes their calendar app to a private, read-only feed (`?action=ics&client=<id>&t=<token>`) with every booking and blocked time, plus a 1-hour reminder before each estimate. iPhone checks for changes about every 15 minutes (owners can set this under Settings > Calendar > Accounts > Fetch); Outlook every few hours. The feed link can't open the inbox. Changing a client's `inboxKey` gives them a new feed link (the old one stops working).
 
 ## Connecting the owner's calendar (auto-blocking)
 
@@ -123,6 +123,10 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Free Gmail accounts can send about 100 emails a day through Apps Script; Google Workspace accounts get 1,500. Each booking sends 1 to 3 emails.
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
+
+## Fix: "Page Not Found" from the backend (Nov 15, 2026)
+
+Apps Script reserves the URL parameter names `c` and `sid`; using them makes Google answer "Sorry, unable to open the file at this time" (Page Not Found). Every request now uses `?client=` instead (the backend still accepts old `?c=` links as a fallback). After pasting the new `Code.gs` (and `connect/Code.gs`), publish a new version. Rule for future code: never name a web-app parameter `c` or `sid`.
 
 ## What's new: share link, results, incomplete leads (Nov 15, 2026)
 

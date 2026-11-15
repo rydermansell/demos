@@ -588,7 +588,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   function signedOut(msg){ setToken(''); B=[]; closeAll(); showLogin(msg||''); }
   async function authFlow(){
     let info=null;
-    if(C){ try{ info=await (await fetch(API+'?action=auth&c='+encodeURIComponent(C))).json(); }
+    if(C){ try{ info=await (await fetch(API+'?action=auth&client='+encodeURIComponent(C))).json(); }
       catch(e){ $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; } }
     if(info&&!info.ok&&info.error==='unknown_client'){
       if(OWNER){ EX=DEMO=true; load(); return; }   // their business isn't connected yet: example bookings
@@ -875,7 +875,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   function renderSources(){ $('#cList').innerHTML=SRC.map((x,i)=>'<div class="src">'+CAL_ICON+'<span><b>'+esc(x.label)+'</b><small>Connected'+(x.detail?' · '+esc(x.detail):', syncs every few minutes')+'</small></span><button type="button" data-dis="'+i+'">Disconnect</button></div>').join('');
     $('#cAsk').textContent=SRC.length?'Add another calendar':'Where do you keep your jobs?'; }
   /* Bookings out to the owner's calendar app: a private, read-only subscription link (webcal) */
-  function feedUrl(){ return FEED&&API?API+(API.indexOf('?')<0?'?':'&')+'action=ics&c='+encodeURIComponent(C)+'&t='+FEED:''; }
+  function feedUrl(){ return FEED&&API?API+(API.indexOf('?')<0?'?':'&')+'action=ics&client='+encodeURIComponent(C)+'&t='+FEED:''; }
   function setupSubs(){ const u=feedUrl(), name=(($('#biz').textContent||'')+' bookings').trim();
     $('#subIos').href=u?u.replace(/^https?:/,'webcal:'):'#';
     $('#subOl').href=u?'https://outlook.live.com/calendar/0/addfromweb?url='+encodeURIComponent(u)+'&name='+encodeURIComponent(name):'#'; }
@@ -908,7 +908,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
       setTimeout(()=>{ b.classList.remove('busy'); b.querySelector('small').textContent='Sign in and tap Allow';
         if(!SRC.some(x=>x.type==='google')) SRC.push({type:'google',id:'owner@gmail.com',label:'Google Calendar',detail:'owner@gmail.com (demo)'}); saveDemoSources(); afterConnect(); },1300); return; }
     b.classList.add('busy');
-    call({action:'connectTicket'}).then(j=>{ if(!j.ok) throw 0; location.href=CONNECT+'?c='+encodeURIComponent(C)+'&k='+encodeURIComponent(j.ticket); })
+    call({action:'connectTicket'}).then(j=>{ if(!j.ok) throw 0; location.href=CONNECT+'?client='+encodeURIComponent(C)+'&k='+encodeURIComponent(j.ticket); })
       .catch(e=>{ b.classList.remove('busy'); if(e!=='auth') toast('Couldn’t open Google. Try again.'); }); });
   function afterConnect(){ closeAll(); render(); toast('Calendar connected. Jobs on it now block your booking page.'); }
   $('#cList').addEventListener('click',async e=>{ const b=e.target.closest('[data-dis]'); if(!b) return; const x=SRC[+b.dataset.dis]; if(!x) return;
@@ -938,7 +938,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   /* ---------- move a booking, or add one taken by phone (same day + time picker) ---------- */
   const ms={id:null,days:[],di:0,start:''}; let mBusy=false;
   async function getSlots(){
-    if(!DEMO){ const r=await fetch(API+'?action=slots&c='+encodeURIComponent(C)), j=await r.json(); if(!j.ok) throw 0; return j.days; }
+    if(!DEMO){ const r=await fetch(API+'?action=slots&client='+encodeURIComponent(C)), j=await r.json(); if(!j.ok) throw 0; return j.days; }
     const now=new Date(), taken=new Set(B.filter(b=>b.slotStart&&b.status!=='Canceled').map(b=>new Date(b.slotStart).getTime())), out=[];
     for(let i=0;i<=14;i++){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i); if(d.getDay()===0) continue; const times=[];
       for(let h=8;h<=16;h++){ const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),h), x=t.getTime(); if(x<now.getTime()+3600e3||taken.has(x)||BL.some(k=>new Date(k.start).getTime()<=x&&new Date(k.end).getTime()>x)) continue;
