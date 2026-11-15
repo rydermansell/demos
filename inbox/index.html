@@ -214,6 +214,38 @@ body.has-open .fab{transform:translateY(calc(100% + 40px))}
 .toast.on{transform:translate(-50%,0);visibility:visible}
 .toast button{flex:none;border:0;border-radius:10px;background:rgba(255,255,255,.14);color:var(--tag);font:700 15px var(--f);padding:9px 14px;margin:-3px -8px -3px 0;cursor:pointer}
 body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+/* ---------- Share, results, incomplete leads ---------- */
+.hx{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:2px}
+.leadbn{display:flex;align-items:center;gap:12px;width:calc(100% - 32px);margin:12px 16px 0;padding:12px 14px;border:0;border-radius:14px;background:#FFF4CF;color:#3D3104;text-align:left;font:inherit;cursor:pointer;box-shadow:inset 0 0 0 1px #F0DC8E;animation:in .45s var(--ease) both;transition:transform .14s var(--ease)}
+.leadbn:active{transform:scale(.985)}.leadbn b{display:block;font-size:15.5px;color:#2E2400}.leadbn span{flex:1;min-width:0;font-size:13.5px;line-height:1.35}
+.leadbn i{flex:none;display:grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:var(--tag);color:var(--tag-ink);font:800 15px/1 var(--disp);font-style:normal}
+.leadbn em{flex:none;font-style:normal;font-weight:700;font-size:14px;color:#6B5600}
+.lnk{display:flex;align-items:center;gap:8px;margin:14px 0 4px;padding:6px 6px 6px 14px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+.lnk span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:15px;color:var(--ink)}
+.lnk button{flex:none;border:0;border-radius:10px;padding:11px 14px;background:var(--ink);color:#fff;font:700 14px var(--f);cursor:pointer}
+.shgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.shgrid a,.shgrid button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;border:0;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--ink);font:700 15px var(--f);text-decoration:none;cursor:pointer;transition:transform .14s var(--ease)}
+.shgrid a:active,.shgrid button:active{transform:scale(.97)}.shgrid svg{width:19px;height:19px;flex:none}
+.shgrid .pri{grid-column:1/-1;background:var(--tag);color:var(--tag-ink);box-shadow:none}
+.res-h{margin:14px 0 2px;font:800 34px/1.05 var(--disp);letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}.res-h small{display:block;margin-top:4px;font:500 14px/1.35 var(--f);color:var(--muted);letter-spacing:0}
+.fun{margin:14px 0 4px;padding:0;list-style:none}
+.fun li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line2)}
+.fun li span{font-size:15px;color:var(--ink)}.fun li b{font:800 18px var(--disp);color:var(--ink);font-variant-numeric:tabular-nums}.fun li b small{margin-left:6px;font:600 12.5px var(--f);color:var(--muted)}
+.fun li i{grid-column:1/-1;display:block;height:8px;border-radius:4px;background:var(--paper2);overflow:hidden}.fun li i::after{content:"";display:block;height:100%;width:var(--w);border-radius:4px;background:var(--ink)}
+.fun li:last-child i::after{background:var(--tag)}
+.srct{width:100%;margin-top:6px;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums}
+.srct th{padding:6px 0;text-align:right;font-size:12.5px;font-weight:600;color:var(--muted)}.srct th:first-child,.srct td:first-child{text-align:left}
+.srct td{padding:9px 0;border-top:1px solid var(--line2);text-align:right;color:var(--ink)}.srct td:first-child{font-weight:600}
+.ld{margin:0 0 10px;padding:14px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--line)}
+.ld.off{opacity:.62}
+.ld .hd b{font:600 17px/1.25 var(--f);color:var(--ink)}.ld .hd .amt{font:600 15px var(--f);color:var(--ink);font-variant-numeric:tabular-nums}
+.ld p{margin:4px 0 0;font-size:14.5px;line-height:1.4;color:var(--muted)}.ld p b{color:var(--body);font-weight:600}
+.ld .chip{display:inline-block;margin:8px 6px 0 0;padding:4px 9px;border-radius:999px;background:var(--paper2);font-size:12.5px;font-weight:600;color:var(--body)}
+.ld .chip.ok{background:var(--ok-bg);color:var(--ok)}
+.ld .acts{margin-top:10px}.ld .alts{justify-content:flex-start;gap:0 18px}.ld .alts .alt{padding:10px 0 2px;font-size:14px}
+.tpl{margin:6px 0 14px;padding:12px;border-radius:14px;background:#F7F3EA}
+.tpl p{margin:0 0 8px;font-size:13px;line-height:1.45;color:var(--muted)}.tpl code{font:600 12.5px ui-monospace,monospace;color:var(--ink)}
+.tpl .save{margin-top:10px}
 /* ---------- New Job ---------- */
 .fab{font-size:16px;font-weight:700;padding:15px 20px 15px 17px}
 .two-in{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -224,7 +256,7 @@ body.ex .toast,body.has-open .toast{bottom:calc(24px + env(safe-area-inset-botto
 .warn button{display:block;margin-top:8px;border:0;border-radius:10px;padding:10px 14px;background:var(--red);color:#fff;font:700 14.5px var(--f);cursor:pointer}
 textarea.inp{resize:vertical;min-height:76px;line-height:1.4}
 /* ---------- Sign in ---------- */
-body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,body.out #hint,body.out #list,body.out #upd,body.out #fab,body.out #acct{display:none!important}
+body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,body.out #hint,body.out #list,body.out #upd,body.out #fab,body.out #acct,body.out #leadBn{display:none!important}
 .login{margin:18px 16px 0}
 .lg-card{background:var(--card);border-radius:20px;padding:22px 18px 18px;box-shadow:0 0 0 1px var(--line),0 20px 40px -28px rgba(14,27,46,.45);animation:in .45s var(--ease) both}
 .lg-card h2{margin:0;font:800 24px/1.15 var(--disp);letter-spacing:-.02em;color:var(--ink)}
@@ -248,7 +280,9 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   <button class="ref" id="ref" aria-label="Refresh"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
   <div class="stats"><button type="button" class="hot" id="stNew"><b id="nNew">0</b><span>New</span></button><p><b id="nWeek">0</b><span>Next 7 days</span></p><p><b id="nVal">$0</b><span>Quoted</span></p></div>
   <p class="month" id="month" hidden></p>
-  <div class="hcal"><div id="sync" hidden></div></div>
+  <div class="hcal"><div id="sync" hidden></div>
+    <div class="hx"><button type="button" class="calbtn" id="openShare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Share your booking link</span></button>
+    <button type="button" class="calbtn" id="openRes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Results</span></button></div></div>
 </header>
 <div class="mini" id="mini" aria-hidden="true"><div class="row"><b id="miniBiz"></b><span class="pill" id="miniNew" hidden></span>
   <button class="ref" id="ref2" aria-label="Refresh" tabindex="-1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div></div>
@@ -284,11 +318,12 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   </section>
   <div class="tabs" role="tablist" id="tabs"><i aria-hidden="true"></i><button aria-pressed="true" data-t="up">Upcoming<em id="cUp"></em></button><button aria-pressed="false" data-t="new">New<em id="cNew"></em></button><button aria-pressed="false" data-t="past">Past</button></div>
   <p class="demo" id="demo" hidden></p>
+  <button type="button" class="leadbn" id="leadBn" hidden></button>
   <p class="hint" id="hint" hidden>Tap a booking to see the details and call or text your customer.</p>
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <p class="upd" id="upd" hidden></p>
   <p class="acct" id="acct" hidden></p>
-  <p class="ver">PriceWink inbox · build 32</p>
+  <p class="ver">PriceWink inbox · build 33</p>
 </main>
 <button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> New Job</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -379,6 +414,43 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   <button class="cancel" id="jCancel" type="button">Cancel</button>
   <button class="alt" id="jBlock" type="button">Taking time off instead? Block time</button>
 </section>
+<section class="sheet" id="shSheet" role="dialog" aria-modal="true" aria-labelledby="shT2" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="shT2">Share your booking link</h2>
+  <p class="sh-help">Customers get a price and book in about a minute. Every booking shows where it came from.</p>
+  <div class="lnk"><span id="shUrl"></span><button type="button" id="shCopy">Copy</button></div>
+  <div class="shgrid">
+    <button type="button" class="pri" id="shNative"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Share…</button>
+    <a id="shSms" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Text</a>
+    <a id="shMail" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>Email</a>
+    <a id="shFb" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a>
+    <button type="button" id="shGbp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Google profile</button>
+  </div>
+  <p class="fine" style="margin-top:12px">Tip: put this link in your Google Business Profile as your booking link, in your Facebook page’s button, and in your phone’s voicemail text.</p>
+  <button class="cancel" type="button" data-close>Close</button>
+</section>
+<section class="sheet" id="rsSheet" role="dialog" aria-modal="true" aria-labelledby="rsT" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="rsT">Results</h2>
+  <p class="sh-help">The last 30 days.</p>
+  <div id="rsBody"></div>
+  <p class="fine" style="margin-top:14px">Counts only. PriceWink never tracks who visitors are. People show up by name only after they type it into your quote tool.</p>
+  <button class="cancel" type="button" data-close>Close</button>
+</section>
+<section class="sheet" id="ldSheet" role="dialog" aria-modal="true" aria-labelledby="ldT" hidden>
+  <i class="grab" aria-hidden="true"></i>
+  <h2 id="ldT">Incomplete leads</h2>
+  <p class="sh-help">They got a price but didn’t book. A quick text often wins the job.</p>
+  <button class="alt" type="button" id="ldEdit" style="text-align:left;padding-left:0">Edit your follow-up message</button>
+  <div class="tpl" id="ldTpl" hidden>
+    <p>Texts and emails start with this. Use <code>{first}</code> <code>{service}</code> <code>{price}</code> <code>{link}</code> <code>{business}</code> and they fill in for each person. <code>{link}</code> takes them back to their saved price.</p>
+    <textarea class="inp" id="ldTxt" rows="5" maxlength="600"></textarea>
+    <button class="save" type="button" id="ldTplSave">Save message</button>
+  </div>
+  <div id="ldList"></div>
+  <p class="fine">Leads stay here for 30 days, then they’re deleted. Anyone who books is taken off automatically.</p>
+  <button class="cancel" type="button" data-close>Close</button>
+</section>
 <div class="viewer" id="viewer" hidden><img alt="Photo from the customer"><button type="button" id="vClose">Close</button></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
@@ -403,7 +475,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   const CL=()=>CLIENTS[C]||CLIENTS[C.replace(/-/g,'')]||{};
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
-  let B=[], BL=[], SRC=[], FEED='', REVIEW='', tab='up';
+  let B=[], BL=[], SRC=[], FEED='', REVIEW='', tab='up', LEADS=[], FOLLOW='', SITE='', STATS=null;
   const PH={};   // customer photos already fetched this visit, by file id
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
@@ -499,7 +571,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
       return {id, sample:true, created:created.toISOString(), client:C, status:st[id]||x.status, slotStart:when?when.toISOString():'', service:x.service, details:x.details,
         outcome:out.o, jobValue:out.v, estimateLow:x.lo, estimateHigh:x.hi, urgent:x.urgent&&!moved?'Yes':'', name:x.name, phone:'(865) 555-01'+String(42+i*13).slice(-2), email:x.name.toLowerCase().replace(/\s+/g,'.')+'@example.com', address:x.addr, notes:x.notes||'', photoThumbs:x.pics||[]}; }); }
 
-  const SHEETS=['#sheet','#cSheet','#aSheet','#mSheet','#jSheet'];
+  const SHEETS=['#sheet','#cSheet','#aSheet','#mSheet','#jSheet','#shSheet','#rsSheet','#ldSheet'];
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function toast(t,undo){ const el=$('#toast'); el.textContent=t; el._undo=undo||null; if(undo){ const u=document.createElement('button'); u.type='button'; u.textContent='Undo'; el.appendChild(u); }
     el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),undo?6000:2600); }
@@ -594,7 +666,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     if(API&&!FORCE_DEMO&&!EX){
       if(!TOKEN){ authFlow(); return; }
       try{ const j=await call({action:'inbox'});
-        if(j.ok){ document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; ME=j.me||''; renderAcct(); REVIEW=j.reviewUrl||''; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
+        if(j.ok){ document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; ME=j.me||''; renderAcct(); REVIEW=j.reviewUrl||''; LEADS=j.leads||[]; FOLLOW=j.followup||''; SITE=j.site||''; STATS=j.stats||null; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
         $('#list').innerHTML='<p class="msg">Something went wrong. Try again in a minute.</p>'; return;
       }catch(e){ if(e!=='auth') $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; }
     }
@@ -603,7 +675,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
                                   :'<span><b>Sample bookings.</b> Tap one to open it. Anything you book on the demo site shows up here, marked “You”.</span>');
     $('#biz').textContent=CL().name||(EX?'Your bookings':'Your business');
     let mine=[]; if(!EX){ try{ mine=JSON.parse(localStorage.getItem('pw_demo_bookings')||'[]').filter(b=>!C||b.client===C); }catch(e){} }
-    B=[...mine,...samples()]; B.forEach(b=>{ if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=EX?[]:demoBlocks(); SRC=EX?[]:demoSources(); render();
+    B=[...mine,...samples()]; B.forEach(b=>{ if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=EX?[]:demoBlocks(); SRC=EX?[]:demoSources(); LEADS=EX?[]:demoLeads(); SITE=DEMO_SITES[C.replace(/-/g,'')]||''; STATS=EX?null:demoStats(); try{ FOLLOW=localStorage.getItem('pw_demo_follow_'+C)||''; }catch(e){} FOLLOW=FOLLOW||DEFAULT_FOLLOW; render();
   }
   const tOf=b=>b.slotStart?new Date(b.slotStart).getTime():new Date(b.created).getTime();
   const nowT=()=>Date.now();
@@ -703,7 +775,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
       '<span class="nm"><b><span>'+esc(x.label||'Busy')+'</span></b><small>Blocked'+(allDay?' all day':' until '+tm(e0))+'</small></span>'+
       '<span class="pr"><button class="rm" type="button" data-unblock="'+esc(x.id)+'">Remove</button></span></div></article>'; }
   function render(){
-    renderStats(); renderSync(); document.body.classList.toggle('has-open',!!openId&&B.some(b=>b.id===openId));
+    renderStats(); renderSync(); renderLeadBn(); document.body.classList.toggle('has-open',!!openId&&B.some(b=>b.id===openId));
     let seen=false; try{ seen=!!localStorage.getItem('pw_hint'); }catch(e){} $('#hint').hidden=DEMO||seen||!B.length;
     $('#upd').hidden=false; $('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'. This page refreshes on its own.';
     const now=nowT();
@@ -903,6 +975,88 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     try{ const j=await post({action:'add',name:nb.name,phone:nb.phone,job:$('#mJob').value.trim(),address:nb.address,slotStart:start}); if(j.ok) done(j.booking); else if(j.error==='slot_taken') taken(); else throw 0; }
     catch(e){ toast('That didn’t save. Check your signal and try again.'); mBtn(); }
     mBusy=false; });
+  /* ---------- Share your booking link: each way of sharing tags the link (?src=) so bookings show where they came from ---------- */
+  const DEMO_SITES={abcfence:'https://getpricewink.com/demos/abc-fence/',gonzalez:'https://getpricewink.com/demos/gonzalez-tree/',hooks:'https://getpricewink.com/demos/hooks-lawn/',williams:'https://getpricewink.com/demos/williams-removal/',
+    etfence:'https://getpricewink.com/demos/etfence/',knoxfantasy:'https://getpricewink.com/demos/knox-fantasy/',hardinvalley:'https://getpricewink.com/demos/hardin-valley/',ferree:'https://getpricewink.com/demos/ferree-guttering/'};
+  const tagged=src=>SITE?SITE+(SITE.indexOf('?')<0?'?':'&')+'src='+src:'';
+  const shareMsg=src=>'Get a free price from '+$('#biz').textContent.trim()+' in about a minute and book online: '+tagged(src);
+  function openShare(){ const ok=!!SITE; $('#shUrl').textContent=ok?SITE.replace(/^https?:\/\//,'').replace(/\/$/,''):'Your link shows here once your site is live.';
+    $$('#shSheet .shgrid > *, #shCopy').forEach(el=>{ el.style.opacity=ok?'':'.5'; el.style.pointerEvents=ok?'':'none'; });
+    $('#shNative').hidden=!navigator.share;
+    $('#shSms').href='sms:?&body='+encodeURIComponent(shareMsg('sms'));
+    $('#shMail').href='mailto:?subject='+encodeURIComponent('Get a free price from '+$('#biz').textContent.trim())+'&body='+encodeURIComponent(shareMsg('email'));
+    $('#shFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(tagged('fb'));
+    show('#shSheet'); }
+  async function copyText(t,msg){ try{ await navigator.clipboard.writeText(t); toast(msg); }catch(e){ prompt('Copy this:',t); } }
+  $('#openShare').addEventListener('click',openShare);
+  $('#shCopy').addEventListener('click',()=>copyText(tagged('share'),'Link copied. Paste it anywhere.'));
+  $('#shGbp').addEventListener('click',()=>copyText(tagged('gbp'),'Copied. In Google Business Profile, paste it under Edit profile → Booking link.'));
+  $('#shNative').addEventListener('click',async()=>{ try{ await navigator.share({title:$('#biz').textContent.trim(),text:'Get a free price in about a minute and book online.',url:tagged('share')}); }catch(e){} });
+  $$('[data-close]').forEach(b=>b.addEventListener('click',()=>closeAll()));
+
+  /* ---------- Results: quote-tool funnel + where jobs came from (counts only) ---------- */
+  function demoStats(){ let c={}; try{ c=JSON.parse(localStorage.getItem('pw_demo_counts_'+C)||'{}'); }catch(e){}
+    const mineB=B.filter(b=>!b.sample&&b.details!=='Added by you').length;
+    return {days:30,visits:214+(c.visit||0),started:96+(c.start||0),contact:41+(c.contact||0),bookedOnline:23+mineB,
+      bySource:[{source:'Website',bookings:9+mineB,won:4,wonValue:18400},{source:'Google',bookings:6,won:3,wonValue:9650},{source:'Phone call',bookings:5,won:3,wonValue:7200},{source:'Facebook',bookings:4,won:1,wonValue:2900},{source:'Referral',bookings:3,won:2,wonValue:6100}]}; }
+  function openResults(){ const st=STATS, box=$('#rsBody');
+    if(!st){ box.innerHTML='<p class="msg" style="padding:24px 8px">Results show up here once your site is live.</p>'; show('#rsSheet'); return; }
+    const v=st.visits||0, pct=n=>v?Math.round(n/v*100):0, rows=[['Looked at your quote tool',v],['Started a quote',st.started],['Gave their name and number',st.contact],['Booked online',st.bookedOnline]];
+    box.innerHTML='<p class="res-h">'+(v?pct(st.bookedOnline)+'%':'0')+'<small>'+(v?'of people who looked at your quote tool booked online':'No visits yet. Share your booking link to get some.')+'</small></p>'+
+      '<ul class="fun">'+rows.map(([t,n])=>'<li><span>'+esc(t)+'</span><b>'+(n||0)+(v&&t!==rows[0][0]?'<small>'+pct(n||0)+'%</small>':'')+'</b><i style="--w:'+(v?Math.max(2,Math.round((n||0)/v*100)):0)+'%"></i></li>').join('')+'</ul>'+
+      (st.bySource&&st.bySource.length?'<p class="sh-l sec" style="margin-top:18px">Where your jobs came from</p><table class="srct"><tr><th>Source</th><th>Booked</th><th>Won</th></tr>'+
+        st.bySource.map(r=>'<tr><td>'+esc(r.source)+'</td><td>'+r.bookings+'</td><td>'+(r.wonValue?fmt(r.wonValue):r.won||'–')+'</td></tr>').join('')+'</table>':'');
+    show('#rsSheet'); }
+  $('#openRes').addEventListener('click',openResults);
+  $('#month').addEventListener('click',openResults); $('#month').style.cursor='pointer';
+
+  /* ---------- Incomplete leads: got a price, gave a name and number, didn't book ---------- */
+  const DEFAULT_FOLLOW='Hi {first}, this is {business}. I saw you started a quote for {service} on our website. Want me to get you on the schedule? You can pick up where you left off here: {link}  (Reply STOP and we won’t text again.)';
+  function demoLeads(){ const set=SAMPLE_SETS[CL().trade]||SAMPLE_SETS.generic, now=Date.now(), h=3600e3; let ops={}, mine=[];
+    try{ ops=JSON.parse(localStorage.getItem('pw_demo_leadops_'+C)||'{}'); mine=JSON.parse(localStorage.getItem('pw_demo_leads')||'[]').filter(l=>l.client===C||l.client===C.replace(/-/g,'')); }catch(e){}
+    const pick=i=>set[Math.min(i,set.length-1)];
+    const sample=[{id:'SL-1',name:'Rachel Owens',phone:'(865) 555-0177',email:'rachel.owens@example.com',service:pick(1).service,estimateLow:pick(1).lo,estimateHigh:pick(1).hi,step:'Picking a time',source:'Facebook',created:new Date(now-2.2*h).toISOString(),updated:new Date(now-2*h).toISOString()},
+      {id:'SL-2',name:'Mike Dunn',phone:'(865) 555-0163',email:'',service:pick(2).service,estimateLow:pick(2).lo,estimateHigh:pick(2).hi,step:'Contact info',source:'Google',created:new Date(now-26*h).toISOString(),updated:new Date(now-26*h).toISOString(),contactedAt:new Date(now-20*h).toISOString()},
+      {id:'SL-3',name:'Jen Carter',phone:'(865) 555-0148',email:'jen.carter@example.com',service:pick(4).service,estimateLow:pick(4).lo,estimateHigh:pick(4).hi,step:'Saved price',source:'Website',created:new Date(now-74*h).toISOString(),updated:new Date(now-74*h).toISOString()}].map(l=>Object.assign(l,{sample:true}));
+    return [...mine.map(l=>Object.assign({},l,{mine:true})),...sample].map(l=>Object.assign(l,ops[l.id]||{})).filter(l=>!l.deleted); }
+  function renderLeadBn(){ const n=LEADS.filter(l=>!l.optOut&&!l.contactedAt).length, all=LEADS.filter(l=>!l.optOut).length, el=$('#leadBn');
+    el.hidden=!all||EX; if(!all) return;
+    el.innerHTML='<i>'+all+'</i><span><b>'+(all===1?'1 person':all+' people')+' got a price but didn’t book</b>'+(n?n+' not contacted yet':'All contacted')+'</span><em>Follow up ›</em>'; }
+  $('#leadBn').addEventListener('click',openLeads);
+  const priceOf=l=>l.estimateLow?(+l.estimateHigh&&+l.estimateHigh!==+l.estimateLow?fmt(l.estimateLow)+' – '+fmt(l.estimateHigh):fmt(l.estimateLow)):'';
+  const whenAgo=iso=>{ const d=new Date(iso); return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); };
+  function leadCard(l){ const tel=String(l.phone||'').replace(/[^\d+]/g,''), est=priceOf(l), f=esc(String(l.name||'').split(' ')[0]||'them');
+    if(l.optOut) return '<div class="ld off" data-lid="'+esc(l.id)+'"><div class="hd"><b>'+esc(l.name||'Someone')+'</b></div><p>Asked not to be contacted.</p><div class="alts"><button class="alt" type="button" data-lop="delete">Delete</button></div></div>';
+    return '<div class="ld" data-lid="'+esc(l.id)+'"><div class="hd"><b>'+esc(l.name)+(l.mine?' <i class="you">You</i>':'')+'</b>'+(est?'<span class="amt">'+est+'</span>':'')+'</div>'+
+      '<p>'+esc(l.service||'Quote')+'</p><p>Started '+esc(whenAgo(l.created||l.updated))+' · Stopped at <b>'+esc(l.step||'the quote')+'</b></p>'+
+      '<span class="chip">From '+esc(l.source||'Website')+'</span>'+(l.contactedAt?'<span class="chip ok">Contacted '+esc(ago(l.contactedAt))+'</span>':'')+
+      '<div class="acts" style="grid-template-columns:repeat('+(l.email?3:2)+',minmax(0,1fr))"><a class="call" href="tel:'+esc(tel)+'" data-lact="call">'+IC.call+'Call</a><a href="#" data-lact="text">'+IC.text+'Text</a>'+(l.email?'<a href="#" data-lact="email">'+IC.note+'Email</a>':'')+'</div>'+
+      '<div class="alts"><button class="alt" type="button" data-lop="contacted">'+(l.contactedAt?'Contacted again':'Mark contacted')+'</button><button class="alt" type="button" data-lop="dnc">Don’t contact</button><button class="alt" type="button" data-lop="delete">Delete</button></div></div>'; }
+  function openLeads(){ $('#ldTpl').hidden=true; $('#ldTxt').value=FOLLOW||DEFAULT_FOLLOW; drawLeads(); show('#ldSheet'); }
+  function drawLeads(){ $('#ldList').innerHTML=LEADS.length?LEADS.map(leadCard).join(''):'<p class="msg" style="padding:28px 8px">No incomplete leads right now.</p>';
+    if(DEMO&&!EX) $('#ldList').insertAdjacentHTML('afterbegin','<p class="fine" style="margin:0 2px 10px">In the live app, someone shows up here 30 minutes after they stop without booking.</p>'); }
+  function fill(tpl,l,link){ const est=priceOf(l); return String(tpl||DEFAULT_FOLLOW).replace(/\{first\}/g,String(l.name||'').split(' ')[0]||'there').replace(/\{business\}/g,$('#biz').textContent.trim())
+      .replace(/\{service\}/g,String(l.service||'your project').toLowerCase()).replace(/\{price\}/g,est||'').replace(/\{link\}/g,link||SITE||'').replace(/\s+\(Reply/,' (Reply'); }
+  async function leadLink(l){ if(DEMO) return l.key&&SITE?SITE+'?resume='+l.key:SITE; try{ const j=await call({action:'lead',id:l.id,op:'link'}); return j.ok?j.url:SITE; }catch(e){ return SITE; } }
+  function demoOp(id,o){ try{ const k='pw_demo_leadops_'+C, m=JSON.parse(localStorage.getItem(k)||'{}'); m[id]=Object.assign(m[id]||{},o); localStorage.setItem(k,JSON.stringify(m)); }catch(e){} }
+  async function leadOp(l,op,quiet){ const was=Object.assign({},l);
+    if(op==='contacted') l.contactedAt=new Date().toISOString(); if(op==='dnc'){ l.optOut=true; l.phone=''; l.email=''; } if(op==='delete') LEADS=LEADS.filter(x=>x!==l);
+    drawLeads(); renderLeadBn(); if(!quiet) toast(op==='contacted'?'Marked as contacted.':op==='dnc'?'Got it. They won’t get follow-ups.':'Deleted.');
+    if(DEMO){ demoOp(l.id,op==='contacted'?{contactedAt:l.contactedAt}:op==='dnc'?{optOut:true,phone:'',email:''}:{deleted:true}); return; }
+    try{ const j=await call({action:'lead',id:l.id,op}); if(!j.ok) throw 0; }catch(e){ if(e==='auth') return; if(op==='delete') LEADS.push(was); else Object.assign(l,was); drawLeads(); renderLeadBn(); toast('That didn’t save. Try again.'); } }
+  $('#ldList').addEventListener('click',async e=>{ const card=e.target.closest('[data-lid]'); if(!card) return; const l=LEADS.find(x=>x.id===card.dataset.lid); if(!l) return;
+    const op=e.target.closest('[data-lop]'); if(op){ leadOp(l,op.dataset.lop); return; }
+    const a=e.target.closest('[data-lact]'); if(!a) return; const kind=a.dataset.lact;
+    if(kind==='call'){ leadOp(l,'contacted',true); return; }
+    e.preventDefault(); toast('Getting their link…'); const link=await leadLink(l), msg=fill(FOLLOW,l,link), tel=String(l.phone||'').replace(/[^\d+]/g,'');
+    leadOp(l,'contacted',true);
+    location.href=kind==='text'?'sms:'+tel+'?&body='+encodeURIComponent(msg):'mailto:'+encodeURIComponent(l.email)+'?subject='+encodeURIComponent('Your '+String(l.service||'quote').toLowerCase()+' price from '+$('#biz').textContent.trim())+'&body='+encodeURIComponent(msg); });
+  $('#ldEdit').addEventListener('click',()=>{ $('#ldTpl').hidden=!$('#ldTpl').hidden; if(!$('#ldTpl').hidden) setTimeout(()=>$('#ldTxt').focus(),60); });
+  $('#ldTplSave').addEventListener('click',async()=>{ const t=$('#ldTxt').value.trim(); if(t.indexOf('{link}')<0&&!confirm('Your message has no {link}, so they won’t get their saved price back. Save anyway?')) return;
+    FOLLOW=t||DEFAULT_FOLLOW; $('#ldTpl').hidden=true; toast('Message saved.');
+    if(DEMO){ try{ localStorage.setItem('pw_demo_follow_'+C,FOLLOW); }catch(e){} return; }
+    try{ const j=await call({action:'followup',text:t}); if(j.ok) FOLLOW=j.followup; else throw 0; }catch(e){ if(e!=='auth') toast('That didn’t save. Try again.'); } });
+
   /* ---------- + New Job: a customer called or texted. Saved like an online booking (call, text, directions, move, cancel, review). ---------- */
   const SRCS=['Phone call','Text','Referral','Facebook','Google','Repeat customer','Website','Other'];
   const js={days:[],di:0,start:'',other:false,src:'Phone call',force:false}; let jBusy=false;

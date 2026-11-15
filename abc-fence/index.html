@@ -263,6 +263,14 @@ header.top.solid{background:#16181b;box-shadow:0 1px 0 rgba(255,255,255,.06)}
 @keyframes pulse{50%{opacity:.55}}
 .asap{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:9px;border:1.5px dashed #c9c2a8;background:transparent;border-radius:10px;padding:11px 13px;font-weight:700;font-size:14.5px;cursor:pointer;text-align:left}
 .asap[aria-pressed=true]{border-style:solid;border-color:var(--ink);background:#f8ead9}
+.saveq{display:block;width:100%;margin-top:4px;border:0;background:none;padding:12px 4px 4px;font-weight:700;font-size:14.5px;color:#96531f;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-align:center}
+.savebox{margin-top:10px;padding:14px 13px 6px;border-radius:12px;background:#f8f1e4}
+.savebox h4{margin:0 0 3px;font-size:16px;font-weight:800}.savebox>p{margin:0 0 10px;font-size:13.5px;line-height:1.4;opacity:.8}
+.savebox .btn{width:100%;margin:2px 0 8px}
+.saved{margin-top:10px;padding:12px 13px;border-radius:12px;background:#e9f4ec;color:#1d5a35;font-size:14px;line-height:1.4;font-weight:600}
+.legal{margin:2px 0 8px;font-size:12px;line-height:1.45;opacity:.72}.legal a{color:inherit}
+.back-bn{margin:0 0 12px;padding:11px 12px;border-radius:12px;background:#f8f1e4;font-size:14px;line-height:1.4}.back-bn b{display:block;font-size:15px}
+.back-bn button{border:0;background:none;padding:6px 0 0;font:inherit;font-size:12.5px;text-decoration:underline;color:inherit;opacity:.75;cursor:pointer}
 .msg{margin:10px 0 0;font-size:14.5px;color:var(--mulch);font-weight:600}
 .field{display:block;margin-bottom:12px}
 .field span{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
@@ -480,6 +488,7 @@ footer b{color:var(--paper)}
             </div>
 
             <div class="step" data-step="3">
+              <div class="back-bn" id="backBn" hidden></div>
               <div class="price" id="pbox"><div class="k" id="pK">Your price</div><div class="amt tn" id="amt">$<span id="lo">0</span> – $<span id="hi">0</span></div><p id="pNote">Installed, with posts and hardware.</p></div>
               <div class="pills" id="extras"></div>
               <div class="lbl">Pick a time</div>
@@ -487,6 +496,17 @@ footer b{color:var(--paper)}
               <div class="times" id="times"></div>
               <p class="msg" id="slotMsg" hidden></p>
               <button type="button" class="asap" id="asapBtn" aria-pressed="false"><span>Not sure on a time? Have ABC call me</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+              <button type="button" class="saveq" id="saveQ" aria-expanded="false">Not ready? Save this price</button>
+              <div class="savebox" id="saveBox" hidden>
+                <h4>Save your price</h4>
+                <p>We’ll hold it so you can book when you’re ready.</p>
+                <label class="field"><span>Name</span><input id="sName" autocomplete="name" enterkeyhint="next" placeholder="First and last"></label>
+                <label class="field"><span>Mobile phone</span><input id="sPhone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="(865) 555-0123"></label>
+                <label class="field"><span>Email <small style="font-weight:500;opacity:.7">(optional, we’ll send you the link)</small></span><input id="sEmail" type="email" inputmode="email" autocomplete="email" enterkeyhint="done"></label>
+                <button type="button" class="btn go2" id="sSave">Save my price</button>
+                <p class="legal">We save what you enter so ABC Fence can follow up about this quote by call, text or email. Reply STOP to opt out. <a href="https://getpricewink.com/privacy" target="_blank" rel="noopener">Privacy</a></p>
+              </div>
+              <p class="saved" id="savedMsg" hidden></p>
             </div>
 
             <div class="step" data-step="4">
@@ -503,6 +523,7 @@ footer b{color:var(--paper)}
                   <div class="phrow" id="phRow"><label class="phadd" id="phAdd"><input id="fPhotos" type="file" accept="image/*" multiple style="position:absolute;width:1px;height:1px;opacity:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg>Add a photo</label></div>
                 </div>
               </div>
+              <p class="legal">We save what you type so ABC Fence can follow up about this quote by call, text or email, even if you don’t finish. Reply STOP to opt out. <a href="https://getpricewink.com/privacy" target="_blank" rel="noopener">Privacy</a></p>
               <label class="hp" aria-hidden="true">Website<input id="fWeb" tabindex="-1" autocomplete="off"></label>
             </div>
 
@@ -563,6 +584,7 @@ footer b{color:var(--paper)}
 <footer><div class="wrap"><span><b>ABC Fence Co</b> · Kodak, TN · <a href="tel:+18659330937">(865) 933-0937</a></span><span>Site preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a></span></div></footer>
 <div class="cta-bar" id="ctaBar"><a class="btn dk" style="background:#2a2e35" href="tel:+18659330937">Call</a><a class="btn go2" href="#quote" id="barQ">Get my price</a></div>
 
+<script src="../pw-leads.js"></script>
 <script>
 (function(){
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -597,6 +619,8 @@ footer b{color:var(--paper)}
 
   const S={svc:null,size:null,bushes:8,ex:{},slot:null,asap:false,when:null};
   let step=1, booted=false, sending=false;
+  /* Lead source, quote-tool counts and unfinished-quote saving (../pw-leads.js). The site works the same if it fails to load. */
+  const L=window.PWL||null; if(L) L.init({endpoint:BOOKING_ENDPOINT,client:CLIENT_ID});
 
   function price(){ const P=PRICING, L=[]; let lo=0,hi=0; const add=(n,a,b)=>{L.push([n,a,b]);lo+=a;hi+=b;}, k=P[S.svc];
     if(k){ const [a,b]=k.sizes[S.size||Object.keys(k.sizes)[1]]; add(NAMES[S.svc]+', '+label(),a,b);
@@ -605,7 +629,7 @@ footer b{color:var(--paper)}
   function label(){ const set=SIZES[S.svc]; if(!set) return ''; const o=set.o.find(x=>x[0]===S.size); return o?o[1].toLowerCase():''; }
 
   /* ---------- step 1: service ---------- */
-  function pickSvc(v){ if(S.svc!==v){ S.ex={}; S.size=null; } S.svc=v; $$('#svcPick .opt').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v))); buildSize(); setTimeout(()=>go(2),RM?0:260); }
+  function pickSvc(v){ if(L) L.track('start'); if(S.svc!==v){ S.ex={}; S.size=null; } S.svc=v; $$('#svcPick .opt').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v))); buildSize(); setTimeout(()=>go(2),RM?0:260); }
   $$('#svcPick .opt').forEach(b=>b.addEventListener('click',()=>pickSvc(b.dataset.v)));
   function buildSize(){ const set=SIZES[S.svc]; $$('[data-pane]').forEach(p=>p.classList.toggle('active',p.dataset.pane===(S.svc==='bush'?'bush':'size'))); if(!set) return;
     $('#sizeQ').textContent=set.q; $('#sizeHelp').textContent=set.help;
@@ -661,6 +685,38 @@ footer b{color:var(--paper)}
     r.append(NAMES[S.svc]+', $'+fmt(lo)+' – $'+fmt(hi)+'. '); if(S.slot){ const b=document.createElement('b'); b.textContent=S.slot.label; r.append(b); } else r.append(S.when+'.');
     const c=document.createElement('button'); c.type='button'; c.textContent='Change'; c.onclick=()=>go(3); r.append(c); }
 
+  /* ---------- unfinished quotes: saved once a name + phone are typed (the notice is right under the fields) ---------- */
+  function leadData(stepName,o){ const {lo,hi,L:lines}=price();
+    return Object.assign({step:stepName,service:NAMES[S.svc]||'',estimateLow:S.svc?lo:'',estimateHigh:S.svc?hi:'',slotLabel:S.when||'',
+      details:S.svc?lines.map(([n,a,b])=>n+': $'+fmt(r5(a))+'–$'+fmt(r5(b))).join('; '):'',state:{svc:S.svc,size:S.size,ex:S.ex},website:$('#fWeb').value},o); }
+  function autosave(){ if(!L||step!==4) return; L.save(leadData('Contact info',{name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),address:$('#fAddr').value.trim(),email:$('#fEmail').value.trim()})); }
+  ['#fName','#fPhone','#fAddr','#fEmail'].forEach(q=>$(q).addEventListener('input',autosave));
+  function phoneFmt(e){ const d=e.target.value.replace(/\D/g,'').replace(/^1/,'').slice(0,10); let o=d; if(d.length>6) o='('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6); else if(d.length>3) o='('+d.slice(0,3)+') '+d.slice(3); e.target.value=o; }
+  $('#sPhone').addEventListener('input',phoneFmt);
+  $('#saveQ').addEventListener('click',()=>{ const open=$('#saveBox').hidden; $('#saveBox').hidden=!open; $('#saveQ').setAttribute('aria-expanded',String(open)); if(open){ $('#savedMsg').hidden=true; setTimeout(()=>$('#sName').focus(),60); } });
+  [['#sName','#sPhone'],['#sPhone','#sEmail']].forEach(([a,b])=>$(a).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $(b).focus(); } }));
+  $('#sEmail').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#sSave').click(); } });
+  $('#sSave').addEventListener('click',async()=>{ const b=$('#sSave'), name=$('#sName').value.trim(), phone=$('#sPhone').value.trim(), email=$('#sEmail').value.trim();
+    if(name.length<2){ $('#sName').focus(); return; } if(phone.replace(/\D/g,'').length!==10){ $('#sPhone').focus(); return; }
+    if(!L){ $('#savedMsg').hidden=false; $('#savedMsg').textContent='Couldn’t save right now. Call (865) 933-0937 and we’ll hold your price.'; return; }
+    b.classList.add('busy'); b.textContent='Saving…';
+    const j=await L.saveNow(leadData('Saved price',{name,phone,email,emailMe:!!email}));
+    b.classList.remove('busy'); b.textContent='Save my price';
+    if(!j||!j.ok){ $('#savedMsg').hidden=false; $('#savedMsg').textContent='That didn’t save. Please call (865) 933-0937.'; return; }
+    $('#fName').value=name; $('#fPhone').value=phone; if(email){ $('#fEmail').value=email; $('#moreBox').hidden=false; $('#moreBtn').hidden=true; }
+    $('#saveBox').hidden=true; $('#saveQ').hidden=true; $('#savedMsg').hidden=false;
+    $('#savedMsg').textContent='Saved, '+name.split(' ')[0]+'. '+(email?'We emailed you a link to come back and book. ':'')+'ABC Fence may reach out about it. Want to book now? Pick a time above.'; });
+  /* Back from a "pick up where you left off" link: their answers come back, they pick a time. */
+  function resumeFrom(lead){ let st={}; try{ st=JSON.parse(lead.state||'{}'); }catch(e){}
+    if(st.svc&&PRICING[st.svc]){ S.svc=st.svc; S.size=st.size||null; S.ex=st.ex||{}; $$('#svcPick .opt').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===S.svc))); }
+    $('#fName').value=lead.name||''; $('#fPhone').value=lead.phone||''; $('#fAddr').value=lead.address||''; if(lead.email){ $('#fEmail').value=lead.email; $('#moreBox').hidden=false; $('#moreBtn').hidden=true; }
+    const bn=$('#backBn'); bn.hidden=false; bn.innerHTML=''; const t=document.createElement('b'); t.textContent='Welcome back'+(lead.name?', '+String(lead.name).split(' ')[0]:'')+'.';
+    const x=document.createElement('button'); x.type='button'; x.textContent='Not you? Delete my info';
+    x.onclick=async()=>{ await L.forget(); ['#fName','#fPhone','#fAddr','#fEmail'].forEach(q=>$(q).value=''); bn.textContent='Your info was deleted. ABC Fence won’t follow up.'; };
+    bn.append(t,S.svc?'Your price is saved. Pick a time to finish booking.':'Pick up where you left off.',document.createElement('br'),x);
+    if(S.svc&&S.size) go(3); else if(S.svc) go(2);
+    setTimeout(()=>$('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}),300); }
+
   /* ---------- navigation ---------- */
   function valid(){ if(step===1) return !!S.svc; if(step===2) return S.svc==='bush'||!!S.size; if(step===3) return !!S.when;
     if(step===4) return $('#fName').value.trim().length>1&&$('#fPhone').value.replace(/\D/g,'').length===10&&$('#fAddr').value.trim().length>4; return true; }
@@ -701,13 +757,14 @@ footer b{color:var(--paper)}
     const data={action:'book',client:CLIENT_ID,job:NAMES[S.svc],estimateLow:lo,estimateHigh:hi,slotStart:S.slot?S.slot.start:null,when:S.when,urgent:false,
       name:$('#fName').value.trim(),phone:$('#fPhone').value.trim(),email:$('#fEmail').value.trim(),address:$('#fAddr').value.trim(),notes:note,website:$('#fWeb').value,photos:PHOTOS.map(p=>p.full),
       details:L.map(([n,a,b])=>n+': $'+fmt(r5(a))+'–$'+fmt(r5(b))).join('; ')};
+    if(window.PWL) Object.assign(data,window.PWL.bookingExtras());
     let res;
     try{ if(BOOKING_ENDPOINT){ const r=await fetch(BOOKING_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)}); res=await r.json(); }
       else { await new Promise(r=>setTimeout(r,600)); res={ok:true,slotLabel:S.slot?S.slot.label:S.when,id:'DEMO-'+Date.now().toString(36).toUpperCase()};
-        try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push({id:res.id,created:new Date().toISOString(),client:CLIENT_ID,status:'New',slotStart:data.slotStart||'',slotLabel:res.slotLabel,service:data.job,details:data.details,estimateLow:lo,estimateHigh:hi,urgent:'',name:data.name,phone:data.phone,email:data.email,address:data.address,notes:note,photoThumbs:PHOTOS.map(p=>p.thumb)}); localStorage.setItem(k,JSON.stringify(all.slice(-40))); }catch(e){} } }
+        try{ const k='pw_demo_bookings', all=JSON.parse(localStorage.getItem(k)||'[]'); all.push({id:res.id,created:new Date().toISOString(),client:CLIENT_ID,status:'New',slotStart:data.slotStart||'',slotLabel:res.slotLabel,service:data.job,details:data.details,estimateLow:lo,estimateHigh:hi,urgent:'',name:data.name,phone:data.phone,email:data.email,address:data.address,notes:note,source:data.source||'Website',photoThumbs:PHOTOS.map(p=>p.thumb)}); localStorage.setItem(k,JSON.stringify(all.slice(-40))); }catch(e){} } }
     catch(e){ res={ok:false}; }
     sending=false; btn.classList.remove('busy'); btn.textContent=submitLabel();
-    if(res&&res.ok){ go(5); finish(res); return; }
+    if(res&&res.ok){ if(window.PWL) window.PWL.done(data.phone); go(5); finish(res); return; }
     if(res&&res.error==='slot_taken'){ S.slot=null; S.when=null; loadSlots(); go(3); setTimeout(()=>{ const m=$('#slotMsg'); m.hidden=false; m.textContent='Someone just booked that time. Pick another.'; },400); return; }
     const w=$('#why'); w.innerHTML=''; w.append('That didn’t send. Please call '); const a=document.createElement('a'); a.href='tel:+18659330937'; a.textContent='(865) 933-0937'; w.append(a); }
   function finish(res){ const {lo,hi}=price(), first=$('#fName').value.trim().split(' ')[0], addr=$('#fAddr').value.trim();
@@ -727,6 +784,10 @@ footer b{color:var(--paper)}
   function startWith(svc){ if(step===5){ S.slot=null; S.asap=false; S.when=null; } if(step!==1) go(1); pickSvc(svc); }
   $$('#quick a, .row[data-svc], #qcard').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); startWith(a.dataset.svc); $('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); }));
   go(1);
+  if(L) L.resume().then(r=>{ if(!r) return; const bn=$('#backBn');
+    if(r.lead) return resumeFrom(r.lead);
+    bn.hidden=false; bn.textContent=r.forgotten?'Your info was deleted. ABC Fence won’t follow up.':'That link expired. Get a fresh price below, it only takes a minute.';
+    if(r.forgotten||r.expired){ go(1); const q=$('#qt'); q.insertBefore(bn,q.querySelector('.step')); setTimeout(()=>$('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}),300); } });
 
   // notification: on phones it drops from the top of the screen, so it lives on <body>
   { const qn=$('#qn'), home=$('#qtilt'), place=()=>{ if(innerWidth<960){ if(qn.parentElement!==document.body) document.body.appendChild(qn); } else if(qn.parentElement!==home) home.appendChild(qn); }; place(); addEventListener('resize',place,{passive:true}); }
