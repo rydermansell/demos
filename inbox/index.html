@@ -323,7 +323,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   <p class="upd" id="upd" hidden></p>
   <p class="acct" id="acct" hidden></p>
-  <p class="ver">PriceWink inbox · build 33</p>
+  <p class="ver">PriceWink inbox · build 34</p>
 </main>
 <button class="fab" id="fab" type="button"><span aria-hidden="true">+</span> New Job</button>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -479,7 +479,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   const PH={};   // customer photos already fetched this visit, by file id
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
-  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree'},hooks:{name:'Hooks Lawn And More',trade:'lawn'},williams:{name:'Williams Removal Services',trade:'junk'},etfence:{name:'East Tennessee Fence Co.',trade:'fence'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'},ferree:{name:'Ferree Guttering',trade:'gutters'},abcfence:{name:'ABC Fence Co',trade:'fenceabc'}};
+  const CLIENTS={gonzalez:{name:'Gonzalez Tree Service',trade:'tree',place:'ChIJoU4g3bZk3QARI8rUgk4-x9k'},hooks:{name:'Hooks Lawn And More',trade:'lawn',place:'ChIJVTUDu7NHXIgRRcbJ3Kj0xsA'},williams:{name:'Williams Removal Services',trade:'junk',place:'ChIJcSu2vn8fGkMRwg1ROkNXCzY'},etfence:{name:'East Tennessee Fence Co.',trade:'fence',place:'ChIJcaykbysfXIgRMr5AbFJfL1M'},knoxfantasy:{name:'Knox Fantasy Christmas Lights',trade:'lights',place:'ChIJfR8QkVPj0yoRCN1JN_u-Lcw'},hardinvalley:{name:'Hardin Valley Tree & More',trade:'treehv'},ferree:{name:'Ferree Guttering',trade:'gutters',place:'ChIJpwvqIP0FXIgRTRJ7ZyhxMz0'},abcfence:{name:'ABC Fence Co',trade:'fenceabc',place:'ChIJf4SHHhMJXIgR7VGDjnJ8mWQ'}};
   const SAMPLE_SETS={
     tree:[
       {urgent:1, mins:-14, status:'New', service:'Storm cleanup', details:'One downed tree: On a structure', lo:600, hi:1950, name:'Dale Whitaker', addr:'1418 Pine Hollow Rd, Maryville', notes:'Big oak limb on the garage roof. Nobody hurt.'},
@@ -803,10 +803,10 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     const d=b.slotStart?new Date(b.slotStart):null, now=new Date(), street=String(b.address||'').split(',')[0].trim();
     const tm=d?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'', diff=d?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5):0;
     const when=d?(diff===0?'today':diff===1?'tomorrow':d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}))+' at '+tm:'', past=d&&d.getTime()<now.getTime()-3600e3;
-    if(kind==='review') return hi+'Thanks for choosing us for your '+svc+'. If you’re happy with how it turned out, a quick Google review would mean a lot to us'+(REVIEW?': '+REVIEW:'.');
+    if(kind==='review') return hi+'Thanks for choosing us for your '+svc+'. If you’re happy with how it turned out, would you leave us a quick Google review? It only takes a minute: '+reviewLink();
     if(kind==='moved'&&d) return hi+'We needed to move your '+svc+' estimate. Your new time is '+when+(street?' at '+street:'')+'. Reply here if that doesn’t work and we’ll find another time.';
     if(b.status==='Canceled') return hi+'Sorry we couldn’t make '+(d?(diff===0?'today':d.toLocaleDateString('en-US',{weekday:'long'})):'that time')+' work for your '+svc+' estimate. Want to pick a new time? Just reply with a day that works for you.';
-    if(b.status==='Done') return hi+'Thanks for having us out for your '+svc+'. If anything doesn’t look right, let us know and we’ll take care of it. And if you’re happy with the work, a quick Google review would mean a lot to us.';
+    if(b.status==='Done') return hi+'Thanks for having us out for your '+svc+'. If anything doesn’t look right, let us know and we’ll take care of it. And if you’re happy with the work, a quick Google review would mean a lot to us: '+reviewLink();
     if(b.urgent) return hi+'We got your emergency request for '+svc+(street?' at '+street:'')+'. We’re working on getting someone out to you as soon as we can. Is this the best number to call?';
     if(!d) return hi+'Thanks for your '+svc+' request. What day and time works best for a free estimate?';
     if(past) return hi+'Thanks for having us out to look at your '+svc+'. Any questions about the estimate? Happy to get you on the schedule whenever you’re ready.';
@@ -975,6 +975,10 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     try{ const j=await post({action:'add',name:nb.name,phone:nb.phone,job:$('#mJob').value.trim(),address:nb.address,slotStart:start}); if(j.ok) done(j.booking); else if(j.error==='slot_taken') taken(); else throw 0; }
     catch(e){ toast('That didn’t save. Check your signal and try again.'); mBtn(); }
     mBusy=false; });
+  /* Google "write a review" link: the owner's own link if set (reviewUrl on their row), else their Google listing's review box (Place ID),
+     else a Google search for their business, where the "Write a review" button is one tap away. */
+  function reviewLink(){ if(REVIEW) return REVIEW; const p=CL().place; if(p) return 'https://search.google.com/local/writereview?placeid='+p;
+    return 'https://www.google.com/search?q='+encodeURIComponent($('#biz').textContent.trim()+' reviews'); }
   /* ---------- Share your booking link: each way of sharing tags the link (?src=) so bookings show where they came from ---------- */
   const DEMO_SITES={abcfence:'https://getpricewink.com/demos/abc-fence/',gonzalez:'https://getpricewink.com/demos/gonzalez-tree/',hooks:'https://getpricewink.com/demos/hooks-lawn/',williams:'https://getpricewink.com/demos/williams-removal/',
     etfence:'https://getpricewink.com/demos/etfence/',knoxfantasy:'https://getpricewink.com/demos/knox-fantasy/',hardinvalley:'https://getpricewink.com/demos/hardin-valley/',ferree:'https://getpricewink.com/demos/ferree-guttering/'};

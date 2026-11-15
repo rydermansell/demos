@@ -97,7 +97,7 @@ function addClient() {
     leadHours: 12,                          // no bookings sooner than this
     phone: '(865) 367-4667',
     site: 'https://rydermansell.github.io/demos/gonzalez-tree/',
-    reviewUrl: '',                          // their Google "write a review" link, used by the inbox's Ask for a review button
+    reviewUrl: '',                          // their Google "write a review" link, or just their Google Place ID (ChIJ...), used by Ask for a review
   };
   const ss = sheet_();
   if (findClient_(c.id)) throw new Error('A client with id "' + c.id + '" already exists. Edit their row on the Clients tab instead.');
@@ -204,7 +204,7 @@ function ownerAction_(a, d) {
   client = prepare_(client, true);
   if (a === 'inbox') {
     const bookings = bookingsFor_(client.id);
-    return { ok: true, name: client.name, me: auth.email || '', reviewUrl: String(client.reviewUrl || ''), site: String(client.site || ''), bookings: bookings, blocks: blocksFor_(client),
+    return { ok: true, name: client.name, me: auth.email || '', reviewUrl: reviewUrl_(client), site: String(client.site || ''), bookings: bookings, blocks: blocksFor_(client),
       synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client), leads: leadsFor_(client.id), followup: followupText_(client), stats: stats_(client.id, bookings) };
   }
   if (a === 'photo') return photo_(client, String(d.id || ''));
@@ -374,6 +374,8 @@ function verifyGoogle_(cred) {
   if (String(t.email_verified) !== 'true' || Number(t.exp) * 1000 < Date.now()) return null;
   return normEmail_(t.email);
 }
+/** reviewUrl may hold a full link (e.g. their g.page/r/.../review link) or just a Google Place ID ("ChIJ..."), which becomes the write-a-review link. */
+function reviewUrl_(c) { const r = String(c.reviewUrl || '').trim(); return /^ChIJ[\w-]+$/.test(r) ? 'https://search.google.com/local/writereview?placeid=' + r : r; }
 function ownerLink_(c) { return INBOX_BASE + '?c=' + encodeURIComponent(c.id) + '#start'; }
 function otpKey_(clientId, email) { return 'otp_' + sha_(clientId + '|' + email); }
 /** Counts an attempt; false once there have been max of them within the window. */

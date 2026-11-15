@@ -124,6 +124,10 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
 
+## Google review link (Nov 15, 2026)
+
+"Ask for a review" and the after-the-job text include a link that opens the business's Google listing with the review box already open. Put it in the client's `reviewUrl` column: either their own review link from Google Business Profile (Home > "Ask for reviews" > copy link, looks like `g.page/r/.../review`), or just their Google **Place ID** (`ChIJ...`). The Place ID becomes `https://search.google.com/local/writereview?placeid=...`. With nothing set, the text links to a Google search for the business, where "Write a review" is one tap away. Demo inboxes use the Place IDs in the inbox's `CLIENTS` list.
+
 ## Emails come from rj@getpricewink.com (Nov 15, 2026)
 
 All emails (sign-in codes, booking alerts, customer confirmations, reminders) are sent from `MAIL_FROM` (top of `Code.gs`) using Gmail's "Send mail as". The address must be listed in this Gmail account under Settings > Accounts > Send mail as. If it isn't, emails still go out from the Gmail address. After pasting, run `setup` once and click **Allow** (Gmail asks for send-as permission), then publish a new version.
