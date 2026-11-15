@@ -124,6 +124,27 @@ After editing `Code.gs`: **Deploy > Manage deployments > edit (pencil) > Version
 - Text alerts use the carrier's email-to-text address (for example `8655551234@vtext.com` for Verizon). Some carriers have been phasing these out; email always works.
 - Preview mode: when `BOOKING_ENDPOINT` is empty, the site uses sample times and saves bookings only on that device, and `/demos/inbox/?c=<client>&demo` shows them. That's for showing prospects the full loop before they sign up.
 
+## What's new: share link, results, incomplete leads (Nov 15, 2026)
+
+Paste the new `Code.gs`, then **Deploy > Manage deployments > edit > New version > Deploy**. The **Leads** and **Events** tabs create themselves. Tests: `node backend/test/leads.test.js`.
+
+**In the owner inbox**
+- **Share your booking link** (header): Share / Text / Email / Facebook / Google profile / Copy. Each adds `?src=` to the client's `site` link, so bookings show where they came from. The `site` column on the Clients tab must hold the client's live quote page.
+- **Results** (header, or tap the month line): last 30 days of quote-tool visits, quotes started, contact info given and online bookings, plus bookings and won dollars by source.
+- **Incomplete leads** (yellow banner): people who typed their name and phone, then went 30 minutes without booking. Shows what they picked, the price, when they started and the step where they stopped. Call / Text / Email with the owner's own follow-up message (editable; `{first} {service} {price} {link} {business}`), where `{link}` is a fresh "pick up where you left off" link. Plus Mark contacted / Don't contact / Delete. Booking removes them automatically. Saved per client in the `followupText` column.
+
+**On the client's site** (`pw-leads.js`, shared by every site)
+- Records where each visit came from (`?src=`, `utm_source`, or the site that sent them) and counts visit / start / contact. Counts have no personal info: no cookies, no IDs.
+- Saves the unfinished quote once the customer types a name and a 10-digit phone, under a notice next to the fields. Updates are deduplicated by phone number. Someone typing a phone number that's already saved replaces that saved info instead of seeing it.
+- **Not ready? Save this price** under the time picker: name, phone and optional email. If they give an email, they're emailed their own link back, with a "Delete my info" link.
+- `?resume=<key>` links bring their answers back and drop them on "pick a time". Links expire after 7 days. The key never goes in the sheet (only its fingerprint), and it's removed from the address bar on arrival.
+- Retention (nightly, with the 7 PM run): incomplete leads are deleted after 30 quiet days, contact info is cleared off finished leads after 7 days, and visit counts are deleted after 35 days. Privacy page: `getpricewink.com/privacy`.
+
+**Adding it to another client site** (ABC Fence is done; copy its pattern):
+1. `<script src="../pw-leads.js"></script>` before the site script (on a client's own domain, copy `pw-leads.js` next to the page and use `pw-leads.js`).
+2. After `BOOKING_ENDPOINT`/`CLIENT_ID`: `const L=window.PWL||null; if(L) L.init({endpoint:BOOKING_ENDPOINT,client:CLIENT_ID});`
+3. `L.track('start')` when a service is picked, `L.save({...})` on contact-field input, `Object.assign(data, PWL.bookingExtras())` in the booking request, `PWL.done(phone)` after it succeeds, and `L.resume()` on load. Add the notice under the contact fields and the "Save this price" box (see `abc-fence/index.html`).
+
 ## What's new: + New Job (Nov 15, 2026)
 
 The inbox's main button is now **+ New Job**, for customers who call or text instead of booking online. Owners enter the name, phone, address, job, a time (one of their open times, or any other day and time), an optional price, how the customer found them, and optionally an email (with a confirmation email) and notes. It's saved like an online booking, so call, text, directions, move, cancel, won/lost and review requests all work. If something's already on the calendar at that time, the owner is warned and can add it anyway. Every booking now records a `source` (online bookings say Website), which the lead tracking will build on.

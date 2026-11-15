@@ -7,7 +7,7 @@ function makeEnv(){
     getLastRow:()=>data.length, getLastColumn:()=>data[0]?data[0].length:0,
     getRange:(r,c,nr,nc)=>({ setValue:v=>{ while(data.length<r) data.push([]); if(typeof v==='string'&&v[0]==="'") v=v.slice(1); data[r-1][c-1]=v; return {setFontWeight(){}}; },
       setValues:vals=>{ vals.forEach((row,i)=>row.forEach((v,j)=>{ data[r-1+i][c-1+j]=v; })); }, getValues:()=>[data[r-1].slice(c-1,c-1+(nc||1))], setFontWeight(){} }),
-    setFrozenRows(){} }; return api; };
+    deleteRows:(start,n)=>{ data.splice(start-1,n); }, setFrozenRows(){} }; return api; };
   const ss={getSheetByName:n=>sheets[n]?sheetObj(n):null, insertSheet:n=>{sheets[n]=[];return sheetObj(n);}, getSheets:()=>Object.keys(sheets), getId:()=>'S1'};
   const fmt=(d,tz,pat)=>{ const p=new Intl.DateTimeFormat('en-US',{timeZone:tz==='UTC'?'UTC':tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,weekday:'short'}).formatToParts(d).reduce((a,x)=>(a[x.type]=x.value,a),{});
     if(p.hour==='24') p.hour='00';
@@ -16,7 +16,7 @@ function makeEnv(){
     PropertiesService:{getScriptProperties:()=>({getProperty:k=>props[k]||null,setProperty:(k,v)=>{props[k]=v;}})},
     SpreadsheetApp:{openById:()=>ss, getActiveSpreadsheet:()=>ss},
     CacheService:{getScriptCache:()=>({get:k=>k in cache?cache[k]:null,put:(k,v)=>{cache[k]=String(v);},remove:k=>{delete cache[k];}})},
-    LockService:{getScriptLock:()=>({waitLock(){},releaseLock(){}})},
+    LockService:{getScriptLock:()=>({waitLock(){},releaseLock(){},hasLock:()=>false})},
     MailApp:{sendEmail:o=>mail.push(o)},
     Session:{getEffectiveUser:()=>({getEmail:()=>'admin@pw.com'})},
     Logger:{log:x=>ctx._log.push(x)}, _log:[],

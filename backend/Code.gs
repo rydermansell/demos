@@ -7,6 +7,11 @@
  *   GET  ?action=auth&c=<client>                     business name for the sign-in screen (nothing private)
  *   POST {action:"book", client, slotStart, ...}     books a time (re-checks it is still free)
  *
+ *   POST {action:"track", client, event, source}     quote-tool counts: visit / start / contact (no personal info)
+ *   POST {action:"save_lead", client, name, phone, ...}  saves an unfinished quote (after the customer gives name + phone)
+ *   GET  ?action=resume&c=<client>&t=<token>          the customer's own saved quote, for their "pick up where you left off" link
+ *   POST {action:"forget_lead", client, t}           the customer deletes their saved quote
+ *
  * Owner sign-in (no password is ever stored):
  *   POST {action:"login_code", client, email}             emails a 6-digit code (same answer whether or not the email is on file)
  *   POST {action:"login_verify", client, email, code}     code -> device session token
@@ -15,7 +20,8 @@
  *
  * Owner actions: every one sends {token} and is checked by ownerAction_(). The business is taken from the
  * session, never from the request, so one owner can never reach another business's data.
- *   inbox, photo, status, block, unblock, connect, disconnect, reschedule, add (+ New Job), outcome, connectTicket, signout
+ *   inbox, photo, status, block, unblock, connect, disconnect, reschedule, add (+ New Job), outcome, connectTicket, signout,
+ *   lead (contacted / don't contact / delete / make a resume link), followup (save the follow-up message)
  *
  * Open times automatically skip anything on the owner's own calendars: Google calendars shared with this
  * account (free/busy is enough) and private calendar links (iPhone/iCloud, Outlook). See README.md.
@@ -29,12 +35,18 @@
 
 const TZ = 'America/New_York';
 const DAYS_AHEAD = 14;
-const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails'];
+const CLIENT_COLS = ['id', 'name', 'ownerEmail', 'ownerSms', 'calendarId', 'days', 'start', 'end', 'slotMinutes', 'leadHours', 'inboxKey', 'active', 'phone', 'site', 'busyCalendars', 'busyIcs', 'digest', 'reviewUrl', 'loginEmails', 'followupText'];
 const BLOCK_PREFIX = 'Blocked: ';
 const INBOX_BASE = 'https://getpricewink.com/inbox/';
 const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
 const SESSION_COLS = ['tokenHash', 'client', 'email', 'method', 'device', 'created', 'lastSeen', 'expires', 'revoked'];
+const LEAD_COLS = ['id', 'client', 'created', 'updated', 'status', 'step', 'name', 'phone', 'email', 'address', 'service', 'details', 'estimateLow', 'estimateHigh', 'slotLabel', 'source', 'state', 'resumeHash', 'resumeExpires', 'bookingId', 'contactedAt', 'optOut'];
+const EVENT_COLS = ['date', 'client', 'event', 'source'];
+const ABANDON_MINUTES = 30;    // an unfinished quote counts as an incomplete lead after this long with no activity
+const LEAD_DAYS = 30;          // incomplete leads (and their contact info) are deleted after this many days without activity
+const RESUME_DAYS = 7;         // "pick up where you left off" links work this long
+const EVENT_DAYS = 35;         // raw visit counts are kept this long (no personal info in them)
 const SESSION_DAYS = 180;      // a signed-in phone stays signed in this long after its last use
 const INVITE_HOURS = 72;       // one-time setup links expire after this
 const CODE_MINUTES = 10;       // emailed sign-in codes expire after this
@@ -55,6 +67,8 @@ function setup() {
   ensureSheet_(ss, 'Clients', CLIENT_COLS);
   ensureSheet_(ss, 'Bookings', BOOKING_COLS);
   ensureSheet_(ss, 'Sessions', SESSION_COLS);
+  ensureSheet_(ss, 'Leads', LEAD_COLS);
+  ensureSheet_(ss, 'Events', EVENT_COLS);
   const first = ss.getSheetByName('Sheet1'); if (first && ss.getSheets().length > 1) ss.deleteSheet(first);
   installTriggers();   // nightly summary emails + auto-setup of new client rows
   Logger.log('Spreadsheet ready: ' + ss.getUrl());
@@ -141,6 +155,7 @@ function doGet(e) {
     client = prepare_(client, true);
     if (p.action === 'slots') return json_({ ok: true, tz: TZ, days: openSlots_(client) });
     if (p.action === 'auth') return json_({ ok: true, name: client.name });
+    if (p.action === 'resume') return json_(resumeLead_(client, String(p.t || '')));
     if (p.action === 'ics') {   // calendar subscription for owners on iPhone / Outlook (read-only, its own token)
       if (!p.t || !safeEq_(String(p.t), feedToken_(client))) return ContentService.createTextOutput('Not found').setMimeType(ContentService.MimeType.TEXT);
       return ContentService.createTextOutput(feed_(client)).setMimeType(ContentService.MimeType.ICAL);
@@ -151,7 +166,8 @@ function doGet(e) {
 
 const LOGIN_ACTIONS = { login_code: loginCode_, login_verify: loginVerify_, login_google: loginGoogle_, login_invite: loginInvite_ };
 const OWNER_READS = ['inbox', 'photo', 'connectTicket', 'signout'];
-const OWNER_WRITES = ['status', 'block', 'unblock', 'connect', 'disconnect', 'reschedule', 'add', 'outcome'];
+const OWNER_WRITES = ['status', 'block', 'unblock', 'connect', 'disconnect', 'reschedule', 'add', 'outcome', 'lead', 'followup'];
+const PUBLIC_ACTIONS = { track: track_, save_lead: saveLead_, forget_lead: forgetLead_ };
 
 function doPost(e) {
   let d;
@@ -160,6 +176,11 @@ function doPost(e) {
     const a = String(d.action || 'book');
     if (LOGIN_ACTIONS[a]) return json_(LOGIN_ACTIONS[a](d));
     if (OWNER_READS.indexOf(a) >= 0 || OWNER_WRITES.indexOf(a) >= 0) return json_(ownerAction_(a, d));
+    if (PUBLIC_ACTIONS[a]) {
+      const pc = findClient_(d.client);
+      if (!pc || !isOn_(pc.active)) return json_({ ok: false, error: 'unknown_client' });
+      return json_(a === 'track' ? track_(pc, d) : locked_(() => PUBLIC_ACTIONS[a](findClient_(pc.id), d)));
+    }
     if (a !== 'book') return json_({ ok: false, error: 'unknown_action' });
     return json_(locked_(() => {
       let client = findClient_(d.client);
@@ -177,7 +198,11 @@ function ownerAction_(a, d) {
   let client = findClient_(auth.client);
   if (!client || !isOn_(client.active)) return { ok: false, error: 'auth' };
   client = prepare_(client, true);
-  if (a === 'inbox') return { ok: true, name: client.name, me: auth.email || '', reviewUrl: String(client.reviewUrl || ''), bookings: bookingsFor_(client.id), blocks: blocksFor_(client), synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client) };
+  if (a === 'inbox') {
+    const bookings = bookingsFor_(client.id);
+    return { ok: true, name: client.name, me: auth.email || '', reviewUrl: String(client.reviewUrl || ''), site: String(client.site || ''), bookings: bookings, blocks: blocksFor_(client),
+      synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client), leads: leadsFor_(client.id), followup: followupText_(client), stats: stats_(client.id, bookings) };
+  }
   if (a === 'photo') return photo_(client, String(d.id || ''));
   if (a === 'connectTicket') return { ok: true, ticket: makeTicket_(client.id) };
   if (a === 'signout') return signout_(auth, !!d.others);
@@ -191,6 +216,8 @@ function ownerAction_(a, d) {
     if (a === 'reschedule') return reschedule_(fresh, d);
     if (a === 'add') return addByOwner_(fresh, d);
     if (a === 'outcome') return outcome_(fresh, d);
+    if (a === 'lead') return leadOp_(fresh, d);
+    if (a === 'followup') { setClientField_(fresh.id, 'followupText', clean_(d.text, 600)); return { ok: true, followup: followupText_(findClient_(fresh.id)) }; }
     return { ok: false, error: 'unknown_action' };
   });
 }
@@ -247,7 +274,7 @@ function loginGoogle_(d) {
 /** One-time setup link (for setting up an owner's phone in person). Used once, then it's dead. */
 function loginInvite_(d) {
   const inv = String(d.invite || ''); if (inv.length < 40) return { ok: false, error: 'invite_bad' };
-  const h = sha_(inv), sh = sheet_().getSheetByName('Sessions'), rows = sh.getDataRange().getValues(), H = rows[0], now = new Date();
+  const h = sha_(inv), sh = tab_('Sessions', SESSION_COLS), rows = sh.getDataRange().getValues(), H = rows[0], now = new Date();
   for (let r = 1; r < rows.length; r++) {
     const o = rowObj_(H, rows[r]);
     if (o.method !== 'invite' || !safeEq_(String(o.tokenHash), h)) continue;
@@ -275,7 +302,7 @@ function allowedEmails_(c) { return [c.ownerEmail].concat(String(c.loginEmails |
 function createSession_(clientId, email, method, device) {
   const token = randToken_(), now = new Date();
   const row = { tokenHash: sha_(token), client: clientId, email: email, method: method, device: clean_(device, 40), created: now, lastSeen: now, expires: new Date(now.getTime() + SESSION_DAYS * 86400000), revoked: '' };
-  sheet_().getSheetByName('Sessions').appendRow(SESSION_COLS.map(k => cell_(row[k])));
+  tab_('Sessions', SESSION_COLS).appendRow(SESSION_COLS.map(k => cell_(row[k])));
   return token;
 }
 /** Checks a device token. Returns { client, email, hash } or null. Cached for 5 minutes; lastSeen is written at most twice a day. */
@@ -283,7 +310,7 @@ function authOwner_(token) {
   token = String(token || ''); if (token.length < 40) return null;
   const h = sha_(token), cache = CacheService.getScriptCache(), hit = cache.get('sess_' + h), now = Date.now();
   if (hit) { const o = JSON.parse(hit); if (o.exp > now) return { client: o.c, email: o.e, hash: h }; }
-  const sh = sheet_().getSheetByName('Sessions'), rows = sh.getDataRange().getValues(), H = rows[0];
+  const sh = tab_('Sessions', SESSION_COLS), rows = sh.getDataRange().getValues(), H = rows[0];
   for (let r = 1; r < rows.length; r++) {
     const o = rowObj_(H, rows[r]);
     if (String(o.tokenHash) !== h || o.method === 'invite') continue;
@@ -300,7 +327,7 @@ function authOwner_(token) {
 }
 /** Sign out this device, or (others) every other device for this business. */
 function signout_(auth, others) {
-  const sh = sheet_().getSheetByName('Sessions'), rows = sh.getDataRange().getValues(), H = rows[0], cache = CacheService.getScriptCache();
+  const sh = tab_('Sessions', SESSION_COLS), rows = sh.getDataRange().getValues(), H = rows[0], cache = CacheService.getScriptCache();
   const iR = H.indexOf('revoked') + 1, stamp = 'signed out ' + Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm');
   let n = 0;
   for (let r = 1; r < rows.length; r++) {
@@ -321,7 +348,7 @@ function makeInvite_(clientId) {
   const c = findClient_(clientId); if (!c) throw new Error('No client with id ' + clientId);
   const token = randToken_(), now = new Date();
   const row = { tokenHash: sha_(token), client: c.id, email: normEmail_(c.ownerEmail), method: 'invite', device: '', created: now, lastSeen: '', expires: new Date(now.getTime() + INVITE_HOURS * 3600000), revoked: '' };
-  sheet_().getSheetByName('Sessions').appendRow(SESSION_COLS.map(k => cell_(row[k])));
+  tab_('Sessions', SESSION_COLS).appendRow(SESSION_COLS.map(k => cell_(row[k])));
   return INBOX_BASE + '?c=' + encodeURIComponent(c.id) + '#invite=' + token;
 }
 /** Short-lived ticket the inbox hands to the Connect app, so the owner's session token never goes in a link. */
@@ -383,6 +410,7 @@ function book_(client, d) {
     }
   }
   appendBooking_(b);
+  try { completeLeads_(client.id, b.phone, id, String(d.leadKey || '')); } catch (err) { console.error(err); }   // never blocks a booking
   notifyOwner_(client, b, range);
   if (b.email) notifyCustomer_(client, b);
   return { ok: true, id: id, slotLabel: slotLabel };
@@ -575,6 +603,192 @@ function outcome_(client, d) {
   setCells_(row, { outcome: o, jobValue: o === 'Won' && v > 0 && v < 10000000 ? v : '' });
   return { ok: true };
 }
+
+/* ------------------------------------------------------------------ incomplete leads + quote-tool counts */
+/*
+ * A lead is saved only after the customer has typed their name and phone into the quote tool, under a notice that says
+ * the business may follow up about this quote. Visitors who never type their contact info are only counted (visit / start),
+ * with no identifier of any kind. Leads are deleted after LEAD_DAYS without activity, or when the customer asks.
+ */
+const TRACK_EVENTS = ['visit', 'start', 'contact'];
+
+function track_(client, d) {
+  const ev = String(d.event || ''); if (TRACK_EVENTS.indexOf(ev) < 0) return { ok: false, error: 'bad_event' };
+  if (!bump_(CacheService.getScriptCache(), 'trk_' + client.id + '_' + Math.floor(Date.now() / 60000), 300, 120)) return { ok: true };   // flood guard
+  tab_('Events', EVENT_COLS).appendRow([Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd'), client.id, ev, cell_(cleanSource_(d.source))]);
+  return { ok: true };
+}
+function cleanSource_(s) { s = clean_(s, 40); return s || 'Website'; }
+
+/** Customer side: create or update their unfinished quote. Returns { id, key } (the key is their private resume token). */
+function saveLead_(client, d) {
+  if (d.website) return { ok: true, id: 'ignored', key: '' };                               // honeypot = bot
+  const name = clean_(d.name, 80), phone = clean_(d.phone, 30), digits = phone.replace(/\D/g, '');
+  if (name.length < 2 || digits.length < 10) return { ok: false, error: 'missing_fields' };
+  const cache = CacheService.getScriptCache();
+  if (!bump_(cache, 'lead_' + client.id, 60, 600) || !bump_(cache, 'leadp_' + client.id + digits, 30, 600)) return { ok: false, error: 'slow_down' };
+  const email = clean_(d.email, 120), now = new Date();
+  const fields = { updated: now, status: 'Open', step: clean_(d.step, 40), name: name, phone: phone, email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '',
+    address: clean_(d.address, 160), service: clean_(d.service, 60), details: clean_(d.details, 600), estimateLow: Number(d.estimateLow) || '', estimateHigh: Number(d.estimateHigh) || '',
+    slotLabel: clean_(d.slotLabel, 60), source: cleanSource_(d.source), state: d.state ? clean_(typeof d.state === 'string' ? d.state : JSON.stringify(d.state), 2000) : '' };
+  const sh = tab_('Leads', LEAD_COLS), rows = sh.getDataRange().getValues(), H = rows[0];
+  let found = -1, keyOk = false;
+  const kh = d.key ? sha_(String(d.key)) : '';
+  for (let r = rows.length - 1; r >= 1; r--) {
+    const o = rowObj_(H, rows[r]); if (String(o.client) !== client.id || o.status !== 'Open') continue;
+    if (kh && safeEq_(String(o.resumeHash), kh) && String(o.id) === String(d.id || '')) { found = r; keyOk = true; break; }
+    if (found < 0 && String(o.phone).replace(/\D/g, '') === digits && now - new Date(o.updated) < 14 * 86400000) found = r;
+  }
+  let key = keyOk ? String(d.key) : randToken_(), id;
+  const hashCols = { resumeHash: sha_(key), resumeExpires: new Date(now.getTime() + RESUME_DAYS * 86400000) };
+  if (found > 0) {
+    const o = rowObj_(H, rows[found]); id = String(o.id);
+    if (String(o.optOut) === 'Yes') return { ok: true, id: id, key: '' };   // asked not to be contacted: keep it that way, store nothing new
+    // Without the key, this is someone typing the same phone number: replace everything (never merge someone else's saved info) and issue a new key.
+    if (keyOk) Object.keys(fields).forEach(k => { if (fields[k] === '') delete fields[k]; });   // their own later save: only fill in what's new
+    const row = Object.assign(keyOk ? o : { id: id, client: client.id, created: o.created, bookingId: '', contactedAt: '', optOut: '' }, fields, keyOk ? {} : hashCols);
+    sh.getRange(found + 1, 1, 1, H.length).setValues([H.map(h => cell_(row[h] === undefined ? '' : row[h]))]);
+  } else {
+    id = 'L' + Utilities.formatDate(now, TZ, 'yyMMdd') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const row = Object.assign({ id: id, client: client.id, created: now, bookingId: '', contactedAt: '', optOut: '' }, fields, hashCols);
+    appendRowByHeader_(sh, LEAD_COLS, row);
+  }
+  if (d.emailMe && fields.email && client.site && !keyOk) {   // "Save this price": email them their own link back (once per key)
+    try {
+      MailApp.sendEmail({ to: fields.email, name: client.name, replyTo: client.ownerEmail || undefined,
+        subject: 'Your ' + (fields.service || 'quote') + ' price from ' + client.name,
+        htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(name.split(' ')[0]) + ',</p>' +
+          '<p>Here’s the ' + esc_((fields.service || 'quote').toLowerCase()) + ' price you saved' + (fields.estimateLow ? ': <b>$' + fmt_(fields.estimateLow) + (fields.estimateHigh && fields.estimateHigh !== fields.estimateLow ? ' to $' + fmt_(fields.estimateHigh) : '') + '</b>' : '') + '.</p>' +
+          '<p><a href="' + esc_(resumeUrl_(client, key)) + '">Pick a time when you’re ready</a> (this link works for ' + RESUME_DAYS + ' days).</p>' +
+          '<p>' + esc_(client.name) + (client.phone ? ' · ' + esc_(String(client.phone)) : '') + '</p>' +
+          '<p style="color:#8a8f86;font-size:12px">You got this because you saved a quote on our website. Don’t want us to follow up? <a href="' + esc_(resumeUrl_(client, key) + '&forget=1') + '">Delete my info</a>.</p></div>' });
+    } catch (err) { console.error(err); }
+  }
+  return { ok: true, id: id, key: key };
+}
+function resumeUrl_(client, key) { const s = String(client.site || ''); return s + (s.indexOf('?') < 0 ? '?' : '&') + 'resume=' + key; }
+
+/** Customer side: their own saved quote, by their private link. */
+function resumeLead_(client, t) {
+  if (t.length < 40) return { ok: false, error: 'not_found' };
+  const row = leadByKey_(client, t); if (!row) return { ok: false, error: 'not_found' };
+  const o = row.o;
+  return { ok: true, lead: { id: o.id, name: o.name, phone: o.phone, email: o.email, address: o.address, service: o.service, details: o.details, step: o.step, state: String(o.state || '') } };
+}
+/** Customer side: "Delete my info". Wipes their contact details and marks them as not to be contacted. */
+function forgetLead_(client, d) {
+  const row = leadByKey_(client, String(d.t || '')); if (!row) return { ok: true };
+  wipeLead_(row.sh, row.r, row.H, 'Deleted'); return { ok: true };
+}
+function leadByKey_(client, t) {
+  if (!t || t.length < 40) return null;
+  const h = sha_(t), sh = tab_('Leads', LEAD_COLS), rows = sh.getDataRange().getValues(), H = rows[0], now = new Date();
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (String(o.client) === client.id && o.status === 'Open' && safeEq_(String(o.resumeHash), h) && new Date(o.resumeExpires) > now) return { sh: sh, r: r, H: H, o: o };
+  }
+  return null;
+}
+function wipeLead_(sh, r, H, status) {
+  const keep = { id: 1, client: 1, created: 1, source: 1, bookingId: 1 }, row = sh.getRange(r + 1, 1, 1, H.length).getValues()[0];
+  sh.getRange(r + 1, 1, 1, H.length).setValues([H.map((h, i) => keep[h] ? row[i] : h === 'status' ? status : h === 'updated' ? new Date() : h === 'optOut' && status === 'Deleted' ? 'Yes' : '')]);
+}
+/** A booking finishes any open lead with the same phone (and the one whose key came with the booking). */
+function completeLeads_(clientId, phone, bookingId, key) {
+  const digits = String(phone || '').replace(/\D/g, ''), kh = key ? sha_(key) : '';
+  const sh = tab_('Leads', LEAD_COLS), rows = sh.getDataRange().getValues(), H = rows[0];
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (String(o.client) !== clientId || o.status !== 'Open') continue;
+    if ((digits && String(o.phone).replace(/\D/g, '') === digits) || (kh && safeEq_(String(o.resumeHash), kh))) {
+      const set = { status: 'Completed', bookingId: bookingId, updated: new Date(), resumeHash: '' };
+      Object.keys(set).forEach(k => sh.getRange(r + 1, H.indexOf(k) + 1).setValue(set[k]));
+    }
+  }
+}
+/** Owner side: open leads that have gone quiet for ABANDON_MINUTES. */
+function leadsFor_(clientId) {
+  const rows = tab_('Leads', LEAD_COLS).getDataRange().getValues(), H = rows[0], cut = Date.now() - ABANDON_MINUTES * 60000, out = [];
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (String(o.client) !== clientId || o.status !== 'Open' || new Date(o.updated).getTime() > cut) continue;
+    out.push({ id: o.id, created: iso_(o.created), updated: iso_(o.updated), step: o.step, name: o.name, phone: String(o.optOut) === 'Yes' ? '' : o.phone, email: String(o.optOut) === 'Yes' ? '' : o.email,
+      address: o.address, service: o.service, details: o.details, estimateLow: o.estimateLow, estimateHigh: o.estimateHigh, slotLabel: o.slotLabel, source: o.source,
+      contactedAt: iso_(o.contactedAt), optOut: String(o.optOut) === 'Yes' });
+  }
+  return out.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+}
+/** Owner side: contacted | dnc (don't contact) | delete | link (fresh "pick up where you left off" link for a follow-up message). */
+function leadOp_(client, d) {
+  const sh = tab_('Leads', LEAD_COLS), rows = sh.getDataRange().getValues(), H = rows[0];
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]);
+    if (String(o.id) !== String(d.id) || String(o.client) !== client.id || o.status !== 'Open') continue;
+    const put = (k, v) => sh.getRange(r + 1, H.indexOf(k) + 1).setValue(v);
+    if (d.op === 'contacted') { put('contactedAt', new Date()); return { ok: true }; }
+    if (d.op === 'dnc') { put('optOut', 'Yes'); put('resumeHash', ''); return { ok: true }; }
+    if (d.op === 'delete') { wipeLead_(sh, r, H, 'Deleted'); return { ok: true }; }
+    if (d.op === 'link') {
+      if (String(o.optOut) === 'Yes') return { ok: false, error: 'opted_out' };
+      if (!client.site) return { ok: true, url: '' };
+      const key = randToken_(); put('resumeHash', sha_(key)); put('resumeExpires', new Date(Date.now() + RESUME_DAYS * 86400000));
+      return { ok: true, url: resumeUrl_(client, key) };
+    }
+    return { ok: false, error: 'bad_op' };
+  }
+  return { ok: false, error: 'not_found' };
+}
+function followupText_(client) {
+  return String(client.followupText || '') || 'Hi {first}, this is {business}. I saw you started a quote for {service} on our website. Want me to get you on the schedule? You can pick up where you left off here: {link}  (Reply STOP and we won’t text again.)';
+}
+/** Last 30 days: quote-tool funnel and where bookings came from. Counts only, no personal info. */
+function stats_(clientId, bookings) {
+  const since = Utilities.formatDate(new Date(Date.now() - 29 * 86400000), TZ, 'yyyy-MM-dd'), sinceT = zoned_(since, 0).getTime();
+  const c = { visit: 0, start: 0, contact: 0 }, rows = tab_('Events', EVENT_COLS).getDataRange().getValues(), H = rows[0];
+  const iD = H.indexOf('date'), iC = H.indexOf('client'), iE = H.indexOf('event');
+  for (let r = 1; r < rows.length; r++) {
+    const dt = rows[r][iD] instanceof Date ? Utilities.formatDate(rows[r][iD], TZ, 'yyyy-MM-dd') : String(rows[r][iD]);
+    if (rows[r][iC] === clientId && dt >= since && c[rows[r][iE]] !== undefined) c[rows[r][iE]]++;
+  }
+  const recent = bookings.filter(b => new Date(b.created).getTime() >= sinceT && b.status !== 'Canceled');
+  const by = {};
+  recent.forEach(b => { const s = String(b.source || (b.details === 'Added by you' ? 'Phone call' : 'Website')); by[s] = by[s] || { source: s, bookings: 0, won: 0, wonValue: 0 }; by[s].bookings++;
+    if (b.outcome === 'Won') { by[s].won++; by[s].wonValue += Number(b.jobValue) || 0; } });
+  const online = recent.filter(b => b.details !== 'Added by you').length;
+  return { days: 30, visits: c.visit, started: c.start, contact: c.contact, bookedOnline: online, bySource: Object.keys(by).map(k => by[k]).sort((a, b) => b.bookings - a.bookings) };
+}
+/** Nightly: delete incomplete leads after LEAD_DAYS quiet, and wipe contact info off finished ones after 7 days (it lives on the booking). */
+function purgeLeads_() {
+  const sh = tab_('Leads', LEAD_COLS); if (!sh) return;
+  const rows = sh.getDataRange().getValues(), H = rows[0], now = Date.now();
+  for (let r = 1; r < rows.length; r++) {
+    const o = rowObj_(H, rows[r]), age = now - new Date(o.updated).getTime();
+    if (o.status === 'Open' && age > LEAD_DAYS * 86400000) wipeLead_(sh, r, H, 'Expired');
+    else if (o.status === 'Completed' && o.name && age > 7 * 86400000) wipeLead_(sh, r, H, 'Completed');
+  }
+}
+function purgeEvents_() {
+  const sh = tab_('Events', EVENT_COLS); if (!sh) return;
+  const rows = sh.getDataRange().getValues(), cut = Utilities.formatDate(new Date(Date.now() - EVENT_DAYS * 86400000), TZ, 'yyyy-MM-dd');
+  let n = 0; for (let r = 1; r < rows.length; r++) { const dt = rows[r][0] instanceof Date ? Utilities.formatDate(rows[r][0], TZ, 'yyyy-MM-dd') : String(rows[r][0]); if (dt < cut) n = r; else break; }
+  if (n > 0) sh.deleteRows(2, n);   // rows are in date order, so the old ones are all at the top
+}
+/** A tab by name, created with its headers if it doesn't exist yet (so forgetting to re-run setup() never breaks anything). */
+function tab_(name, cols) {
+  const ss = sheet_(); let sh = ss.getSheetByName(name);
+  if (!sh) {   // take the script lock unless this run already holds it (releasing it here would free the caller's lock too)
+    const l = LockService.getScriptLock(), mine = !l.hasLock();
+    if (mine) { try { l.waitLock(10000); } catch (e) {} }
+    try { sh = ss.getSheetByName(name) || ensureSheet_(ss, name, cols); } finally { if (mine) { try { l.releaseLock(); } catch (e) {} } }
+  }
+  return sh;
+}
+function appendRowByHeader_(sh, cols, obj) {
+  const H = sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn())).getValues()[0].map(String);
+  cols.forEach(k => { if (H.indexOf(k) < 0) { sh.getRange(1, H.length + 1).setValue(k).setFontWeight('bold'); H.push(k); } });
+  sh.appendRow(H.map(k => obj[k] === undefined || obj[k] === null ? '' : cell_(obj[k])));
+}
+function iso_(v) { return v instanceof Date ? v.toISOString() : String(v || ''); }
 
 /* ------------------------------------------------------------------ job photos from the customer */
 
@@ -845,6 +1059,7 @@ function installTriggers() {
   ScriptApp.newTrigger('sendDigests').timeBased().atHour(19).everyDays(1).inTimezone(TZ).create();
 }
 function sendDigests() {
+  try { purgeLeads_(); purgeEvents_(); } catch (err) { console.error(err); }
   const rows = sheet_().getSheetByName('Clients').getDataRange().getValues(), H = rows[0];
   for (let r = 1; r < rows.length; r++) {
     const c = {}; H.forEach((h, i) => c[h] = rows[r][i]); if (!isOn_(c.active)) continue;
