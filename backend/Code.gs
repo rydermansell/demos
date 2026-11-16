@@ -184,6 +184,7 @@ function doPost(e) {
   try { d = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return json_({ ok: false, error: 'bad_json' }); }
   try {
     const a = String(d.action || 'book');
+    if (a === 'demo_request') return json_(demoRequest_(d));   // getpricewink.com "Request my demo" form
     if (LOGIN_ACTIONS[a]) return json_(LOGIN_ACTIONS[a](d));
     if (OWNER_READS.indexOf(a) >= 0 || OWNER_WRITES.indexOf(a) >= 0) return json_(ownerAction_(a, d));
     if (PUBLIC_ACTIONS[a]) {
@@ -235,6 +236,26 @@ function locked_(fn) {
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);
   try { return fn(); } finally { try { lock.releaseLock(); } catch (err) {} }
+}
+
+/* ------------------------------------------------------------------ getpricewink.com demo requests */
+
+const DEMO_COLS = ['date', 'name', 'business', 'email', 'phone', 'type', 'interest', 'bestTime', 'page'];
+/** The marketing site's "Request my demo" form: saved on the Demo requests tab and emailed to you (reply goes straight to them). */
+function demoRequest_(d) {
+  if (d.website_url) return { ok: true };                                    // honeypot = bot
+  const f = { name: clean_(d.name, 80), business: clean_(d.business, 100), email: clean_(d.email, 120), phone: clean_(d.phone, 30),
+    type: clean_(d.type, 80), interest: clean_(d.interest, 80), bestTime: clean_(d.best_time, 40), page: clean_(d.page, 200) };
+  if (f.name.length < 2 || f.business.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) return { ok: false, error: 'missing_fields' };
+  if (!bump_(CacheService.getScriptCache(), 'demoreq_' + Math.floor(Date.now() / 3600000), 30, 3700)) return { ok: false, error: 'slow_down' };
+  locked_(() => appendRowByHeader_(tab_('Demo requests', DEMO_COLS), DEMO_COLS, Object.assign({ date: new Date() }, f)));
+  const me = Session.getEffectiveUser().getEmail() || MAIL_FROM;
+  const rows = [['Name', f.name], ['Business', f.business], ['Email', f.email], ['Phone', f.phone], ['Type of business', f.type], ['Interested in', f.interest], ['Best time', f.bestTime]].filter(r => r[1]);
+  sendMail_({ to: MAIL_FROM || me, name: 'PriceWink website', replyTo: f.email, subject: 'Demo request: ' + f.business + (f.type ? ' (' + f.type + ')' : ''),
+    htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><h2 style="margin:0 0 12px">New demo request</h2><table cellpadding="6" style="border-collapse:collapse">' +
+      rows.map(r => '<tr><td style="color:#5d6459">' + esc_(r[0]) + '</td><td><b>' + esc_(r[1]) + '</b></td></tr>').join('') + '</table>' +
+      '<p>Reply to this email to answer ' + esc_(f.name.split(' ')[0]) + ' directly.' + (f.phone ? ' Or <a href="tel:' + esc_(f.phone.replace(/[^\d+]/g, '')) + '">call ' + esc_(f.phone) + '</a>.' : '') + '</p></div>' });
+  return { ok: true };
 }
 
 /* ------------------------------------------------------------------ owner sign-in */
