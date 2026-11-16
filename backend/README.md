@@ -136,8 +136,8 @@ All emails (sign-in codes, booking alerts, customer confirmations, reminders) ar
 
 - **app.getpricewink.com** = this repo on **Cloudflare Pages** (project `pricewink-app`, free: unlimited bandwidth and requests, commercial use OK). Every push to `main` publishes automatically. Owner inboxes live at `app.getpricewink.com/inbox/?c=<id>#start`; live client sites go here too (each client's own domain gets added to the `pricewink-app` project's Custom domains, with a CNAME at their DNS).
 - **rydermansell.github.io/demos** = the same repo on GitHub Pages, for prospect demos only (GitHub Pages doesn't allow running a business on it).
-- **getpricewink.com** = the marketing site on **Netlify** (repo `pricewink`). Each publish costs 15 Netlify credits (300 free a month), so only publish it when the marketing site itself changes, batched. Never put client sites or new projects on Netlify.
-- DNS for getpricewink.com is at **Porkbun** (`app` is a CNAME to `pricewink-app.pages.dev`).
+- **www.getpricewink.com** = the marketing site on **Cloudflare Pages** (project `pricewink`, repo `PriceWink`; moved off Netlify Nov 15, 2026). Every push to `main` publishes, free. The plain `getpricewink.com` forwards to www (Porkbun URL forwarding, 301, keeps the path). Its `/demos/*` and `/inbox` links redirect to app.getpricewink.com. The demo request form posts to this backend (`demo_request`, Demo requests tab). Netlify is no longer used.
+- DNS for getpricewink.com is at **Porkbun** (`app` is a CNAME to `pricewink-app.pages.dev`, `www` to `pricewink.pages.dev`; email MX/Brevo records untouched).
 
 ## Fix: "Page Not Found" from the backend (Nov 15, 2026)
 
