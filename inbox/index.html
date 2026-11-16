@@ -395,6 +395,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   <p class="sh-help">Customer called or texted? Add them here. It works just like an online booking.</p>
   <label class="sh-l" for="jName">Customer’s name</label><input class="inp" id="jName" maxlength="80" autocomplete="off" autocapitalize="words" placeholder="Pat Smith" enterkeyhint="next">
   <label class="sh-l" for="jPhone">Phone</label><input class="inp" id="jPhone" type="tel" inputmode="tel" maxlength="30" autocomplete="off" placeholder="(865) 555-0100" enterkeyhint="next">
+  <label class="chk" id="jTextL" hidden><input type="checkbox" id="jText"> OK to text them (texts a booking confirmation)</label>
   <label class="sh-l" for="jAddr">Job address</label><input class="inp" id="jAddr" maxlength="160" autocomplete="off" placeholder="123 Main St, Kodak" enterkeyhint="next">
   <label class="sh-l" for="jJob">What’s the job?</label><input class="inp" id="jJob" maxlength="60" autocomplete="off" list="jJobs" placeholder="Fence repair" enterkeyhint="next"><datalist id="jJobs"></datalist>
   <p class="sh-l">When</p><div class="chips" id="jDays"></div>
@@ -475,7 +476,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   const CL=()=>CLIENTS[C]||CLIENTS[C.replace(/-/g,'')]||{};
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US'), STS=['New','Confirmed','Done','Canceled'];
-  let B=[], BL=[], SRC=[], FEED='', REVIEW='', tab='up', LEADS=[], FOLLOW='', SITE='', STATS=null;
+  let B=[], BL=[], SRC=[], FEED='', REVIEW='', tab='up', LEADS=[], FOLLOW='', SITE='', STATS=null, TEXTING={};
   const PH={};   // customer photos already fetched this visit, by file id
   /* Demo mode: realistic sample bookings (dates relative to today) so every feature shows: emergency, new, confirmed,
      notes, a full week, and done/canceled in Past. Bookings made on the demo site are added on top. */
@@ -666,7 +667,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     if(API&&!FORCE_DEMO&&!EX){
       if(!TOKEN){ authFlow(); return; }
       try{ const j=await call({action:'inbox'});
-        if(j.ok){ document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; ME=j.me||''; renderAcct(); REVIEW=j.reviewUrl||''; LEADS=j.leads||[]; FOLLOW=j.followup||''; SITE=j.site||''; STATS=j.stats||null; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
+        if(j.ok){ document.body.classList.remove('ex'); $('#demo').hidden=true; $('#biz').textContent=j.name; ME=j.me||''; renderAcct(); REVIEW=j.reviewUrl||''; LEADS=j.leads||[]; FOLLOW=j.followup||''; SITE=j.site||''; STATS=j.stats||null; TEXTING=j.texting||{}; B=j.bookings; B.forEach(b=>{ if(pend[b.id]) b.status=pend[b.id].status; if(keep[b.id]) Object.assign(b,keep[b.id]); }); BL=j.blocks||[]; SRC=j.sources||[]; FEED=j.feed||''; render(); welcomeBack(); return; }
         $('#list').innerHTML='<p class="msg">Something went wrong. Try again in a minute.</p>'; return;
       }catch(e){ if(e!=='auth') $('#list').innerHTML='<p class="msg">Can’t connect right now. Check your signal, then tap the refresh button at the top.</p>'; return; }
     }
@@ -1067,7 +1068,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
   const digits=v=>String(v||'').replace(/\D/g,'');
   async function openJob(){ js.days=[]; js.di=0; js.start=''; js.other=false; js.src='Phone call'; js.force=false;
     ['#jName','#jPhone','#jAddr','#jJob','#jPrice','#jEmail','#jNotes','#jDate','#jTime'].forEach(q=>$(q).value='');
-    $('#jMore').hidden=true; $('#jMoreBtn').hidden=false; $('#jNotifyL').hidden=true; $('#jNotify').checked=true; $('#jWarn').hidden=true;
+    $('#jMore').hidden=true; $('#jMoreBtn').hidden=false; $('#jNotifyL').hidden=true; $('#jNotify').checked=true; $('#jTextL').hidden=!TEXTING.confirm; $('#jText').checked=false; $('#jWarn').hidden=true;
     $('#jOther').hidden=true; $('#jOtherBtn').textContent='Need a different day or time?';
     const seen=[...new Set(B.map(b=>String(b.service||'').trim()).filter(x=>x&&x!=='Phone booking'))].slice(0,12);
     $('#jJobs').innerHTML=seen.map(x=>'<option value="'+esc(x)+'">').join('');
@@ -1103,7 +1104,7 @@ body.out .stats,body.out .month,body.out .hcal,body.out #tabs,body.out #demo,bod
     const start=js.other?otherStart():js.start; if(!start) return toast('Pick a time first.');
     if(new Date(start).getTime()<Date.now()-5*60000) return toast('That time already passed. Pick a later one.');
     const price=Math.round(Number(String($('#jPrice').value).replace(/[^\d.]/g,'')))||'';
-    const o={action:'add',name,phone,address,job,email,slotStart:start,anyTime:js.other,force:js.force,price,notes:$('#jNotes').value.trim(),source:js.src,notify:!!email&&$('#jNotify').checked};
+    const o={action:'add',name,phone,address,job,email,slotStart:start,anyTime:js.other,force:js.force,price,notes:$('#jNotes').value.trim(),source:js.src,notify:!!email&&$('#jNotify').checked,textOk:!$('#jTextL').hidden&&$('#jText').checked};
     const done=(x,emailed)=>{ B.push(x); tab='up'; $$('.tabs button').forEach(t=>t.setAttribute('aria-pressed',String(t.dataset.t==='up'))); openId=x.id; closeAll(); render();
       toast(emailed?'Job added. '+first(x)+' was emailed a confirmation.':'Job added. That time is blocked online now.'); };
     if(DEMO){ const nb={id:'M-'+Date.now().toString(36),created:new Date().toISOString(),client:C,status:'Confirmed',slotStart:start,slotLabel:whenText(start),service:job,details:'Added by you',
