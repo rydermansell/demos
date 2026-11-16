@@ -112,6 +112,36 @@ ok(rv && /Hi Pat, thanks for choosing ABC-FENCE/.test(rv.Body) && /google\.com\/
 ok(!E.sent.some(s=>s.To==='+18655550501'),'no box ticked: no review text');
 E.ctx.runAutoTexts(); ok(E.sent.filter(s=>s.To==='+18655550500').length===1,'review text sent once');
 
+// --- booking confirmations (confirm)
+E=env(ON); E.addClient('abc-fence','owner@abc.com',Object.assign({},ABC,{autoTexts:'confirm',phone:'(865) 933-0937'}));
+const c1=book(E);
+const cf=E.sent.find(s=>s.To==='+18655550200');
+ok(c1.ok && cf && /^Hi Pat, you’re booked with ABC-FENCE for .+ at 1 Oak St, Kodak\. Need to change it\? Call or text \(865\) 933-0937\. \(Reply STOP/.test(cf.Body),'online booking: customer gets confirmation text');
+ok(!E.sent.some(s=>s.To==='+18655550101'),'confirm only: owner not texted');
+const Bc=E.sheets.Bookings; ok(Bc[1][Bc[0].indexOf('confirmTexted')],'confirmTexted recorded');
+E.post({action:'login_code',client:'abc-fence',email:'owner@abc.com'});
+const T2=E.post({action:'login_verify',client:'abc-fence',email:'owner@abc.com',code:E.mail.filter(m=>/code/i.test(m.subject)).pop().subject.slice(0,6)}).token;
+ok(E.post({action:'inbox',token:T2}).texting.confirm===true,'inbox told texting confirmations are on');
+E.sent.length=0;
+const days=E.get({action:'slots',client:'abc-fence'}).days;
+ok(E.post({action:'reschedule',token:T2,id:c1.id,slotStart:days[2].times[0].start}).texted && /moved your visit from .+ to /.test(E.sent[0].Body),'moved: customer texted');
+E.sent.length=0;
+ok(E.post({action:'status',token:T2,id:c1.id,status:'Canceled'}).ok && /had to cancel your visit/.test(E.sent[0].Body) && /src=sms/.test(E.sent[0].Body),'canceled: customer texted with rebook link');
+E.sent.length=0;
+const nj=E.post({action:'add',token:T2,name:'Lee Ray',phone:'865-555-0700',address:'9 Elm St',job:'Gate repair',slotStart:days[3].times[0].start,source:'Phone call'});
+ok(nj.ok && !nj.texted && E.sent.length===0,'+ New Job without OK to text: no text');
+const nj2=E.post({action:'add',token:T2,name:'Kim Fox',phone:'865-555-0701',address:'8 Elm St',job:'Gate repair',slotStart:days[3].times[1].start,source:'Phone call',textOk:true});
+ok(nj2.texted && E.sent.some(s=>s.To==='+18655550701'&&/Hi Kim, you’re booked/.test(s.Body)) && nj2.booking.smsOk==='Yes','+ New Job with OK to text: confirmation sent, marked OK for review texts');
+// day-before reminder by text
+E.sent.length=0;
+const tmr=new Date(Date.now()+86400000); const iS=Bc[0].indexOf('slotStart'), iCT=Bc[0].indexOf('confirmTexted'), iSt=Bc[0].indexOf('status');
+const kim=Bc.find(r=>r[Bc[0].indexOf('name')]==='Kim Fox'); kim[iS]=E.ctx.zoned_(E.ctx.Utilities.formatDate(tmr,'America/New_York','yyyy-MM-dd'),600).toISOString();
+E.ctx.sendDigests();
+ok(E.sent.some(s=>s.To==='+18655550701'&&/^Reminder: ABC-FENCE will be out tomorrow at/.test(s.Body)),'evening before: reminder text');
+const n2=E.sent.length; E.ctx.sendDigests(); ok(E.sent.length===n2,'reminder text sent once');
+E2=env(ON); E2.addClient('abc-fence','o@x.com',Object.assign({},ABC,{autoTexts:'alerts'})); book(E2);
+ok(!E2.sent.some(s=>s.To==='+18655550200'),'confirm not enabled: no customer text');
+
 // --- test mode: every text goes to Ryder's phone
 E=env(Object.assign({},ON,{TEXT_TEST_TO:'865-555-0999'})); E.addClient('abc-fence','owner@abc.com',ABC);
 E.hook({action:'voice',client:'abc-fence',k:'hk',From:'+18655550300'});

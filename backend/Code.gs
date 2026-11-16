@@ -44,7 +44,7 @@ const BLOCK_PREFIX = 'Blocked: ';
  *  If it isn't (or Gmail refuses), emails still go out from the Gmail address, so nothing is ever lost. */
 const MAIL_FROM = 'rj@getpricewink.com';
 const INBOX_BASE = 'https://app.getpricewink.com/inbox/';   // Cloudflare Pages (free, unlimited traffic), serving this repo
-const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source', 'smsOk', 'doneAt', 'reviewTexted'];
+const BOOKING_COLS = ['id', 'created', 'client', 'status', 'slotStart', 'slotLabel', 'service', 'details', 'estimateLow', 'estimateHigh', 'urgent', 'name', 'phone', 'email', 'address', 'notes', 'eventId', 'photos', 'outcome', 'jobValue', 'reminded', 'source', 'smsOk', 'doneAt', 'reviewTexted', 'confirmTexted'];
 const STATUSES = ['New', 'Confirmed', 'Done', 'Canceled'];
 const SESSION_COLS = ['tokenHash', 'client', 'email', 'method', 'device', 'created', 'lastSeen', 'expires', 'revoked'];
 const LEAD_COLS = ['id', 'client', 'created', 'updated', 'status', 'step', 'name', 'phone', 'email', 'address', 'service', 'details', 'estimateLow', 'estimateHigh', 'slotLabel', 'source', 'state', 'resumeHash', 'resumeExpires', 'bookingId', 'contactedAt', 'optOut', 'smsOk', 'textedAt'];
@@ -211,7 +211,7 @@ function ownerAction_(a, d) {
   if (a === 'inbox') {
     const bookings = bookingsFor_(client.id);
     return { ok: true, name: client.name, me: auth.email || '', reviewUrl: reviewUrl_(client), site: String(client.site || ''), bookings: bookings, blocks: blocksFor_(client),
-      synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client), leads: leadsFor_(client.id), followup: followupText_(client), stats: stats_(client.id, bookings) };
+      synced: syncedSources_(client), sources: sources_(client), feed: feedToken_(client), leads: leadsFor_(client.id), followup: followupText_(client), stats: stats_(client.id, bookings), texting: { confirm: textOn_(client, 'confirm') } };
   }
   if (a === 'photo') return photo_(client, String(d.id || ''));
   if (a === 'connectTicket') return { ok: true, ticket: makeTicket_(client.id) };
@@ -425,6 +425,7 @@ function book_(client, d) {
   try { completeLeads_(client.id, b.phone, id, String(d.leadKey || '')); } catch (err) { console.error(err); }   // never blocks a booking
   notifyOwner_(client, b, range);
   if (b.email) notifyCustomer_(client, b);
+  try { confirmText_(client, b); } catch (err) { console.error(err); }   // never blocks a booking
   return { ok: true, id: id, slotLabel: slotLabel };
 }
 
@@ -474,6 +475,10 @@ function setStatus_(client, d) {
       if (d.status === 'Canceled' && was !== 'Canceled') {                      // tell the customer, if they left an email
         const b = {}; H.forEach((k, i) => b[k] = rows[r][i]);
         if (b.email) { try { notifyCanceled_(client, b); emailed = true; } catch (err) { emailed = false; } }
+        if (b.confirmTexted && textOn_(client, 'confirm')) {
+          try { sendSms_(client, b.phone, 'Hi ' + (String(b.name || '').split(' ')[0] || 'there') + ', we’re sorry, ' + client.name + ' had to cancel your visit' + (b.slotLabel ? ' on ' + b.slotLabel : '') + '.' +
+            (client.site ? ' Pick a new time: ' + siteLink_(client, 'sms') : '') + (client.phone ? ' Or call ' + client.phone + '.' : ''), 'canceled'); } catch (err) {}
+        }
       }
       return { ok: true, emailed: emailed };
     }
@@ -559,7 +564,11 @@ function reschedule_(client, d) {
       }); emailed = true;
     } catch (err) {}
   }
-  return { ok: true, slotStart: start.toISOString(), slotLabel: label_(start), status: status, emailed: emailed };
+  let texted = false;
+  if (b.confirmTexted && textOn_(client, 'confirm')) {
+    try { texted = sendSms_(client, b.phone, 'Hi ' + (String(b.name).split(' ')[0] || 'there') + ', ' + client.name + ' moved your visit' + (was ? ' from ' + was : '') + ' to ' + label_(start) + '.' + changeLine_(client), 'moved').ok; } catch (err) {}
+  }
+  return { ok: true, slotStart: start.toISOString(), slotLabel: label_(start), status: status, emailed: emailed, texted: texted };
 }
 
 const SOURCES = ['Phone call', 'Text', 'Referral', 'Facebook', 'Website', 'Repeat customer', 'Google', 'Other'];
@@ -583,14 +592,17 @@ function addByOwner_(client, d) {
   const id = 'B' + Utilities.formatDate(new Date(), TZ, 'yyMMdd') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
   const b = { id: id, created: new Date(), client: client.id, status: 'Confirmed', slotStart: start.toISOString(), slotLabel: label_(start),
     service: job, details: 'Added by you', estimateLow: price > 0 && price < 10000000 ? price : '', estimateHigh: price > 0 && price < 10000000 ? price : '',
-    urgent: '', name: name, phone: phone, email: email, address: address, notes: clean_(d.notes, 600), eventId: '', photos: '', outcome: '', jobValue: '', reminded: '', source: source };
+    urgent: '', name: name, phone: phone, email: email, address: address, notes: clean_(d.notes, 600), eventId: '', photos: '', outcome: '', jobValue: '', reminded: '', source: source, smsOk: d.textOk === true ? 'Yes' : '' };
   const cal = client.calendarId && CalendarApp.getCalendarById(client.calendarId);
   if (cal) b.eventId = cal.createEvent(b.service + ' - ' + name, start, new Date(start.getTime() + Number(client.slotMinutes || 60) * 60000), { location: b.address, description: eventText_(b) }).getId();
   appendBooking_(b);
   let emailed = false;
   if (email && d.notify) { try { notifyCustomer_(client, b); emailed = true; } catch (err) {} }
+  let texted = false;
+  if (b.smsOk === 'Yes') { try { texted = confirmText_(client, b); } catch (err) { console.error(err); } }
   const out = {}; BOOKING_COLS.forEach(k => { if (k !== 'eventId') out[k] = b[k] instanceof Date ? b[k].toISOString() : b[k]; });
-  return { ok: true, booking: out, emailed: emailed };
+  if (texted) out.confirmTexted = 'yes';
+  return { ok: true, booking: out, emailed: emailed, texted: texted };
 }
 /** '' if the owner may put a job at this time, else why not: bad_time (past or invalid), slot_taken (not one of their usual times), busy (something's on the calendar). */
 function ownerTimeProblem_(client, start, ignoreEventId, anyTime, force) {
@@ -1088,9 +1100,11 @@ function remind_(client) {
   const now = new Date(), tomorrow = Utilities.formatDate(new Date(now.getTime() + 86400000), TZ, 'yyyy-MM-dd');
   const dayStart = zoned_(tomorrow, 0), dayEnd = new Date(dayStart.getTime() + 86400000);
   bookingsFor_(client.id).forEach(b => {
-    if (!b.email || b.reminded || b.status === 'Canceled' || b.status === 'Done' || !b.slotStart) return;
+    const byText = !!b.confirmTexted && textOn_(client, 'confirm');
+    if ((!b.email && !byText) || b.reminded || b.status === 'Canceled' || b.status === 'Done' || !b.slotStart) return;
     const t = new Date(b.slotStart); if (t < dayStart || t >= dayEnd) return;
-    sendMail_({
+    if (byText) { try { sendSms_(client, b.phone, 'Reminder: ' + client.name + ' will be out tomorrow at ' + Utilities.formatDate(t, TZ, 'h:mm a') + (b.address ? ' to ' + b.address : '') + '.' + changeLine_(client), 'reminder'); } catch (err) {} }
+    if (b.email) sendMail_({
       to: String(b.email), name: client.name, replyTo: client.ownerEmail || undefined,
       subject: 'Reminder: your estimate visit is tomorrow at ' + Utilities.formatDate(t, TZ, 'h:mm a') + ' - ' + client.name,
       htmlBody: '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#121a14"><p>Hi ' + esc_(String(b.name).split(' ')[0]) + ',</p>' +
@@ -1133,6 +1147,8 @@ function overlaps_(s, client, busy) {
  * Optional script property TEXT_TEST_TO: every text goes to that number instead (marked with who it was for). Use it while testing.
  *
  *   alerts      text the owner (ownerCell) for every new booking, voicemail and customer reply
+ *   confirm     text the customer when they book online (or the owner adds them and ticks "OK with texts"), when the visit is
+ *               moved or canceled, and the evening before
  *   missed      a call that rings out on the owner's phone forwards to the Twilio number: the caller gets a text with the quote link,
  *               then hears a short voicemail greeting; the voicemail is emailed to the owner
  *   incomplete  a customer who ticked "text me about my quote" and stopped before booking gets the follow-up message once, 30+ min later
@@ -1141,7 +1157,7 @@ function overlaps_(s, client, busy) {
  * Customer texts (incomplete, review) only go out 9 AM to 8 PM Eastern.
  */
 const TWILIO_HOOKS = ['voice', 'voice_done', 'recording', 'sms_in'];
-const TEXT_FEATURES = ['alerts', 'missed', 'incomplete', 'review'];
+const TEXT_FEATURES = ['alerts', 'confirm', 'missed', 'incomplete', 'review'];
 const REVIEW_DELAY_HOURS = 2;
 const MISSED_REPEAT_HOURS = 12;   // the same caller gets the missed-call text at most once in this window
 const DEFAULT_MISSED = 'Hi, this is {business}. Sorry we missed your call! We’ll call you back soon. Want a price now? Get one here: {link}  (Reply STOP to opt out.)';
@@ -1187,6 +1203,21 @@ function fillText_(tpl, client, o, link) {
     .replace(/\s+\(Reply/, ' (Reply').replace(/[ \t]{2,}/g, ' ').trim();
 }
 function siteLink_(client, src) { const s = String(client.site || ''); return s ? s + (s.indexOf('?') < 0 ? '?' : '&') + 'src=' + src : ''; }
+
+/* ---------- booking confirmations ---------- */
+
+function changeLine_(client) { return client.phone ? ' Need to change it? Call or text ' + client.phone + '.' : ''; }
+/** Texts the customer their booking. Online bookings always (they asked for the visit); owner-added ones only when marked OK with texts. Returns true if sent. */
+function confirmText_(client, b) {
+  if (!textOn_(client, 'confirm')) return false;
+  const first = String(b.name || '').split(' ')[0] || 'there';
+  const msg = b.slotStart
+    ? 'Hi ' + first + ', you’re booked with ' + client.name + ' for ' + b.slotLabel + (b.address ? ' at ' + b.address : '') + '.' + changeLine_(client) + ' (Reply STOP to opt out.)'
+    : 'Hi ' + first + ', ' + client.name + ' got your request' + (b.service ? ' for ' + String(b.service).toLowerCase() : '') + ' and will reach out soon to set a time.' + (client.phone ? ' Questions? Call ' + client.phone + '.' : '') + ' (Reply STOP to opt out.)';
+  const res = sendSms_(client, b.phone, msg, 'confirm');
+  if (res.ok) { const row = bookingRow_(client, b.id); if (row) setCells_(row, { confirmTexted: new Date().toISOString() }); }
+  return res.ok;
+}
 
 /* ---------- Twilio webhooks: missed calls, voicemail, customer replies ---------- */
 
