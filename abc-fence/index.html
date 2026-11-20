@@ -11,7 +11,7 @@
 <meta property="og:image" content="https://app.getpricewink.com/abc-fence/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "HomeAndConstructionBusiness", "name": "ABC Fence Co", "description": "Fence company serving Knoxville and East Tennessee: chain link, pressure treated wood privacy, aluminum, vinyl, farm fence, gates, gate operators, on-site welding and repairs. Free estimates.", "telephone": "+1-865-933-0937", "image": "https://app.getpricewink.com/abc-fence/img/og.jpg", "areaServed": [{"@type": "City", "name": "Knoxville, TN"}, {"@type": "City", "name": "Kodak, TN"}, {"@type": "City", "name": "Sevierville, TN"}, {"@type": "City", "name": "Maryville, TN"}, {"@type": "City", "name": "Clinton, TN"}, {"@type": "City", "name": "Oak Ridge, TN"}, {"@type": "City", "name": "Kingston, TN"}, {"@type": "State", "name": "East Tennessee"}], "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Fences, gates and repairs", "itemListElement": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Chain link fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Pressure treated pine privacy fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Aluminum fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Vinyl privacy fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Farm and ranch fence"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Custom gates and on-site welding"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Automatic gate operators"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Fence and gate repair"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Old fence removal"}}]}, "potentialAction": {"@type": "QuoteAction", "name": "Get a fence ballpark estimate", "target": "#quote"}}
+{"@context": "https://schema.org", "@type": "HomeAndConstructionBusiness", "name": "ABC Fence Co", "description": "Fence company serving Knoxville and East Tennessee: chain link, pressure treated wood privacy, aluminum, vinyl, farm fence, gates, gate operators, on-site welding and repairs. Free estimates.", "telephone": "+1-865-933-0937", "contactPoint": [{"@type": "ContactPoint", "telephone": "+1-865-933-0937", "contactType": "office"}, {"@type": "ContactPoint", "telephone": "+1-865-253-5334", "contactType": "cell"}], "image": "https://app.getpricewink.com/abc-fence/img/og.jpg", "areaServed": [{"@type": "City", "name": "Knoxville, TN"}, {"@type": "City", "name": "Kodak, TN"}, {"@type": "City", "name": "Sevierville, TN"}, {"@type": "City", "name": "Maryville, TN"}, {"@type": "City", "name": "Clinton, TN"}, {"@type": "City", "name": "Oak Ridge, TN"}, {"@type": "City", "name": "Kingston, TN"}, {"@type": "State", "name": "East Tennessee"}], "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Fences, gates and repairs", "itemListElement": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Chain link fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Pressure treated pine privacy fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Aluminum fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Vinyl privacy fence installation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Farm and ranch fence"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Custom gates and on-site welding"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Automatic gate operators"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Fence and gate repair"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Old fence removal"}}]}, "potentialAction": {"@type": "QuoteAction", "name": "Get a fence ballpark estimate", "target": "#quote"}}
 </script>
 <meta name="theme-color" content="#16181b">
 <script>(function(d){d.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('rm');return}d.classList.add('motion');try{if(sessionStorage.getItem('abcIntro'))d.classList.add('seen');else sessionStorage.setItem('abcIntro','1')}catch(e){d.classList.add('seen')}})(document.documentElement)</script>
@@ -435,6 +435,16 @@ footer b{color:var(--paper)}
 .gpics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:22px}
 .gpics .ph{border-radius:12px;overflow:hidden;aspect-ratio:1}
 .gpics img{width:100%;height:100%;object-fit:cover}
+
+.hph{margin:20px 0 0;font-size:15.5px;font-weight:600;color:#c2b8a9;display:flex;flex-wrap:wrap;gap:4px 8px}
+.hph a{color:var(--paper);font-weight:800;text-decoration:none;font-variant-numeric:tabular-nums}
+.hph span{opacity:.5}
+.hrsn a{color:var(--ink);font-weight:700;text-decoration:none}
+
+.hph em{font-style:normal;white-space:nowrap;margin-right:14px}
+/* quote tool as a clean card on every screen (the phone mockup stays on getpricewink.com) */
+.qbox{width:100%;max-width:460px;margin:0 auto}
+@media(min-width:960px){.qbox .qt{box-shadow:0 40px 80px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}}
 </style>
 </head>
 <body>
@@ -468,6 +478,7 @@ footer b{color:var(--paper)}
         <a class="chip" href="#quote" data-t="farm">Farm fence</a>
         <a class="chip" href="#quote" data-t="gate">Gates</a>
       </div>
+      <p class="hph fade" style="--d:680ms"><em>Office <a href="tel:+18659330937">(865) 933-0937</a></em><em>Cell <a href="tel:+18652535334">(865) 253-5334</a></em></p>
     </div>
   </div>
   <a class="cue" id="cue" href="#styles" aria-label="Scroll to fence styles"><i></i></a>
@@ -510,10 +521,7 @@ footer b{color:var(--paper)}
         <li><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Free on-site estimates across East TN</li>
       </ul>
     </div>
-    <div class="phone" id="qphone">
-      <div class="tilt" id="qtilt">
-        <div class="frame"><div class="scr"><div class="island"></div>
-          <div class="sb"><span class="tn" id="clock">9:41</span><span><svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x=".5" y=".5" width="22" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="2.5" y="2.5" width="16" height="8" rx="2" fill="currentColor"/><rect x="24" y="4.5" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".45"/></svg></span></div>
+    <div class="qbox">
           <div class="qt" id="qt">
             <div class="qhead"><span id="qlab">Step 1 of 4</span><span class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i></span></div>
             <div class="step" data-step="1">
@@ -540,24 +548,21 @@ footer b{color:var(--paper)}
               <div class="est-card" id="ebox" hidden><img id="eImg" alt=""><div><span class="k">Priced on site</span><b>Free estimate</b><p id="eNote"></p></div></div>
               <ul class="picks" id="picks"></ul>
               <div class="acts">
-                <a class="btn go2" href="tel:+18659330937" id="callBtn"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" fill="currentColor"/></svg> Call (865) 933-0937</a>
+                <a class="btn go2" href="tel:+18659330937" id="callBtn"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" fill="currentColor"/></svg> Call the office</a>
                 <a class="btn tx" href="sms:+18652535334" id="textBtn"><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg> Text us these details</a>
               </div>
-              <p class="hrsn">We answer from 8 AM to 9 PM.</p>
+              <p class="hrsn">Office <a href="tel:+18659330937">(865) 933-0937</a> · Cell <a href="tel:+18652535334">(865) 253-5334</a><br>We answer from 8 AM to 9 PM.</p>
               <button type="button" class="again" id="again">Price something else</button>
             </div>
             <div class="nav" id="nav"><button type="button" class="btn ln" id="prev" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="btn go2" id="next">See my price</button></div>
           </div>
-          <div class="home"></div>
-        </div></div>
-      </div>
     </div>
   </div>
 </section>
 
 <section class="s" id="gates">
   <div class="wrap gw">
-    <div class="vid reveal"><video src="img/gate-operator.mp4" poster="img/gate-operator.jpg" controls playsinline muted preload="none" aria-label="Video of an ABC chain link roll gate with an automatic opener"></video></div>
+    <div class="vid reveal"><video src="img/gate-operator.mp4" poster="img/gate-operator.jpg" autoplay loop muted playsinline preload="metadata" aria-label="Video of an ABC chain link roll gate with an automatic opener"></video></div>
     <div>
       <h2 class="reveal">Gates, openers and welding</h2>
       <p class="intro reveal">We weld and build gates on site, then hang them and wire the opener. For homes, farms and businesses.</p>
@@ -568,7 +573,7 @@ footer b{color:var(--paper)}
         <li class="reveal"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Commercial and residential gates</b><span>Estate gates, roll gates, drive gates and walk gates.</span></span></li>
         <li class="reveal"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Fence and gate repair</b><span>Sagging gates, broken posts and openers that quit.</span></span></li>
       </ul>
-      <div class="ctas reveal"><a class="btn go2" style="flex:none" href="#quote" data-t="gate">Price a gate</a><a class="btn dk" href="tel:+18659330937">Call (865) 933-0937</a></div>
+      <div class="ctas reveal"><a class="btn go2" style="flex:none" href="#quote" data-t="gate">Price a gate</a><a class="btn dk" href="tel:+18659330937">Office (865) 933-0937</a><a class="btn dk" href="tel:+18652535334">Cell (865) 253-5334</a></div>
     </div>
   </div>
 </section>
@@ -578,19 +583,20 @@ footer b{color:var(--paper)}
     <div>
       <h2 class="reveal">Knoxville and all of East TN</h2>
       <p class="intro reveal" style="margin-bottom:0">We build fences in Knoxville, Kodak, Sevierville, Maryville, Clinton, Oak Ridge and Kingston, plus the towns around them. Not sure if you’re in range? Call and ask.</p>
-      <div class="ctas reveal"><a class="btn go2" style="flex:none" href="#quote" id="areaQ">Get my price</a><a class="btn dk" href="tel:+18659330937">Call (865) 933-0937</a></div>
+      <div class="ctas reveal"><a class="btn go2" style="flex:none" href="#quote" id="areaQ">Get my price</a><a class="btn dk" href="tel:+18659330937">Office (865) 933-0937</a><a class="btn dk" href="tel:+18652535334">Cell (865) 253-5334</a></div>
     </div>
     <ul class="hrs reveal">
+      <li>Office<span><a href="tel:+18659330937">(865) 933-0937</a></span></li>
+      <li>Cell<span><a href="tel:+18652535334">(865) 253-5334</a></span></li>
       <li>Estimates<span>Free</span></li>
       <li>Calls<span>8 AM to 9 PM</span></li>
-      <li>Old fence tear-out<span>Yes</span></li>
-      <li>Repairs<span>Fences, gates, openers</span></li>
+            <li>Repairs<span>Fences, gates, openers</span></li>
     </ul>
   </div>
 </section>
 </main>
 
-<footer><div class="wrap"><span><b>ABC Fence Co</b> · Knoxville, TN · <a href="tel:+18659330937">(865) 933-0937</a></span><span>Site preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a></span></div></footer>
+<footer><div class="wrap"><span><b>ABC Fence Co</b> · Knoxville, TN · Office <a href="tel:+18659330937">(865) 933-0937</a> · Cell <a href="tel:+18652535334">(865) 253-5334</a></span><span>Site preview by <a href="https://getpricewink.com" target="_blank" rel="noopener">PriceWink</a></span></div></footer>
 <div class="cta-bar" id="ctaBar"><a class="btn dk" style="background:#2a2e35" href="tel:+18659330937">Call</a><a class="btn go2" href="#quote" id="barQ">Get my price</a></div>
 <script>
 (function(){
@@ -686,7 +692,7 @@ footer b{color:var(--paper)}
   function go(n){ const qt=$('#qt'); qt.classList.toggle('back',n<step); step=n;
     $$('.step').forEach(x=>x.classList.toggle('active',+x.dataset.step===n)); $('#qlab').textContent=n===4?'Your price':'Step '+n+' of 4';
     $$('#dots i').forEach((d,i)=>d.classList.toggle('on',i<n)); if(n===2) buildStyles(); if(n===3) buildSize(); if(n===4) showResult(); nav();
-    const sc=$('#qt'); if(innerWidth>=960) sc.scrollTop=0; }
+    }
   function pickType(v){ if(S.t!==v){ S.s=null; S.ex={}; } S.t=v; mark('#typePick',v); setTimeout(()=>go(2),RM?0:220); }
   function pickStyle(v){ S.s=v; mark('#styPick',v); setTimeout(()=>go(S.t==='repair'?4:3),RM?0:220); }
 
@@ -704,14 +710,6 @@ footer b{color:var(--paper)}
   $$('#quick a, .sty[data-t], .ctas a[data-t]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); startWith(a.dataset.t,a.dataset.s); toQuote(); }));
   $$('#barQ,#areaQ').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); toQuote(); }));
   go(1);
-
-  // desktop: phone tilts toward the pointer, glare follows
-  const qp=$('#qphone'), qtl=$('#qtilt');
-  if(!RM&&matchMedia('(hover:hover) and (pointer:fine)').matches){ let pend=null;
-    qp.addEventListener('pointermove',e=>{ if(innerWidth<960||pend) return; const r=qp.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
-      pend=requestAnimationFrame(()=>{ pend=null; qtl.style.transform='rotate(-2deg) rotateY('+(x*7).toFixed(2)+'deg) rotateX('+(-y*5).toFixed(2)+'deg)'; $('.scr').style.setProperty('--ga',(118+x*40).toFixed(1)+'deg'); }); });
-    qp.addEventListener('pointerleave',()=>{ qtl.style.transform=''; }); }
-  { const c=$('#clock'), t=()=>{ const d=new Date(); c.textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0'); }; t(); setInterval(t,30000); }
 
   // reveals: once, lead first, shrinking gaps inside a group
   if('IntersectionObserver' in window){
