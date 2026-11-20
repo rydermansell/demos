@@ -445,6 +445,16 @@ footer b{color:var(--paper)}
 /* quote tool as a clean card on every screen (the phone mockup stays on getpricewink.com) */
 .qbox{width:100%;max-width:460px;margin:0 auto}
 @media(min-width:960px){.qbox .qt{box-shadow:0 40px 80px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}}
+
+.cust{margin-top:48px;display:grid;grid-template-columns:minmax(0,1fr);gap:22px;background:var(--deep);color:var(--paper);border-radius:var(--r2);padding:22px;overflow:hidden}
+@media(min-width:860px){.cust{grid-template-columns:300px minmax(0,1fr);gap:40px;align-items:center;padding:28px}}
+.cimg{border-radius:12px;overflow:hidden;aspect-ratio:4/3}@media(min-width:860px){.cimg{aspect-ratio:4/5}}
+.cimg img{width:100%;height:100%;object-fit:cover}
+.cust h3{font-size:clamp(34px,6.4vw,54px);line-height:.95;text-transform:uppercase;font-weight:800;font-stretch:64%;margin-bottom:12px}
+.cust p{margin:0;color:#ddd4c6;max-width:50ch}
+.cust .ctas{margin-top:18px}
+.cust .also2{margin-top:16px;font-size:14.5px;color:#aba191}
+.cust .btn.dk{background:transparent;border:1.5px solid rgba(246,244,236,.35)}
 </style>
 </head>
 <body>
@@ -468,7 +478,7 @@ footer b{color:var(--paper)}
     <div>
       <p class="live fade" style="--d:0ms"><i></i>Free estimates · East TN</p>
       <h1><span class="vh">ABC Fence Co, fence company in Knoxville, TN: </span><span class="ln"><span style="--d:120ms">Fences.</span></span><span class="ln"><span class="sg" style="--d:210ms">Gates.</span></span><span class="ln"><span style="--d:300ms"><em>Welding.</em></span></span></h1>
-      <p class="lede fade" style="--d:480ms">Built across Knoxville and East Tennessee. Get a ballpark in a minute.</p>
+      <p class="lede fade" style="--d:480ms">Standard or custom, built across East Tennessee. Get a ballpark in a minute.</p>
       <p class="qs-l fade" style="--d:560ms">Get a price for</p>
       <div class="qs fade" style="--d:600ms" id="quick">
         <a class="chip" href="#quote" data-t="chain">Chain link</a>
@@ -477,6 +487,7 @@ footer b{color:var(--paper)}
         <a class="chip" href="#quote" data-t="vinyl">Vinyl</a>
         <a class="chip" href="#quote" data-t="farm">Farm fence</a>
         <a class="chip" href="#quote" data-t="gate">Gates</a>
+        <a class="chip" href="#quote" data-t="custom">Custom</a>
       </div>
       <p class="hph fade" style="--d:680ms"><em>Office <a href="tel:+18659330937">(865) 933-0937</a></em><em>Cell <a href="tel:+18652535334">(865) 253-5334</a></em></p>
     </div>
@@ -499,14 +510,22 @@ footer b{color:var(--paper)}
 <section class="s" id="styles">
   <div class="wrap">
     <h2 class="reveal">Fences we build</h2>
-    <p class="intro reveal">Every photo is an ABC job. Tap one to price it.</p>
+    <p class="intro reveal">Every photo is an ABC job. Tap one to price it, or ask us to build something custom.</p>
 <div class="grp"><div class="grp-h reveal"><h3>Chain link</h3><p>Galvanized or black, for yards, dogs, pools and job sites.</p></div><div class="sty-g" data-group><a class="sty reveal" href="#quote" data-t="chain" data-s="b4"><div class="ph"><img src="img/dog-park.webp" alt="Black chain link fence and gate around a gravel dog park" width="825" height="1100" loading="lazy" decoding="async"></div><b>Black chain link</b><small>Vinyl-coated, here at a dog park</small><span class="pr">Instant ballpark</span></a><a class="sty reveal" href="#quote" data-t="chain" data-s="barb"><div class="ph"><img src="img/chain-link-barbed.webp" alt="Tall galvanized chain link fence topped with barbed wire" width="825" height="1100" loading="lazy" decoding="async"></div><b>6 ft with barbed wire</b><small>Galvanized security fence</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="gate" data-s="walk"><div class="ph"><img src="img/custom-walk-gate.webp" alt="Galvanized chain link walk gate between a house and a concrete wall" width="825" height="1100" loading="lazy" decoding="async"></div><b>Galvanized walk gate</b><small>Built to fit a tight side yard</small><span class="pr est">Free estimate</span></a></div></div>
-<div class="grp"><div class="grp-h reveal"><h3>Wood</h3><p>Every wood fence is pressure treated pine, built on site.</p></div><div class="sty-g" data-group><a class="sty reveal" href="#quote" data-t="wood" data-s="p6"><div class="ph"><img src="img/wood-privacy.webp" alt="Long six foot wood privacy fence across a backyard" width="825" height="1100" loading="lazy" decoding="async"></div><b>6 ft pressure treated pine privacy</b><small>Pressure treated pine boards and posts, built to last in East TN weather</small><span class="pr">Instant ballpark</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="hz"><div class="ph"><img src="img/horizontal-privacy.webp" alt="Horizontal board wood privacy fence along a gravel lot" width="825" height="1100" loading="lazy" decoding="async"></div><b>Horizontal privacy</b><small>Boards run side to side</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="cap"><div class="ph"><img src="img/cap-and-trim.webp" alt="Wood privacy fence with a top cap and trim boards" width="825" height="1100" loading="lazy" decoding="async"></div><b>Cap and trim</b><small>Top cap and trim boards</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="cus"><div class="ph"><img src="img/custom-fence.webp" alt="Wood privacy fence with a lattice top and pointed post caps beside a barn" width="825" height="1100" loading="lazy" decoding="async"></div><b>Custom wood</b><small>Lattice top and carved post caps</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="hz"><div class="ph"><img src="img/deck-and-fence.webp" alt="New pressure treated deck with a horizontal board fence behind it" width="825" height="1100" loading="lazy" decoding="async"></div><b>Decks too</b><small>A new deck with a horizontal fence</small><span class="pr est">Free estimate</span></a></div></div>
+<div class="grp"><div class="grp-h reveal"><h3>Wood</h3><p>Every wood fence is pressure treated pine, built on site.</p></div><div class="sty-g" data-group><a class="sty reveal" href="#quote" data-t="wood" data-s="p6"><div class="ph"><img src="img/wood-privacy.webp" alt="Long six foot wood privacy fence across a backyard" width="825" height="1100" loading="lazy" decoding="async"></div><b>6 ft pressure treated pine privacy</b><small>Pressure treated pine boards and posts, built to last in East TN weather</small><span class="pr">Instant ballpark</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="hz"><div class="ph"><img src="img/horizontal-privacy.webp" alt="Horizontal board wood privacy fence along a gravel lot" width="825" height="1100" loading="lazy" decoding="async"></div><b>Horizontal privacy</b><small>Boards run side to side</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="cap"><div class="ph"><img src="img/cap-and-trim.webp" alt="Wood privacy fence with a top cap and trim boards" width="825" height="1100" loading="lazy" decoding="async"></div><b>Cap and trim</b><small>Top cap and trim boards</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="wood" data-s="hz"><div class="ph"><img src="img/deck-and-fence.webp" alt="New pressure treated deck with a horizontal board fence behind it" width="825" height="1100" loading="lazy" decoding="async"></div><b>Decks too</b><small>A new deck with a horizontal fence</small><span class="pr est">Free estimate</span></a></div></div>
 <div class="grp"><div class="grp-h reveal"><h3>Aluminum and vinyl</h3><p>No painting, no rot.</p></div><div class="sty-g" data-group><a class="sty reveal" href="#quote" data-t="alum" data-s="4f"><div class="ph"><img src="img/aluminum-patio.webp" alt="Black aluminum fence and gate on a concrete patio" width="825" height="1100" loading="lazy" decoding="async"></div><b>Aluminum</b><small>4 or 5 ft, flat top or spear top</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="vinyl" data-s="w"><div class="ph"><img src="img/vinyl-white.webp" alt="White vinyl privacy fence around a new backyard" width="825" height="1100" loading="lazy" decoding="async"></div><b>6 ft vinyl privacy</b><small>White or tan</small><span class="pr est">Free estimate</span></a></div></div>
 <div class="grp"><div class="grp-h reveal"><h3>Farm and ranch</h3><p>Board and rail fence for land, horses and long driveways.</p></div><div class="sty-g" data-group><a class="sty reveal" href="#quote" data-t="farm" data-s="pop2"><div class="ph"><img src="img/two-rail-poplar.webp" alt="Two rail poplar board fence along a hillside driveway" width="825" height="1100" loading="lazy" decoding="async"></div><b>2 rail poplar</b><small>Rails with wire behind them</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="farm" data-s="split"><div class="ph"><img src="img/split-rail.webp" alt="Three rail split rail fence running uphill under trees" width="825" height="1100" loading="lazy" decoding="async"></div><b>3 rail split rail</b><small>Pine, or cedar if you want it</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="farm" data-s="cross"><div class="ph"><img src="img/cross-buck.webp" alt="Cross buck wood fence with an X in each section in the woods" width="825" height="1100" loading="lazy" decoding="async"></div><b>Cross buck</b><small>A single X in every section</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="farm" data-s="cross"><div class="ph"><img src="img/cross-buck-diamond.webp" alt="Wood fence with a double cross diamond pattern along a yard" width="825" height="1100" loading="lazy" decoding="async"></div><b>Double cross buck</b><small>A diamond pattern down the line</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="farm" data-s="board4"><div class="ph"><img src="img/four-board-wire.webp" alt="Four board wood fence with wire mesh and a gate" width="825" height="1100" loading="lazy" decoding="async"></div><b>4 board with wire</b><small>Holds dogs and small animals</small><span class="pr est">Free estimate</span></a></div></div>
 <div class="grp"><div class="grp-h reveal"><h3>Gates</h3><p>Swing, roll and estate gates, welded and hung by ABC.</p></div><div class="sty-g" data-group><a class="sty reveal" href="#quote" data-t="gate" data-s="estate"><div class="ph"><img src="img/estate-gate.webp" alt="Black double estate gate with spear tops across a concrete driveway" width="825" height="1100" loading="lazy" decoding="async"></div><b>Estate gate</b><small>Double drive gate with spear tops</small><span class="pr est">Free estimate</span></a><a class="sty reveal" href="#quote" data-t="gate" data-s="roll"><div class="ph"><img src="img/roll-gate-aluminum.webp" alt="Black aluminum roll gate across a driveway with a solar panel" width="825" height="1100" loading="lazy" decoding="async"></div><b>Aluminum roll gate</b><small>Solar powered opener</small><span class="pr est">Free estimate</span></a></div></div>
 
-    <p class="also reveal"><span><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Repairs</span><span><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Old fence tear-out</span><span><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Commercial and residential</span></p>
+    <div class="cust reveal">
+      <div class="cimg"><img src="img/custom-fence.webp" alt="Custom wood fence with a lattice top and carved post caps" width="825" height="1100" loading="lazy"></div>
+      <div>
+        <h3>Don’t see it? We build custom.</h3>
+        <p>Your own design, a mix of materials, a gate welded to fit an odd opening, or matching what a neighbor has. If you can describe it, ABC can build it.</p>
+        <div class="ctas"><a class="btn go2" style="flex:none" href="#quote" data-t="custom">Ask about custom</a><a class="btn dk" href="tel:+18659330937">Call the office</a></div>
+        <p class="also2">Also: repairs, old fence tear-out, commercial and residential.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -636,6 +655,10 @@ footer b{color:var(--paper)}
       ['estate','Estate gate','Spear tops',null,'estate-gate'],
       ['roll','Roll gate','Slides across the drive',null,'roll-gate-chain'],
       ['opener','Gate opener','Solar or electric',null,'roll-gate-aluminum']]},
+    custom:{name:'Something custom',sub:'Your design, built by ABC',img:'custom-fence',styles:[
+      ['fence','Custom fence','Your own design or a mix of materials',null,'custom-fence'],
+      ['gate','Custom gate','Welded to fit your opening',null,'estate-gate'],
+      ['deck','Deck and fence','Built together',null,'deck-and-fence']]},
     repair:{name:'Repair',sub:'Fences, gates and openers',img:'custom-walk-gate',styles:[
       ['fence','Fence repair','Posts, boards, chain link',null,'wood-privacy-2'],
       ['gate','Gate repair','Sagging or dragging gates',null,'custom-walk-gate'],
@@ -651,7 +674,7 @@ footer b{color:var(--paper)}
   const opt=(v,img,b,sm,fr,cls)=>'<button type="button" class="opt" data-v="'+v+'" aria-pressed="false"><span class="thumb"><img src="'+I(img)+'" alt="" width="52" height="52" loading="lazy"></span><span><b>'+b+'</b>'+(sm?'<small>'+sm+'</small>':'')+'</span>'+(fr?'<span class="fr '+cls+'">'+fr+'</span>':'')+'</button>';
 
   $('#typePick').innerHTML=Object.entries(TYPES).map(([k,t])=>{ const pz=t.styles.some(s=>s[3]); return opt(k,t.img,t.name,t.sub,pz?'Ballpark':'Estimate',pz?'pz':'est'); }).join('');
-  function buildStyles(){ const t=T(); $('#styQ').textContent=S.t==='repair'?'What needs fixing?':S.t==='gate'?'Which gate?':'Which '+t.name.toLowerCase()+'?';
+  function buildStyles(){ const t=T(); $('#styQ').textContent=S.t==='repair'?'What needs fixing?':S.t==='custom'?'What are you picturing?':S.t==='gate'?'Which gate?':'Which '+t.name.toLowerCase()+'?';
     $('#styH').textContent=S.t==='repair'?'We’ll come take a look.':'Tap the closest one.';
     $('#styPick').innerHTML=t.styles.map(s=>opt(s[0],s[4],s[1],s[2],s[3]?'Ballpark':'Estimate',s[3]?'pz':'est')).join('');
     mark('#styPick',S.s); }
@@ -678,7 +701,7 @@ footer b{color:var(--paper)}
       animNum($('#lo'),r.lo); if(!one) animNum($('#hi'),r.hi);
       $('#pNote').textContent=(S.t==='wood'?'Pressure treated pine. ':'')+(r.min&&one?'Our smallest job is $800. ':'About '+fmt(S.ft)+' ft, installed. ')+'Not a quote. Your final price comes from the free estimate.';
       const a=$('#amt'), p=$('#pbox'); if(!RM){ a.classList.remove('swing'); p.classList.remove('shine'); void a.offsetWidth; a.classList.add('swing'); p.classList.add('shine'); } }
-    else { $('#eImg').src=I(st[4]); $('#eNote').textContent=S.t==='repair'?'Every repair is different. Call or text and we’ll come look.':'Every '+(S.t==='gate'?'gate':'fence like this')+' depends on the yard, the ground and the details, so we price it on site for free.'; }
+    else { $('#eImg').src=I(st[4]); $('#eNote').textContent=S.t==='repair'?'Every repair is different. Call or text and we’ll come look.':S.t==='custom'?'Tell us what you have in mind. Text a photo or sketch if you have one, and we’ll price it on site for free.':'Every '+(S.t==='gate'?'gate':'fence like this')+' depends on the yard, the ground and the details, so we price it on site for free.'; }
     const rows=[['Job',name.charAt(0).toUpperCase()+name.slice(1)]]; if(S.ft&&T().fence) rows.push(['Size','About '+fmt(S.ft)+' ft']); if(ex.length) rows.push(['Add',ex.join(', ')]);
     if(r) rows.push(['Ballpark',r.lo===r.hi?'$'+fmt(r.lo):'$'+fmt(r.lo)+' to $'+fmt(r.hi)]);
     $('#picks').innerHTML=rows.map(([k,v])=>'<li><span>'+k+'</span><b>'+v+'</b></li>').join('');
@@ -694,7 +717,7 @@ footer b{color:var(--paper)}
     $$('#dots i').forEach((d,i)=>d.classList.toggle('on',i<n)); if(n===2) buildStyles(); if(n===3) buildSize(); if(n===4) showResult(); nav();
     }
   function pickType(v){ if(S.t!==v){ S.s=null; S.ex={}; } S.t=v; mark('#typePick',v); setTimeout(()=>go(2),RM?0:220); }
-  function pickStyle(v){ S.s=v; mark('#styPick',v); setTimeout(()=>go(S.t==='repair'?4:3),RM?0:220); }
+  function pickStyle(v){ S.s=v; mark('#styPick',v); setTimeout(()=>go((S.t==='repair'||S.t==='custom')?4:3),RM?0:220); }
 
   $('#typePick').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(b) pickType(b.dataset.v); });
   $('#styPick').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(b) pickStyle(b.dataset.v); });
@@ -702,11 +725,11 @@ footer b{color:var(--paper)}
   $('#ftIn').addEventListener('input',e=>{ const v=parseInt(e.target.value,10); S.ft=v>0?Math.min(v,5000):null; mark('#szPick',null); nav(); });
   $('#ftIn').addEventListener('keydown',e=>{ if(e.key==='Enter'&&valid()){ e.target.blur(); go(4); } });
   $('#next').addEventListener('click',()=>{ if(valid()) go(4); });
-  $('#prev').addEventListener('click',()=>{ if(step===4&&S.t==='repair') go(2); else if(step>1) go(step-1); });
+  $('#prev').addEventListener('click',()=>{ if(step===4&&(S.t==='repair'||S.t==='custom')) go(2); else if(step>1) go(step-1); });
   $('#again').addEventListener('click',()=>{ S.t=S.s=null; S.ft=null; S.ex={}; $('#ftIn').value=''; mark('#typePick',null); go(1); });
 
   const toQuote=()=>$('#quote').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
-  function startWith(t,s){ S.t=t; S.ex={}; S.s=s||null; mark('#typePick',t); if(!s) go(2); else go(t==='repair'?4:3); }
+  function startWith(t,s){ S.t=t; S.ex={}; S.s=s||null; mark('#typePick',t); if(!s) go(2); else go((t==='repair'||t==='custom')?4:3); }
   $$('#quick a, .sty[data-t], .ctas a[data-t]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); startWith(a.dataset.t,a.dataset.s); toQuote(); }));
   $$('#barQ,#areaQ').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); toQuote(); }));
   go(1);
