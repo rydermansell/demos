@@ -1,2 +1,6 @@
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
 /img/*
   Cache-Control: public, max-age=2592000
