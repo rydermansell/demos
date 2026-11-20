@@ -458,8 +458,7 @@ footer b{color:var(--paper)}
 .cust .also2{margin-top:16px;font-size:14.5px;color:#aba191}
 .cust .btn.dk{background:transparent;border:1.5px solid rgba(246,244,236,.35)}
 
-.nrev{text-decoration:none;color:inherit;display:block}
-.nrev u{display:block;margin-top:2px;color:var(--cta);text-underline-offset:3px;font-weight:700}
+.nrev{color:var(--cta);font-weight:700;text-underline-offset:3px;white-space:nowrap}
 .faqw{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
 @media(min-width:900px){.faqw{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:64px;align-items:start}}
 .fq{border-top:2px solid var(--ink)}
@@ -488,6 +487,22 @@ footer b{color:var(--paper)}
   .lede{margin-bottom:20px}
 }
 @media(max-width:559px){.hero .wrap{padding-bottom:128px}.hrsn .sep{display:block;height:0;overflow:hidden}}
+
+/* phones: gallery as a clean list, photo left and text right, so every row lines up */
+@media(max-width:559px){
+  .sty-g,.sty-g.n2,.sty-g.n3,.sty-g.n5{grid-template-columns:1fr!important;gap:12px}
+  .sty-g .sty,.sty-g .sty:last-child:nth-child(odd){grid-column:auto;display:grid;grid-template-columns:42% 1fr;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r2);padding:8px}
+  .sty-g .sty .ph,.sty-g .sty:last-child:nth-child(odd) .ph{aspect-ratio:1/1;border-radius:10px}
+  .sty-g .sty>b{margin-top:0}
+  .sty-g .sty{grid-template-rows:auto}
+  .sty-g .sty .ph{grid-row:1/4}
+  .sty-g .sty b,.sty-g .sty small,.sty-g .sty .pr{grid-column:2}
+  .sty-g .sty b{align-self:end;font-size:16px}
+  .sty-g .sty small{margin:2px 0 0;font-size:13.5px}
+  .sty-g .sty .pr{align-self:start;margin-top:8px}
+  .grp-h{margin-bottom:14px}
+}
+@media(max-width:559px){.sty-g .sty .pr{justify-self:start}.sty-g .sty{row-gap:0}.sty-g .sty small{margin-top:4px}}
 </style>
 </head>
 <body>
@@ -532,7 +547,7 @@ footer b{color:var(--paper)}
   <div class="wrap">
     <div class="ngrid" data-group>
       <div class="reveal"><b><span class="cu" data-to="4.7" data-dec="1">4.7</span></b><span>stars on Google</span></div>
-      <a class="reveal nrev" href="https://search.google.com/local/reviews?placeid=ChIJf4SHHhMJXIgR7VGDjnJ8mWQ" target="_blank" rel="noopener"><b><span class="cu" data-to="23">23</span></b><span>reviews on Google <u>Read them</u></span></a>
+      <div class="reveal"><b><span class="cu" data-to="23">23</span></b><span>reviews on Google <a class="nrev" href="https://search.google.com/local/reviews?placeid=ChIJf4SHHhMJXIgR7VGDjnJ8mWQ" target="_blank" rel="noopener">Read them</a></span></div>
       <div class="reveal"><b>$<span class="cu" data-to="0">0</span></b><span>for the estimate</span></div>
       <div class="reveal"><b><span class="cu" data-to="9">9</span><em>PM</em></b><span>we answer calls till</span></div>
     </div>
